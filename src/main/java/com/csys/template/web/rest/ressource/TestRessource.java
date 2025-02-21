@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api")
-public class UserController {
+public class TestRessource {
     
     @GetMapping("/hi")
     public String hello(){
