@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+<!-- The FILE and ASYNC appenders are here as examples for a production configuration -->
+<!--
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>utf-8</charset>
+            <Pattern>%d %-5level [%thread] %logger{0}: %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+        <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+            <queueSize>512</queueSize>
+            <appender-ref ref="FILE"/>
+        </appender>
+    -->
+
+    <logger name="com.csys.facturation" level="ON"/>
+    <logger name="java.util.stream" level="ON"/>
+ 
+    <logger name="org.apache" level="WARN"/>
+    <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
+    <logger name="org.bson" level="WARN"/>
+    <logger name="org.hibernate.validator" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.hibernate.ejb.HibernatePersistence" level="OFF"/>
+    <logger name="org.springframework" level="ERROR"/>
+    <logger name="org.springframework.web" level="OFF"/>
+    <logger name="sun.net" level="OFF"/>
+    <logger name="org.hibernate.type.BasicTypeRegistry" level="INFO"/> 
+    <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="INFO"/> 
+    <logger name="org.hibernate.type.descriptor.sql" level="TRACE"/>
+    <logger name="com.netflix.hystrix" level="INFO"/>
+    <logger name="org.hibernate.stat" level="DEBUG"/> 
+    <logger name="com.crystaldecisions" level="ERROR"/>
+    <logger name="org.springframework.orm.jpa" level="ERROR"/>
+    <logger name="org.springframework.transaction" level="ERROR"/>
+    <logger name="org.springframework.batch.core" level="ERROR"/>
+
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
