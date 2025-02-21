@@ -1,16 +1,19 @@
 management:
-    security:
-        enabled: false
-    metrics.binders.hystrix.enabled: false
-security:
-    basic:
-        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*" 
 spring:
+    security:
+        user:
+            name: admin
+            password: password
+            roles: ADMIN
     application:
         name: template-core
     mvc:
         pathmatch:
-            matching-strategy: ant_path_matcher
+            matching-strategy: ant-path-matcher
     jackson:
         serialization:
             write-dates-as-timestamps: true
