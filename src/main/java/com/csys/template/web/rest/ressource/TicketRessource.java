@@ -49,9 +49,9 @@ public class TicketRessource {
         return ResponseEntity.ok(ticket);
     }
     @GetMapping("/{id}")
-    public Optional<Ticket> findone(@PathVariable Integer id){
-        Optional<Ticket> t = ticketRepository.findById(id);
-        RestPreconditions.checkFound(t+ENTITY_NAME+"not found");
+    public Ticket findone(@PathVariable Integer id){
+        Ticket t = ticketRepository.findOneById(id);
+        RestPreconditions.checkFound(t,ENTITY_NAME+"not found");
         return t;
         
     }

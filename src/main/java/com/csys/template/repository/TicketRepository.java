@@ -11,5 +11,5 @@ import com.csys.template.domain.Ticket;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket , Integer> {
-    
+    Ticket findOneById(Integer id);
 }
