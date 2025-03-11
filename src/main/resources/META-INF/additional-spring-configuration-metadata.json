@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "lang.secondary",
+    "type": "java.lang.String",
+    "description": "A description for 'lang.secondary'"
+  },
+  {
+    "name": "hystrix.command.default.execution.isolation.strategy",
+    "type": "java.lang.String",
+    "description": "A description for 'hystrix.command.default.execution.isolation.strategy'"
+  },
+  {
+    "name": "email.from",
+    "type": "java.lang.String",
+    "description": "A description for 'email.from'"
+  },
+  {
+    "name": "email.to",
+    "type": "java.lang.String",
+    "description": "A description for 'email.to'"
+  }
+]}

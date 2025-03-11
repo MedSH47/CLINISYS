@@ -3,6 +3,7 @@ package com.csys.template.web.rest.ressource;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.csys.template.domain.Ticket;
 import com.csys.template.repository.TicketRepository;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+import com.csys.template.util.RestPreconditions;
+
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +32,7 @@ public class TicketRessource {
     
     @Autowired
     private TicketRepository ticketRepository;
+    private static final String ENTITY_NAME = "Ticket";
 
     @PostMapping
     public ResponseEntity<Ticket> addTicket(@RequestBody Ticket entity) throws URISyntaxException {
@@ -44,6 +47,13 @@ public class TicketRessource {
     public ResponseEntity<Ticket> updateTicket(@RequestBody Ticket entity) throws URISyntaxException {
         Ticket ticket = ticketRepository.save(entity);
         return ResponseEntity.ok(ticket);
+    }
+    @GetMapping("/{id}")
+    public Optional<Ticket> findone(@PathVariable Integer id){
+        Optional<Ticket> t = ticketRepository.findById(id);
+        RestPreconditions.checkFound(t+ENTITY_NAME+"not found");
+        return t;
+        
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTicket(@PathVariable Integer id){

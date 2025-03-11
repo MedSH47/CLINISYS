@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package com.csys.template.config;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import org.springframework.context.annotation.Bean;
