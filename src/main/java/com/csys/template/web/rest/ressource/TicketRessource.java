@@ -42,10 +42,10 @@ public class TicketRessource {
         return ResponseEntity.ok(ticket);
     }
 
-    @GetMapping("/{id}")
-    public Ticket findOne(@PathVariable Integer id) {
-        return ticketService.findOne(id);
-    }
+    // @GetMapping("/{id}")
+    // public Ticket findOne(@PathVariable Integer id) {
+    //     return ticketService.findOne(id);
+    // }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTicket(@PathVariable Integer id) {

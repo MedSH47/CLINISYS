@@ -1,6 +1,8 @@
 package com.csys.template.service;
 
 import com.csys.template.domain.Ticket;
+import com.csys.template.dto.TicketsDto;
+import com.csys.template.factory.TicketsFactory;
 import com.csys.template.repository.TicketRepository;
 import com.csys.template.util.RestPreconditions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +28,9 @@ public class TicketService {
         return ticketRepository.save(entity);
     }
 
-    public Ticket findOne(Integer id) {
+    public TicketsDto findOne(Integer id) {
         Ticket t = ticketRepository.findOneById(id);
-        RestPreconditions.checkFound(t, "Ticket not found");
-        return t;
+        return TicketsFactory.ticketsToTicketsDto(t);
     }
 
     public void deleteTicket(Integer id) {
