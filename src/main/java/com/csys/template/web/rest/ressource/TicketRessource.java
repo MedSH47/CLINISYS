@@ -1,63 +1,55 @@
 package com.csys.template.web.rest.ressource;
 
+import com.csys.template.domain.Ticket;
+import com.csys.template.service.TicketService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.csys.template.domain.Ticket;
-import com.csys.template.repository.TicketRepository;
-import com.csys.template.util.RestPreconditions;
-
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-
 
 @RestController
 @RequestMapping("/api/Ticket")
 public class TicketRessource {
 
-    
-    
     @Autowired
-    private TicketRepository ticketRepository;
+    private TicketService ticketService;
     private static final String ENTITY_NAME = "Ticket";
 
     @PostMapping
-    public ResponseEntity<Ticket> addTicket(@RequestBody Ticket entity) throws URISyntaxException {
-        Ticket ticket = ticketRepository.save(entity);
-        return ResponseEntity.created(new URI("/api/Ticket/"+ticket.getId())).body(ticket);
+    public ResponseEntity<Ticket> addTicket(@RequestBody Ticket entity, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
+        if (entity.getId() != null) {
+            bindingResult.addError(new FieldError(ENTITY_NAME, "Id", "Post not allowed Ticket with Id"));
+            throw new MethodArgumentNotValidException(null, bindingResult);
+        }
+        Ticket ticket = ticketService.addTicket(entity);
+        return ResponseEntity.created(new URI("/api/Ticket/" + ticket.getId())).body(ticket);
     }
+
     @GetMapping
-    public List<Ticket> getAllTickets(){
-        return ticketRepository.findAll();
+    public List<Ticket> getAllTickets() {
+        return ticketService.getAllTickets();
     }
+
     @PutMapping
     public ResponseEntity<Ticket> updateTicket(@RequestBody Ticket entity) throws URISyntaxException {
-        Ticket ticket = ticketRepository.save(entity);
+        Ticket ticket = ticketService.updateTicket(entity);
         return ResponseEntity.ok(ticket);
     }
+
     @GetMapping("/{id}")
-    public Ticket findone(@PathVariable Integer id){
-        Ticket t = ticketRepository.findOneById(id);
-        RestPreconditions.checkFound(t,ENTITY_NAME+"not found");
-        return t;
-        
+    public Ticket findOne(@PathVariable Integer id) {
+        return ticketService.findOne(id);
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTicket(@PathVariable Integer id){
-        ticketRepository.deleteById(id);
+    public ResponseEntity<Void> deleteTicket(@PathVariable Integer id) {
+        ticketService.deleteTicket(id);
         return ResponseEntity.ok().build();
     }
 }
