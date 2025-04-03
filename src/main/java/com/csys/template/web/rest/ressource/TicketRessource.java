@@ -1,7 +1,7 @@
 package com.csys.template.web.rest.ressource;
 
 import com.csys.template.domain.Ticket;
-import com.csys.template.dto.TicketsDto;
+import com.csys.template.dto.TicketDto;
 import com.csys.template.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +44,7 @@ public class TicketRessource {
     }
 
     @GetMapping("/{id}")
-    public TicketsDto findOne(@PathVariable Integer id) {
+    public TicketDto findOne(@PathVariable Integer id) {
         return ticketService.findOne(id);
     }
 

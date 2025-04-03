@@ -2,17 +2,17 @@ package com.csys.template.dto;
 
 import java.util.Date;
 
-public class TicketsDto {
+public class TicketDto {
 
     
     private String ticketNumber;
     private Date date;
 
     
-    public TicketsDto() {
+    public TicketDto() {
     }
 
-    public TicketsDto( String ticketNumber, Date date) {
+    public TicketDto( String ticketNumber, Date date) {
         
         this.ticketNumber = ticketNumber;
         this.date = date;
