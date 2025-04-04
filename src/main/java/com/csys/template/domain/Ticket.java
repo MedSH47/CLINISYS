@@ -51,7 +51,7 @@ public class Ticket implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-
+    
     public String getTicketNumber() {
         return ticketNumber;
     }
