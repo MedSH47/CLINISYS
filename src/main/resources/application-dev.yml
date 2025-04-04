@@ -4,17 +4,19 @@ management:
       exposure:
         include: "*" 
 spring:
-    security:
-        user:
-            name: admin
-            password: password
-            roles: ADMIN
+    # security:
+        # user:
+        #     name: admin
+        #     password: password
+        #     roles: ADMIN
     application:
         name: template-core
     mvc:
         pathmatch:
             matching-strategy: ant-path-matcher
     jackson:
+        date-format: yyyy-MM-dd
+        time-zone: UTC
         serialization:
             write-dates-as-timestamps: true
     liquibase:

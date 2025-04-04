@@ -7,7 +7,6 @@ import com.csys.template.domain.Ticket;
 import com.csys.template.dto.TicketDto;
 
 public class TicketsFactory {
-
     public static Ticket ticketDtoToTicket(TicketDto ticketsDto) {
         Ticket ticket = new Ticket();
         ticket.setTicketNumber(ticketsDto.getTicketNumber());
@@ -24,7 +23,6 @@ public class TicketsFactory {
         ticketsDto.setDate(ticket.getDate());
         return ticketsDto;
     }
-
     public static List<TicketDto> ticketsDtoTicketsDtos(List<Ticket> tickets){
         List<TicketDto> ticketsDtos = new ArrayList<>();
         for (Ticket ticket : tickets) {
@@ -34,5 +32,4 @@ public class TicketsFactory {
         return ticketsDtos;
 
     }
-    
 }
