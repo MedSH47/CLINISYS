@@ -4,14 +4,7 @@ package com.csys.template.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "tickets")
@@ -43,7 +36,31 @@ public class Ticket implements Serializable {
     @Column(name = "status", length = 20)
     private String status;
 
-    // Getters and Setters
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
+
+    @ManyToOne
+    @JoinColumn(name = "equipe_id")
+    private Equipe equipe;
+
+    public Ticket(Integer id, String ticketNumber, Date date, String description, String module, String priority,
+            String temperature, String status, Client client, Equipe equipe) {
+        this.id = id;
+        this.ticketNumber = ticketNumber;
+        this.date = date;
+        this.description = description;
+        this.module = module;
+        this.priority = priority;
+        this.temperature = temperature;
+        this.status = status;
+        this.client = client;
+        this.equipe = equipe;
+    }
+
+    public Ticket() {
+    }
+
     public Integer getId() {
         return id;
     }
@@ -51,7 +68,7 @@ public class Ticket implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public String getTicketNumber() {
         return ticketNumber;
     }
@@ -107,4 +124,22 @@ public class Ticket implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public Equipe getEquipe() {
+        return equipe;
+    }
+
+    public void setEquipe(Equipe equipe) {
+        this.equipe = equipe;
+    }
+
+    
 }

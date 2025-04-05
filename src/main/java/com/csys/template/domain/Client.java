@@ -1,12 +1,14 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -35,7 +37,24 @@ public class Client implements Serializable {
     @Column(name = "ville")
     private String ville;
 
-    // Getters and Setters
+    @OneToMany(mappedBy = "client")
+    private List<Ticket> tickets;
+
+    public Client(Integer id, String nom, String prenom, String email, String telephone, String adresse, String ville,
+            List<Ticket> tickets) {
+        this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.email = email;
+        this.telephone = telephone;
+        this.adresse = adresse;
+        this.ville = ville;
+        this.tickets = tickets;
+    }
+
+    public Client() {
+    }
+
     public Integer getId() {
         return id;
     }
@@ -91,4 +110,14 @@ public class Client implements Serializable {
     public void setVille(String ville) {
         this.ville = ville;
     }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
+    }
+
+   
 }
