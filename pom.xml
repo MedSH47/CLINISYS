@@ -195,7 +195,7 @@
 <dependency>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-ooxml</artifactId>
-    <version>3.13</version>
+    <version>5.1.0</version>
     <type>jar</type>
 </dependency>
     </dependencies>
@@ -290,8 +290,7 @@
 
 
                         <defaultSchemaName>Recept</defaultSchemaName>
-                        <username>sa</username>
-                        <password>123</password>
+                        
                         <referenceUrl>hibernate:spring:com.csys.reception.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl&amp;hibernate.implicit_naming_strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl</referenceUrl>
                         <verbose>true</verbose>
                         <logging>debug</logging>
