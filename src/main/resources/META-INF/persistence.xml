@@ -5,6 +5,11 @@
     <class>com.csys.template.domain.TypeDemande</class>
     <class>com.csys.template.domain.User</class>
     <class>com.csys.template.domain.Poste</class>
+    <class>com.csys.template.domain.Module</class>
+    <class>com.csys.template.domain.Equipe</class>
+    <class>com.csys.template.domain.Client</class>
+    <class>com.csys.template.domain.Ticket</class>
+    <class>com.csys.template.domain.Utilisateur</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://10.12.12.10:1420;databaseName=gcliniquenew"/>
       <property name="javax.persistence.jdbc.user" value="sa"/>

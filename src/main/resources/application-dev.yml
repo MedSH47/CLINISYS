@@ -29,7 +29,7 @@ spring:
             enabled: true
           
     datasource:
-        url: jdbc:sqlserver://localhost:1433;databaseName=GcliniqueHAN
+        url: jdbc:sqlserver://localhost:1433;databaseName=GTickets
         username: SA
         password: 123
         
