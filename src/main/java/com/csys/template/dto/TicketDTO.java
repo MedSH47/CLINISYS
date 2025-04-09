@@ -3,6 +3,9 @@ package com.csys.template.dto;
 import com.csys.template.domain.Client;
 import com.csys.template.domain.Equipe;
 import com.csys.template.domain.Module;
+import com.csys.template.domain.enum_identifier.Priorite;
+import com.csys.template.domain.enum_identifier.Status;
+
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Date;
@@ -21,13 +24,13 @@ public class TicketDTO {
       min = 0,
       max = 30
   )
-  private String status;
+  private Status status;
 
   @Size(
       min = 0,
       max = 30
   )
-  private String priorite;
+  private Priorite priorite;
 
   @Temporal(TemporalType.DATE)
   private Date dateEffectationEquip;
@@ -75,19 +78,19 @@ public class TicketDTO {
     this.numTicket = numTicket;
   }
 
-  public String getStatus() {
+  public Status getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(Status status) {
     this.status = status;
   }
 
-  public String getPriorite() {
+  public Priorite getPriorite() {
     return priorite;
   }
 
-  public void setPriorite(String priorite) {
+  public void setPriorite(Priorite priorite) {
     this.priorite = priorite;
   }
 

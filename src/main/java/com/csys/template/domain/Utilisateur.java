@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.csys.template.domain;
 
 import java.io.Serializable;
@@ -12,13 +9,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.csys.template.domain.enum_identifier.Role;
 
 /**
  *
@@ -26,8 +23,6 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "Utilisateur")
-@NamedQueries({
-    @NamedQuery(name = "Utilisateur.findAll", query = "SELECT u FROM Utilisateur u")})
 public class Utilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -52,13 +47,27 @@ public class Utilisateur implements Serializable {
     private Boolean actif;
     @Size(max = 30)
     @Column(name = "role")
-    private String role;
+    private Role role;
     @JoinColumn(name = "id_equip", referencedColumnName = "id")
     @ManyToOne
     private Equipe idEquip;
     @JoinColumn(name = "id_poste", referencedColumnName = "id")
     @ManyToOne
     private Poste idPoste;
+
+    public Utilisateur(@NotNull Integer id, @Size(max = 30) String login, @Size(max = 30) String password,
+            Date creationDate, @Size(max = 30) String creationUser, Boolean actif, @Size(max = 30) Role role,
+            Equipe idEquip, Poste idPoste) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.creationDate = creationDate;
+        this.creationUser = creationUser;
+        this.actif = actif;
+        this.role = role;
+        this.idEquip = idEquip;
+        this.idPoste = idPoste;
+    }
 
     public Utilisateur() {
     }
@@ -115,11 +124,11 @@ public class Utilisateur implements Serializable {
         this.actif = actif;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

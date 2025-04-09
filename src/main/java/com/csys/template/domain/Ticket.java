@@ -9,6 +9,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,30 +22,33 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.csys.template.domain.enum_identifier.Priorite;
+import com.csys.template.domain.enum_identifier.Status;
+
 /**
  *
  * @author harra
  */
 @Entity
 @Table(name = "Ticket")
-@NamedQueries({
-    @NamedQuery(name = "Ticket.findAll", query = "SELECT t FROM Ticket t")})
+
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Column(name = "num_ticket")
     private Integer numTicket;
     @Size(max = 30)
     @Column(name = "status")
-    private String status;
+    private Status status;
     @Size(max = 30)
     @Column(name = "priorite")
-    private String priorite;
+    private Priorite priorite;
     @Column(name = "date_effectation_equip")
     @Temporal(TemporalType.DATE)
     private Date dateEffectationEquip;
@@ -69,6 +74,24 @@ public class Ticket implements Serializable {
     @ManyToOne
     private Module idModule;
 
+    public Ticket(@NotNull Integer id, Integer numTicket, @Size(max = 30) Status status,
+            @Size(max = 30) Priorite priorite, Date dateEffectationEquip, Date dateCreation,
+            @Size(max = 30) String creationUser, @Size(max = 30) String collaborateur, @Size(max = 30) String echeance,
+            Client idClient, Equipe idEquip, Module idModule) {
+        this.id = id;
+        this.numTicket = numTicket;
+        this.status = status;
+        this.priorite = priorite;
+        this.dateEffectationEquip = dateEffectationEquip;
+        this.dateCreation = dateCreation;
+        this.creationUser = creationUser;
+        this.collaborateur = collaborateur;
+        this.echeance = echeance;
+        this.idClient = idClient;
+        this.idEquip = idEquip;
+        this.idModule = idModule;
+    }
+
     public Ticket() {
     }
 
@@ -92,19 +115,19 @@ public class Ticket implements Serializable {
         this.numTicket = numTicket;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
-    public String getPriorite() {
+    public Priorite getPriorite() {
         return priorite;
     }
 
-    public void setPriorite(String priorite) {
+    public void setPriorite(Priorite priorite) {
         this.priorite = priorite;
     }
 

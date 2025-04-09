@@ -2,6 +2,8 @@ package com.csys.template.dto;
 
 import com.csys.template.domain.Equipe;
 import com.csys.template.domain.Poste;
+import com.csys.template.domain.enum_identifier.Role;
+
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
@@ -42,7 +44,7 @@ public class UtilisateurDTO {
       min = 0,
       max = 30
   )
-  private String role;
+  private Role role;
 
   private Equipe idEquip;
 
@@ -96,11 +98,11 @@ public class UtilisateurDTO {
     this.actif = actif;
   }
 
-  public String getRole() {
+  public Role getRole() {
     return role;
   }
 
-  public void setRole(String role) {
+  public void setRole(Role role) {
     this.role = role;
   }
 

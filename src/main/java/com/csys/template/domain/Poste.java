@@ -9,6 +9,8 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -23,14 +25,14 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "Poste")
-@NamedQueries({
-    @NamedQuery(name = "Poste.findAll", query = "SELECT p FROM Poste p")})
+
 public class Poste implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Size(max = 30)
@@ -40,6 +42,14 @@ public class Poste implements Serializable {
     private Integer code;
     @OneToMany(mappedBy = "idPoste")
     private List<Utilisateur> utilisateurList;
+
+    public Poste(@NotNull Integer id, @Size(max = 30) String designation, Integer code,
+            List<Utilisateur> utilisateurList) {
+        this.id = id;
+        this.designation = designation;
+        this.code = code;
+        this.utilisateurList = utilisateurList;
+    }
 
     public Poste() {
     }

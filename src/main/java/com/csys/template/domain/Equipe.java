@@ -10,6 +10,8 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -26,14 +28,13 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "Equipe")
-@NamedQueries({
-    @NamedQuery(name = "Equipe.findAll", query = "SELECT e FROM Equipe e")})
 public class Equipe implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Size(max = 30)
@@ -49,6 +50,16 @@ public class Equipe implements Serializable {
     private List<Ticket> ticketList;
     @OneToMany(mappedBy = "idEquip")
     private List<Utilisateur> utilisateurList;
+
+    public Equipe(@NotNull Integer id, @Size(max = 30) String nomEquipe, Date creationDate,
+            @Size(max = 30) String creationUser, List<Ticket> ticketList, List<Utilisateur> utilisateurList) {
+        this.id = id;
+        this.nomEquipe = nomEquipe;
+        this.creationDate = creationDate;
+        this.creationUser = creationUser;
+        this.ticketList = ticketList;
+        this.utilisateurList = utilisateurList;
+    }
 
     public Equipe() {
     }

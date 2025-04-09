@@ -1,7 +1,9 @@
-package com.csys.template.web.rest;
+package com.csys.template.web.rest.ressource;
 
 import com.csys.template.dto.ModuleDTO;
 import com.csys.template.service.ModuleService;
+import com.csys.template.util.RestPreconditions;
+
 import java.lang.Integer;
 import java.lang.String;
 import java.lang.Void;

@@ -10,6 +10,8 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -26,12 +28,11 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "Module")
-@NamedQueries({
-    @NamedQuery(name = "Module.findAll", query = "SELECT m FROM Module m")})
 public class Module implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @NotNull
     @Column(name = "id")
@@ -49,6 +50,16 @@ public class Module implements Serializable {
     private Integer code;
     @OneToMany(mappedBy = "idModule")
     private List<Ticket> ticketList;
+
+    public Module(@NotNull Integer id, @Size(max = 30) String designation, Date creationDate,
+            @Size(max = 30) String creationUser, Integer code, List<Ticket> ticketList) {
+        this.id = id;
+        this.designation = designation;
+        this.creationDate = creationDate;
+        this.creationUser = creationUser;
+        this.code = code;
+        this.ticketList = ticketList;
+    }
 
     public Module() {
     }
