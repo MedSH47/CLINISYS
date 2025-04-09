@@ -3,6 +3,8 @@
   <persistence-unit name="com.example_workflowDemande-core_jar_0.0.1-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>com.csys.template.domain.TypeDemande</class>
+    <class>com.csys.template.domain.User</class>
+    <class>com.csys.template.domain.Poste</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://10.12.12.10:1420;databaseName=gcliniquenew"/>
       <property name="javax.persistence.jdbc.user" value="sa"/>

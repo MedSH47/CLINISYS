@@ -22,6 +22,7 @@
         <hibernate.version>5.6.11.Final</hibernate.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <liquibase.version>4.9.1</liquibase.version>
+
     </properties>
     <dependencies>
         <!--        <dependency>
@@ -56,11 +57,12 @@
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
-        <dependency>  
-		<groupId>org.springframework.boot</groupId>  
-		<artifactId>spring-boot-devtools</artifactId>  
-		<scope>runtime</scope >  
-	</dependency>  
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
     
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
@@ -195,7 +197,7 @@
 <dependency>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-ooxml</artifactId>
-    <version>5.1.0</version>
+    <version>3.13</version>
     <type>jar</type>
 </dependency>
     </dependencies>
@@ -209,19 +211,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-                <version>6.2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.microsoft.sqlserver</groupId>
-                <artifactId>mssql-jdbc</artifactId>
-                <scope>runtime</scope>
-            </dependency>
-
-
 
         </dependencies>
     </dependencyManagement>
@@ -290,7 +279,8 @@
 
 
                         <defaultSchemaName>Recept</defaultSchemaName>
-                        
+                        <username>sa</username>
+                        <password>123</password>
                         <referenceUrl>hibernate:spring:com.csys.reception.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl&amp;hibernate.implicit_naming_strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl</referenceUrl>
                         <verbose>true</verbose>
                         <logging>debug</logging>
@@ -459,14 +449,14 @@
         </profile>
 
     </profiles>
-<!--    <repositories>
-                <repository>
+    <repositories>
+        <!--        <repository>
             <id>thirdparty</id>
             <url>http://integration.clinisys.local/nexus/content/repositories/thirdparty/</url>
-        </repository>
+        </repository>-->
         <repository>
             <id>cloud</id>
             <url>https://github.com/spring-cloud</url>
         </repository>
-    </repositories>-->
+    </repositories>
 </project>

@@ -1,22 +1,17 @@
 management:
-  endpoints:
-    web:
-      exposure:
-        include: "*" 
+    security:
+        enabled: false
+    metrics.binders.hystrix.enabled: false
+security:
+    basic:
+        enabled: false
 spring:
-    # security:
-        # user:
-        #     name: admin
-        #     password: password
-        #     roles: ADMIN
     application:
         name: template-core
     mvc:
         pathmatch:
-            matching-strategy: ant-path-matcher
+            matching-strategy: ant_path_matcher
     jackson:
-        date-format: yyyy-MM-dd
-        time-zone: UTC
         serialization:
             write-dates-as-timestamps: true
     liquibase:
@@ -34,20 +29,33 @@ spring:
             enabled: true
           
     datasource:
-      url: jdbc:sqlserver://localhost:1433;databaseName=GcliniqueHAN
-      username: SA
-      password: 123
-      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+        url: jdbc:sqlserver://localhost:1433;databaseName=GcliniqueHAN
+        username: SA
+        password: 123
+        
+
     jpa:
-      database-platform: org.hibernate.dialect.SQLServerDialect
-      hibernate:
-        ddl-auto: update
-      show-sql: true
-      properties:
+        database-platform: org.hibernate.dialect.SQLServer2012Dialect
+        database: SQL_SERVER
+        open-in-view: false
+        show-sql: true
         hibernate:
-            dialect: org.hibernate.dialect.SQLServer2012Dialect
-      
-      
+            ddl-auto: none
+            #            ddl-auto: create
+            naming:
+                implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        properties:
+            hibernate.default_schema: dbo
+            hibernate.id.new_generator_mappings: true
+            hibernate.cache.use_second_level_cache: false
+            hibernate.cache.use_query_cache: false
+            hibernate.generate_statistics: false
+            hibernate.cache.region.factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
+            hibernate.cache.hazelcast.instance_name: hazelcast
+            hibernate.cache.use_minimal_puts: true
+            hibernate.cache.hazelcast.use_lite_member: true
+            org.hibernate.envers.store_data_at_delete: true
     mail:
         username: 
         password: 
