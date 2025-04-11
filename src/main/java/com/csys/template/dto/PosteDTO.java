@@ -20,6 +20,7 @@ public class PosteDTO {
 
   private List utilisateurList;
 
+
   public Integer getId() {
     return id;
   }

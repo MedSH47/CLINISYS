@@ -74,18 +74,7 @@ public class EquipeResource {
     return ResponseEntity.created(new URI("/api/equipes/" + result.getId())).body(result);
   }
 
-  /**
-   * PUT /equipes : Updates an existing equipe.
-   *
-   * @param id
-   * @param equipeDTO the equipe to update
-   * @return the ResponseEntity with status 200 (OK) and with body the updated
-   *         equipe,
-   *         or with status 400 (Bad Request) if the equipe is not valid,
-   *         or with status 500 (Internal Server Error) if the equipe couldn't be
-   *         updated
-   * @throws org.springframework.web.bind.MethodArgumentNotValidException
-   */
+
   @PutMapping("/equipes/{id}")
   public ResponseEntity<EquipeDTO> updateEquipe(@PathVariable Integer id, @Valid @RequestBody EquipeDTO equipeDTO)
       throws MethodArgumentNotValidException {

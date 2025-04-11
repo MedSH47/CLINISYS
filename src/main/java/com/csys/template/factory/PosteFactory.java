@@ -3,7 +3,7 @@ package com.csys.template.factory;
 import com.csys.template.domain.Poste;
 import com.csys.template.dto.PosteDTO;
 import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.List;
 
 public class PosteFactory {
@@ -25,7 +25,7 @@ public class PosteFactory {
     return poste;
   }
 
-  public static Collection<PosteDTO> posteToPosteDTOs(Collection<Poste> postes) {
+  public static List<PosteDTO> posteToPosteDTOs(List<Poste> postes) {
     List<PosteDTO> postesDTO=new ArrayList<>();
     postes.forEach(x -> {
       postesDTO.add(posteToPosteDTO(x));
