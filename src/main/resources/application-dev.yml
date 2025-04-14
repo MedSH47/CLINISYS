@@ -29,7 +29,7 @@ spring:
             enabled: true
           
     datasource:
-        url: jdbc:sqlserver://localhost:1433;databaseName=GTickets
+        url: jdbc:sqlserver://192.168.43.30:1433;databaseName=GTickets
         username: SA
         password: 123
         
