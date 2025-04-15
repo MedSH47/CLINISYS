@@ -44,7 +44,7 @@ public class UtilisateurDTO {
       min = 0,
       max = 30
   )
-  private Role role;
+  private String role;
 
   private Equipe idEquip;
 
@@ -98,11 +98,11 @@ public class UtilisateurDTO {
     this.actif = actif;
   }
 
-  public Role getRole() {
+  public String getRole() {
     return role;
   }
 
-  public void setRole(Role role) {
+  public void setRole(String role) {
     this.role = role;
   }
 

@@ -47,7 +47,7 @@ public class Utilisateur implements Serializable {
     private Boolean actif;
     @Size(max = 30)
     @Column(name = "role")
-    private Role role;
+    private String role;
     @JoinColumn(name = "id_equip", referencedColumnName = "id")
     @ManyToOne
     private Equipe idEquip;
@@ -56,7 +56,7 @@ public class Utilisateur implements Serializable {
     private Poste idPoste;
 
     public Utilisateur(@NotNull Integer id, @Size(max = 30) String login, @Size(max = 30) String password,
-            Date creationDate, @Size(max = 30) String creationUser, Boolean actif, @Size(max = 30) Role role,
+            Date creationDate, @Size(max = 30) String creationUser, Boolean actif, @Size(max = 30) String role,
             Equipe idEquip, Poste idPoste) {
         this.id = id;
         this.login = login;
@@ -124,11 +124,11 @@ public class Utilisateur implements Serializable {
         this.actif = actif;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 
