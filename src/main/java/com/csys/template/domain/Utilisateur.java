@@ -6,6 +6,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -47,7 +49,8 @@ public class Utilisateur implements Serializable {
     private Boolean actif;
     @Size(max = 30)
     @Column(name = "role")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @JoinColumn(name = "id_equip", referencedColumnName = "id")
     @ManyToOne
     private Equipe idEquip;
@@ -56,7 +59,7 @@ public class Utilisateur implements Serializable {
     private Poste idPoste;
 
     public Utilisateur(@NotNull Integer id, @Size(max = 30) String login, @Size(max = 30) String password,
-            Date creationDate, @Size(max = 30) String creationUser, Boolean actif, @Size(max = 30) String role,
+            Date creationDate, @Size(max = 30) String creationUser, Boolean actif, @Size(max = 30) Role role,
             Equipe idEquip, Poste idPoste) {
         this.id = id;
         this.login = login;
@@ -124,11 +127,11 @@ public class Utilisateur implements Serializable {
         this.actif = actif;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

@@ -29,11 +29,10 @@ spring:
             enabled: true
           
     datasource:
-        url: jdbc:sqlserver://192.168.43.30:1433;databaseName=GTickets
+        url: jdbc:sqlserver://192.168.31.161:1433;databaseName=GTickets
         username: SA
         password: 123
         
-
     jpa:
         database-platform: org.hibernate.dialect.SQLServer2012Dialect
         database: SQL_SERVER
@@ -69,8 +68,8 @@ spring:
                     starttls:
                         enable: true
 
-    profiles:
-        include: no-liquibase
+    # profiles:
+    #     include: no-liquibase
     config:
         use-legacy-processing: true
 lang:

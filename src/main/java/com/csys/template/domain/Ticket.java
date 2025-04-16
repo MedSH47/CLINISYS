@@ -9,6 +9,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,9 +47,12 @@ public class Ticket implements Serializable {
     private Integer numTicket;
     @Size(max = 30)
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    
     private Status status;
     @Size(max = 30)
     @Column(name = "priorite")
+    @Enumerated(EnumType.STRING)
     private Priorite priorite;
     @Column(name = "date_effectation_equip")
     @Temporal(TemporalType.DATE)
