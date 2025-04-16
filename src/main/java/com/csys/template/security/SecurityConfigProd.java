@@ -10,7 +10,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -37,16 +37,19 @@ public class SecurityConfigProd extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.cors();
-        if (!env.acceptsProfiles(Profiles.of("unsecure"))) {
-            http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/**").authenticated();
-            http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/**").authenticated();
-            http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/**").authenticated();
-            http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/**").permitAll();
-        }
-
+        http
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> {})
+            .authorizeHttpRequests(auth -> {
+                if (!env.acceptsProfiles(Profiles.of("unsecure"))) {
+                    auth.requestMatchers(new AntPathRequestMatcher("/api/**", "DELETE")).authenticated();
+                    auth.requestMatchers(new AntPathRequestMatcher("/api/**", "POST")).authenticated();
+                    auth.requestMatchers(new AntPathRequestMatcher("/api/**", "PUT")).authenticated();
+                    auth.requestMatchers(new AntPathRequestMatcher("/api/**", "GET")).permitAll();
+                }
+            });
     }
+    
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {

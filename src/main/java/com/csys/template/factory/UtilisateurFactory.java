@@ -3,7 +3,6 @@ package com.csys.template.factory;
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.dto.UtilisateurDTO;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class UtilisateurFactory {
@@ -35,7 +34,7 @@ public class UtilisateurFactory {
     return utilisateur;
   }
 
-  public static Collection<UtilisateurDTO> utilisateurToUtilisateurDTOs(Collection<Utilisateur> utilisateurs) {
+  public static List<UtilisateurDTO> utilisateurToUtilisateurDTOs(List<Utilisateur> utilisateurs) {
     List<UtilisateurDTO> utilisateursDTO=new ArrayList<>();
     utilisateurs.forEach(x -> {
       utilisateursDTO.add(utilisateurToUtilisateurDTO(x));

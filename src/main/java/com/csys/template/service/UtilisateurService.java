@@ -6,9 +6,13 @@ import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.UtilisateurRepository;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
-import java.util.Collection;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,9 +99,9 @@ public class UtilisateurService {
   @Transactional(
       readOnly = true
   )
-  public Collection<UtilisateurDTO> findAll() {
+  public List<UtilisateurDTO> findAll() {
     log.debug("Request to get All Utilisateurs");
-    Collection<Utilisateur> result= utilisateurRepository.findAll();
+    List<Utilisateur> result= utilisateurRepository.findAll();
     return UtilisateurFactory.utilisateurToUtilisateurDTOs(result);
   }
 
@@ -110,5 +114,14 @@ public class UtilisateurService {
     log.debug("Request to delete Utilisateur: {}",id);
     utilisateurRepository.deleteById(id);
   }
+
+  // security
+
+    public Utilisateur loadUserByUsername(String username) {
+        return utilisateurRepository.findBylogin(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+ 
 }
 
