@@ -3,65 +3,67 @@ package com.csys.template.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Basic;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
+
 import javax.validation.constraints.Size;
 
 import com.csys.template.domain.enum_identifier.Role;
 
-/**
- *
- * @author harra
- */
+
 @Entity
 @Table(name = "Utilisateur")
 public class Utilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Size(max = 30)
+
     @Column(name = "login")
     private String login;
-    @Size(max = 30)
+
     @Column(name = "password")
     private String password;
+
     @Column(name = "creation_date")
     @Temporal(TemporalType.DATE)
     private Date creationDate;
-    @Size(max = 30)
+
     @Column(name = "creation_user")
     private String creationUser;
+
     @Column(name = "actif")
     private Boolean actif;
-    @Size(max = 30)
+
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
+
     @JoinColumn(name = "id_equip", referencedColumnName = "id")
     @ManyToOne
     private Equipe idEquip;
+
     @JoinColumn(name = "id_poste", referencedColumnName = "id")
     @ManyToOne
     private Poste idPoste;
 
-    public Utilisateur(@NotNull Integer id, @Size(max = 30) String login, @Size(max = 30) String password,
-            Date creationDate, @Size(max = 30) String creationUser, Boolean actif, @Size(max = 30) Role role,
-            Equipe idEquip, Poste idPoste) {
-        this.id = id;
+    public Utilisateur( String login,  String password,
+            Date creationDate, String creationUser, Boolean actif, Role role,
+            Equipe idEquip, Poste idPoste) { 
+        
         this.login = login;
         this.password = password;
         this.creationDate = creationDate;

@@ -8,42 +8,31 @@ import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Date;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 public class UtilisateurDTO {
-  @NotNull
+  
   private Integer id;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
+
   private String login;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
+  
   private String password;
 
   @Temporal(TemporalType.DATE)
   private Date creationDate;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
+ 
   private String creationUser;
 
   private Boolean actif;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
+  @Enumerated(EnumType.STRING)
   private Role role;
 
   private Equipe idEquip;

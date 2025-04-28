@@ -8,34 +8,26 @@ import com.google.common.base.Preconditions;
 import java.lang.Integer;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service Implementation for managing Utilisateur.
- */
 @Service
-@Transactional
 public class UtilisateurService {
   private final Logger log = LoggerFactory.getLogger(UtilisateurService.class);
 
-  private final UtilisateurRepository utilisateurRepository;
+  @Autowired
+  private  UtilisateurRepository utilisateurRepository;
 
-  public UtilisateurService(UtilisateurRepository utilisateurRepository) {
-    this.utilisateurRepository=utilisateurRepository;
-  }
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
-  /**
-   * Save a utilisateurDTO.
-   *
-   * @param utilisateurDTO
-   * @return the persisted entity
-   */
   public UtilisateurDTO save(UtilisateurDTO utilisateurDTO) {
     log.debug("Request to save Utilisateur: {}",utilisateurDTO);
     Utilisateur utilisateur = UtilisateurFactory.utilisateurDTOToUtilisateur(utilisateurDTO);
@@ -44,12 +36,27 @@ public class UtilisateurService {
     return resultDTO;
   }
 
-  /**
-   * Update a utilisateurDTO.
-   *
-   * @param utilisateurDTO
-   * @return the updated entity
-   */
+  public ResponseEntity<?> createUtilisateur(Utilisateur utilisateur) {
+        if (utilisateurRepository.existsBylogin(utilisateur.getLogin())) {
+            return ResponseEntity.badRequest().body("User already exists");
+        }
+        if (utilisateur.getId() == null) {
+            utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
+            utilisateurRepository.save(utilisateur);
+            return ResponseEntity.ok().body(utilisateur.getLogin() + " created successfully");
+        }
+        return ResponseEntity.badRequest().body("User must not have ID");
+    }
+
+    public List<Utilisateur> getAllUtilisateurs() {
+        return utilisateurRepository.findAll();
+    }
+
+    public Optional<Utilisateur> getUtilisateurById(Integer id) {
+        return utilisateurRepository.findById(id);
+    }
+
+ 
   public UtilisateurDTO update(UtilisateurDTO utilisateurDTO) {
     log.debug("Request to update Utilisateur: {}",utilisateurDTO);
     Utilisateur inBase= utilisateurRepository.findById(utilisateurDTO.getId()).orElse(null);
@@ -60,15 +67,7 @@ public class UtilisateurService {
     return resultDTO;
   }
 
-  /**
-   * Get one utilisateurDTO by id.
-   *
-   * @param id the id of the entity
-   * @return the entity DTO
-   */
-  @Transactional(
-      readOnly = true
-  )
+
   public UtilisateurDTO findOne(Integer id) {
     log.debug("Request to get Utilisateur: {}",id);
     Utilisateur utilisateur= utilisateurRepository.findById(id).orElse(null);
@@ -76,26 +75,14 @@ public class UtilisateurService {
     return dto;
   }
 
-  /**
-   * Get one utilisateur by id.
-   *
-   * @param id the id of the entity
-   * @return the entity
-   */
-  @Transactional(
-      readOnly = true
-  )
+
   public Utilisateur findUtilisateur(Integer id) {
     log.debug("Request to get Utilisateur: {}",id);
     Utilisateur utilisateur= utilisateurRepository.findById(id).orElse(null);
     return utilisateur;
   }
 
-  /**
-   * Get all the utilisateurs.
-   *
-   * @return the the list of entities
-   */
+
   @Transactional(
       readOnly = true
   )
@@ -105,23 +92,12 @@ public class UtilisateurService {
     return UtilisateurFactory.utilisateurToUtilisateurDTOs(result);
   }
 
-  /**
-   * Delete utilisateur by id.
-   *
-   * @param id the id of the entity
-   */
+ 
   public void delete(Integer id) {
     log.debug("Request to delete Utilisateur: {}",id);
     utilisateurRepository.deleteById(id);
   }
 
-  // security
 
-    public Utilisateur loadUserByUsername(String username) {
-        return utilisateurRepository.findBylogin(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
- 
 }
 

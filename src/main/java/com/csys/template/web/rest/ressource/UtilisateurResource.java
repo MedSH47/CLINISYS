@@ -1,6 +1,9 @@
 package com.csys.template.web.rest.ressource;
 
+import com.csys.template.domain.Utilisateur;
 import com.csys.template.dto.UtilisateurDTO;
+import com.csys.template.service.CustomUserDetailsService;
+import com.csys.template.service.JwtUtil;
 import com.csys.template.service.UtilisateurService;
 import com.csys.template.util.RestPreconditions;
 
@@ -14,6 +17,10 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,22 +43,43 @@ public class UtilisateurResource {
 
   private final UtilisateurService utilisateurService;
 
+  private final JwtUtil jwtUtil;
+  private final CustomUserDetailsService customUserDetailsService;
+  private final AuthenticationManager authenticationManager;
   private final Logger log = LoggerFactory.getLogger(UtilisateurService.class);
 
-  public UtilisateurResource(UtilisateurService utilisateurService) {
+  public UtilisateurResource(UtilisateurService utilisateurService,JwtUtil jwtUtil,CustomUserDetailsService customUserDetailsService,AuthenticationManager authenticationManager) {
     this.utilisateurService=utilisateurService;
+    this.jwtUtil=jwtUtil;
+    this.customUserDetailsService=customUserDetailsService;
+    this.authenticationManager=authenticationManager;
   }
 
-  /**
-   * POST  /utilisateurs : Create a new utilisateur.
-   *
-   * @param utilisateurDTO
-   * @param bindingResult
-   * @return the ResponseEntity with status 201 (Created) and with body the new utilisateur, or with status 400 (Bad Request) if the utilisateur has already an ID
-   * @throws URISyntaxException if the Location URI syntax is incorrect
-   * @throws org.springframework.web.bind.MethodArgumentNotValidException
-   */
-  @PostMapping("/utilisateurs")
+  @PostMapping("/authenticate")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody Utilisateur authenticationRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authenticationRequest.getLogin(), 
+                    authenticationRequest.getPassword())
+            );
+        } catch (BadCredentialsException e) {
+            throw new Exception("Incorrect username or password", e);
+        }
+
+        final UserDetails userDetails = customUserDetailsService
+            .loadUserByUsername(authenticationRequest.getLogin());
+
+        final String jwt = jwtUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok(jwt);
+    }
+    
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody Utilisateur utilisateur) {
+        return utilisateurService.createUtilisateur(utilisateur);
+    }
+
+  @PostMapping("/create_old")
   public ResponseEntity<UtilisateurDTO> createUtilisateur(@Valid @RequestBody UtilisateurDTO utilisateurDTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
     log.debug("REST request to save Utilisateur : {}", utilisateurDTO);
     if ( utilisateurDTO.getId() != null) {

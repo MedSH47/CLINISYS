@@ -6,11 +6,13 @@ security:
     basic:
         enabled: false
 spring:
+    main:
+        allow-circular-references: true
     application:
         name: template-core
     mvc:
         pathmatch:
-            matching-strategy: ant_path_matcher
+            matching-strategy: ant-path-matcher 
     jackson:
         serialization:
             write-dates-as-timestamps: true
