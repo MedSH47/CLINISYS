@@ -12,7 +12,7 @@ import java.lang.Void;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Map;
+
 
 import javax.validation.Valid;
 import org.slf4j.Logger;
@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ClientResource {
 
-  private static final String ENTITY_NAME = "client";
+  
 
   private final ClientService clientService;
 

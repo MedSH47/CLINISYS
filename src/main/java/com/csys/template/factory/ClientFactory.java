@@ -20,6 +20,7 @@ public class ClientFactory {
     return clientDTO;
   }
 
+  @SuppressWarnings("unchecked")
   public static Client clientDTOToClient(ClientDTO clientDTO) {
     Client client=new Client();
     client.setNumClient(clientDTO.getNumClient());

@@ -18,6 +18,7 @@ public class ModuleFactory {
     return moduleDTO;
   }
 
+  @SuppressWarnings("unchecked")
   public static Module moduleDTOToModule(ModuleDTO moduleDTO) {
     Module module=new Module();
     module.setId(moduleDTO.getId());

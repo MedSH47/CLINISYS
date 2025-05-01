@@ -7,9 +7,7 @@ import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.UtilisateurRepository;
 import com.google.common.base.Preconditions;
 
-import ch.qos.logback.classic.pattern.Util;
 
-import java.io.IOException;
 import java.lang.Integer;
 
 import java.util.List;

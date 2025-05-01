@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
+
 import javax.imageio.ImageIO;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -443,6 +443,7 @@ public class Helper {
             return false;
         }
         try {
+            @SuppressWarnings("unused")
             double d = Double.parseDouble(strNum);
         } catch (NumberFormatException nfe) {
             return false;

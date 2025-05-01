@@ -16,6 +16,7 @@ public class PosteFactory {
     return posteDTO;
   }
 
+  @SuppressWarnings("unchecked")
   public static Poste posteDTOToPoste(PosteDTO posteDTO) {
     Poste poste=new Poste();
     poste.setId(posteDTO.getId());

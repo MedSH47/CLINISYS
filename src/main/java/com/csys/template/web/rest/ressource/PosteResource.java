@@ -9,7 +9,7 @@ import java.lang.String;
 import java.lang.Void;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
+
 import java.util.List;
 
 import javax.validation.Valid;

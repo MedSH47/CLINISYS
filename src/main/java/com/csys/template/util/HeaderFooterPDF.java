@@ -5,7 +5,7 @@
  */
 package com.csys.template.util;
 
-import com.csys.template.config.*;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;

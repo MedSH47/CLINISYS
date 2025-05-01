@@ -2,7 +2,6 @@ package com.csys.template.util;
 
 import com.csys.template.web.rest.errors.IllegalBusinessLogiqueException;
 import com.csys.template.web.rest.errors.MyResourceNotFoundException;
-import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

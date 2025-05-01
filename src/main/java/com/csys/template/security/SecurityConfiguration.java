@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.csys.template.config.JwtRequestFilter;
-import com.csys.template.service.CustomUserDetailsService;
+
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -29,12 +29,11 @@ import java.io.IOException;
 public class SecurityConfiguration {
 
     private final JwtRequestFilter jwtRequestFilter;
-    private final CustomUserDetailsService customUserDetailsService;
+    
 
-    public SecurityConfiguration(JwtRequestFilter jwtRequestFilter, 
-                               CustomUserDetailsService customUserDetailsService) {
+    public SecurityConfiguration(JwtRequestFilter jwtRequestFilter) {
         this.jwtRequestFilter = jwtRequestFilter;
-        this.customUserDetailsService = customUserDetailsService;
+        
     }
 
     @Bean

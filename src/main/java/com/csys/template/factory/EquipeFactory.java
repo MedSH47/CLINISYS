@@ -18,6 +18,7 @@ public class EquipeFactory {
     return equipeDTO;
   }
 
+  @SuppressWarnings("unchecked")
   public static Equipe equipeDTOToEquipe(EquipeDTO equipeDTO) {
     Equipe equipe=new Equipe();
     equipe.setId(equipeDTO.getId());
