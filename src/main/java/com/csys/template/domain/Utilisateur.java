@@ -46,7 +46,7 @@ public class Utilisateur implements Serializable {
     private String creationUser;
 
     @Column(name = "actif")
-    private Boolean actif;
+    private Boolean actif =false;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)

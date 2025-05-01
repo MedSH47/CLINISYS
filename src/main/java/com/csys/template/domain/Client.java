@@ -24,37 +24,35 @@ public class Client implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Column(name = "num_client")
     private Integer numClient;
-    @Size(max = 30)
+   
     @Column(name = "adress")
     private String adress;
-    @Size(max = 30)
+    
     @Column(name = "telephone")
     private String telephone;
-    @Size(max = 30)
+   
     @Column(name = "nom")
     private String nom;
-    @Size(max = 30)
+    
     @Column(name = "prenom")
     private String prenom;
     @Column(name = "creation_date")
     @Temporal(TemporalType.DATE)
     private Date creationDate;
-    @Size(max = 30)
+    
     @Column(name = "creation_user")
     private String creationUser;
     @OneToMany(mappedBy = "idClient")
     private List<Ticket> ticketList;
 
-    public Client(@NotNull Integer id, Integer numClient, @Size(max = 30) String adress,
-            @Size(max = 30) String telephone, @Size(max = 30) String nom, @Size(max = 30) String prenom,
-            Date creationDate, @Size(max = 30) String creationUser, List<Ticket> ticketList) {
+    public Client(Integer id, Integer numClient,String adress,
+            String telephone,String nom, String prenom,
+            Date creationDate,String creationUser, List<Ticket> ticketList) {
         this.id = id;
         this.numClient = numClient;
         this.adress = adress;

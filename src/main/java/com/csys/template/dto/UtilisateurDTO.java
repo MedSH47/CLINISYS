@@ -3,6 +3,7 @@ package com.csys.template.dto;
 import com.csys.template.domain.Equipe;
 import com.csys.template.domain.Poste;
 import com.csys.template.domain.enum_identifier.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -21,7 +22,7 @@ public class UtilisateurDTO {
 
   private String login;
 
-  
+  @JsonIgnore
   private String password;
 
   @Temporal(TemporalType.DATE)

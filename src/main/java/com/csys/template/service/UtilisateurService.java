@@ -1,14 +1,21 @@
 package com.csys.template.service;
 
 import com.csys.template.domain.Utilisateur;
+import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.dto.UtilisateurDTO;
 import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.UtilisateurRepository;
 import com.google.common.base.Preconditions;
+
+import ch.qos.logback.classic.pattern.Util;
+
+import java.io.IOException;
 import java.lang.Integer;
 
 import java.util.List;
 import java.util.Optional;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +34,6 @@ public class UtilisateurService {
 
   @Autowired
   private PasswordEncoder passwordEncoder;
-
-  public UtilisateurDTO save(UtilisateurDTO utilisateurDTO) {
-    log.debug("Request to save Utilisateur: {}",utilisateurDTO);
-    Utilisateur utilisateur = UtilisateurFactory.utilisateurDTOToUtilisateur(utilisateurDTO);
-    utilisateur = utilisateurRepository.save(utilisateur);
-    UtilisateurDTO resultDTO = UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur);
-    return resultDTO;
-  }
 
   public ResponseEntity<?> createUtilisateur(Utilisateur utilisateur) {
         if (utilisateurRepository.existsBylogin(utilisateur.getLogin())) {
@@ -98,6 +97,26 @@ public class UtilisateurService {
     utilisateurRepository.deleteById(id);
   }
 
+  public boolean existsById(Integer id) {
+    return utilisateurRepository.existsById(id);
+  }
 
+ public Role getRole(Integer id) {
+    if (id == null) {
+        throw new IllegalArgumentException("User ID cannot be null");
+    }
+    
+    Optional<Utilisateur> userOptional = utilisateurRepository.findById(id);
+    
+    if (userOptional.isPresent()) {
+        Utilisateur user = userOptional.get();
+        return user.getRole();
+    }
+    
+    throw new EntityNotFoundException("User not found with ID: " + id);
+}
+public Utilisateur findBylogin(String login){
+  return utilisateurRepository.findBylogin(login);
+}
 }
 

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.repository.UtilisateurRepository;
 
-import java.util.Collections;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -22,9 +21,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Utilisateur utilisateur = utilisateurRepository.findBylogin(username);
-        if (utilisateur == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
-        return new User(utilisateur.getLogin(), utilisateur.getPassword(), Collections.emptyList());
+        
+        return User.builder()
+                .username(utilisateur.getLogin())
+                .password(utilisateur.getPassword())
+                .roles(utilisateur.getRole().name()) // Converts enum to ROLE_ format
+                .build();
     }
 }
