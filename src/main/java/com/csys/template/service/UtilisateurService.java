@@ -7,7 +7,6 @@ import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.UtilisateurRepository;
 import com.google.common.base.Preconditions;
 
-
 import java.lang.Integer;
 
 import java.util.List;
@@ -28,35 +27,34 @@ public class UtilisateurService {
   private final Logger log = LoggerFactory.getLogger(UtilisateurService.class);
 
   @Autowired
-  private  UtilisateurRepository utilisateurRepository;
+  private UtilisateurRepository utilisateurRepository;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
 
   public ResponseEntity<?> createUtilisateur(Utilisateur utilisateur) {
-        if (utilisateurRepository.existsBylogin(utilisateur.getLogin())) {
-            return ResponseEntity.badRequest().body("User already exists");
-        }
-        if (utilisateur.getId() == null) {
-            utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
-            utilisateurRepository.save(utilisateur);
-            return ResponseEntity.ok().body(utilisateur.getLogin() + " created successfully");
-        }
-        return ResponseEntity.badRequest().body("User must not have ID");
+    if (utilisateurRepository.existsBylogin(utilisateur.getLogin())) {
+      return ResponseEntity.badRequest().body("User already exists");
     }
-
-    public List<Utilisateur> getAllUtilisateurs() {
-        return utilisateurRepository.findAll();
+    if (utilisateur.getId() == null) {
+      utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
+      utilisateurRepository.save(utilisateur);
+      return ResponseEntity.ok().body(utilisateur.getLogin() + " created successfully");
     }
+    return ResponseEntity.badRequest().body("User must not have ID");
+  }
 
-    public Optional<Utilisateur> getUtilisateurById(Integer id) {
-        return utilisateurRepository.findById(id);
-    }
+  public List<Utilisateur> getAllUtilisateurs() {
+    return utilisateurRepository.findAll();
+  }
 
- 
+  public Optional<Utilisateur> getUtilisateurById(Integer id) {
+    return utilisateurRepository.findById(id);
+  }
+
   public UtilisateurDTO update(UtilisateurDTO utilisateurDTO) {
-    log.debug("Request to update Utilisateur: {}",utilisateurDTO);
-    Utilisateur inBase= utilisateurRepository.findById(utilisateurDTO.getId()).orElse(null);
+    log.debug("Request to update Utilisateur: {}", utilisateurDTO);
+    Utilisateur inBase = utilisateurRepository.findById(utilisateurDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "utilisateur.NotFound");
     Utilisateur utilisateur = UtilisateurFactory.utilisateurDTOToUtilisateur(utilisateurDTO);
     utilisateur = utilisateurRepository.save(utilisateur);
@@ -64,34 +62,28 @@ public class UtilisateurService {
     return resultDTO;
   }
 
-
   public UtilisateurDTO findOne(Integer id) {
-    log.debug("Request to get Utilisateur: {}",id);
-    Utilisateur utilisateur= utilisateurRepository.findById(id).orElse(null);
+    log.debug("Request to get Utilisateur: {}", id);
+    Utilisateur utilisateur = utilisateurRepository.findById(id).orElse(null);
     UtilisateurDTO dto = UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur);
     return dto;
   }
 
-
   public Utilisateur findUtilisateur(Integer id) {
-    log.debug("Request to get Utilisateur: {}",id);
-    Utilisateur utilisateur= utilisateurRepository.findById(id).orElse(null);
+    log.debug("Request to get Utilisateur: {}", id);
+    Utilisateur utilisateur = utilisateurRepository.findById(id).orElse(null);
     return utilisateur;
   }
 
-
-  @Transactional(
-      readOnly = true
-  )
+  @Transactional(readOnly = true)
   public List<UtilisateurDTO> findAll() {
     log.debug("Request to get All Utilisateurs");
-    List<Utilisateur> result= utilisateurRepository.findAll();
+    List<Utilisateur> result = utilisateurRepository.findAll();
     return UtilisateurFactory.utilisateurToUtilisateurDTOs(result);
   }
 
- 
   public void delete(Integer id) {
-    log.debug("Request to delete Utilisateur: {}",id);
+    log.debug("Request to delete Utilisateur: {}", id);
     utilisateurRepository.deleteById(id);
   }
 
@@ -99,22 +91,26 @@ public class UtilisateurService {
     return utilisateurRepository.existsById(id);
   }
 
- public Role getRole(Integer id) {
+  public Role getRole(Integer id) {
     if (id == null) {
-        throw new IllegalArgumentException("User ID cannot be null");
+      throw new IllegalArgumentException("User ID cannot be null");
     }
-    
-    Optional<Utilisateur> userOptional = utilisateurRepository.findById(id);
-    
-    if (userOptional.isPresent()) {
-        Utilisateur user = userOptional.get();
-        return user.getRole();
-    }
-    
-    throw new EntityNotFoundException("User not found with ID: " + id);
-}
-public Utilisateur findBylogin(String login){
-  return utilisateurRepository.findBylogin(login);
-}
-}
 
+    Optional<Utilisateur> userOptional = utilisateurRepository.findById(id);
+
+    if (userOptional.isPresent()) {
+      Utilisateur user = userOptional.get();
+      return user.getRole();
+    }
+
+    throw new EntityNotFoundException("User not found with ID: " + id);
+  }
+
+  public Utilisateur findBylogin(String login) {
+    return utilisateurRepository.findBylogin(login);
+  }
+
+  public Optional<Utilisateur> findById(Integer id) {
+    return utilisateurRepository.findById(id);
+  }
+}

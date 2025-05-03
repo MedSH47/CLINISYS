@@ -51,6 +51,7 @@ public class ClientResource {
     this.jwtUtil=jwtUtil;
     this.customUserDetailsService=customUserDetailsService;
   }
+  
 
   @PostMapping("/clients")
   public ResponseEntity<?> createClient(@Valid @RequestBody ClientDTO clientDTO, BindingResult bindingResult,

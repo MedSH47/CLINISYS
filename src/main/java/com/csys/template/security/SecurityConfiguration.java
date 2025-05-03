@@ -45,6 +45,7 @@ public class SecurityConfiguration {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
+    
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -56,7 +57,7 @@ public class SecurityConfiguration {
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
             )
             .authorizeHttpRequests(auth -> auth
-                .antMatchers(HttpMethod.POST, "/api/authenticate", "/api/register").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/authenticate", "/api/register","/api/verify-password").permitAll()
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             )
