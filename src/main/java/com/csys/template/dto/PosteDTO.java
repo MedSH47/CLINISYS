@@ -10,10 +10,7 @@ public class PosteDTO {
   @NotNull
   private Integer id;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
+
   private String designation;
 
   private Integer code;

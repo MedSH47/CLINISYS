@@ -21,15 +21,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
 
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 
-/**
- *
- * @author harra
- */
+
 @Entity
 @Table(name = "Ticket")
 
@@ -43,12 +40,12 @@ public class Ticket implements Serializable {
     private Integer id;
     @Column(name = "num_ticket")
     private Integer numTicket;
-    @Size(max = 30)
+  
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     
     private Status status;
-    @Size(max = 30)
+   
     @Column(name = "priorite")
     @Enumerated(EnumType.STRING)
     private Priorite priorite;
@@ -58,13 +55,13 @@ public class Ticket implements Serializable {
     @Column(name = "date_creation")
     @Temporal(TemporalType.DATE)
     private Date dateCreation;
-    @Size(max = 30)
+   
     @Column(name = "creation_user")
     private String creationUser;
-    @Size(max = 30)
+   
     @Column(name = "collaborateur")
     private String collaborateur;
-    @Size(max = 30)
+   
     @Column(name = "echeance")
     private String echeance;
     @JoinColumn(name = "id_client", referencedColumnName = "id")
@@ -77,9 +74,9 @@ public class Ticket implements Serializable {
     @ManyToOne
     private Module idModule;
 
-    public Ticket(@NotNull Integer id, Integer numTicket, @Size(max = 30) Status status,
-            @Size(max = 30) Priorite priorite, Date dateEffectationEquip, Date dateCreation,
-            @Size(max = 30) String creationUser, @Size(max = 30) String collaborateur, @Size(max = 30) String echeance,
+    public Ticket(@NotNull Integer id, Integer numTicket, Status status,
+             Priorite priorite, Date dateEffectationEquip, Date dateCreation,
+            String creationUser, String collaborateur, String echeance,
             Client idClient, Equipe idEquip, Module idModule) {
         this.id = id;
         this.numTicket = numTicket;
@@ -207,7 +204,7 @@ public class Ticket implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        
         if (!(object instanceof Ticket)) {
             return false;
         }

@@ -7,25 +7,18 @@ import java.util.List;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
 
 public class ModuleDTO {
   @NotNull
   private Integer id;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
+
   private String designation;
 
   @Temporal(TemporalType.DATE)
   private Date creationDate;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
   private String creationUser;
 
   private Integer code;

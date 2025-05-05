@@ -19,12 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-/**
- *
- * @author harra
- */
 @Entity
 @Table(name = "Equipe")
 public class Equipe implements Serializable {
@@ -36,13 +31,13 @@ public class Equipe implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Size(max = 30)
+
     @Column(name = "nom_equipe")
     private String nomEquipe;
     @Column(name = "creation_date")
     @Temporal(TemporalType.DATE)
     private Date creationDate;
-    @Size(max = 30)
+   
     @Column(name = "creation_user")
     private String creationUser;
     @OneToMany(mappedBy = "idEquip")
@@ -50,8 +45,8 @@ public class Equipe implements Serializable {
     @OneToMany(mappedBy = "idEquip")
     private List<Utilisateur> utilisateurList;
 
-    public Equipe(@NotNull Integer id, @Size(max = 30) String nomEquipe, Date creationDate,
-            @Size(max = 30) String creationUser, List<Ticket> ticketList, List<Utilisateur> utilisateurList) {
+    public Equipe(@NotNull Integer id,  String nomEquipe, Date creationDate,
+           String creationUser, List<Ticket> ticketList, List<Utilisateur> utilisateurList) {
         this.id = id;
         this.nomEquipe = nomEquipe;
         this.creationDate = creationDate;
@@ -124,7 +119,7 @@ public class Equipe implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        
         if (!(object instanceof Equipe)) {
             return false;
         }

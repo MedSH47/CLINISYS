@@ -12,7 +12,6 @@ import java.util.Date;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 public class TicketDTO {
   @NotNull
@@ -20,16 +19,9 @@ public class TicketDTO {
 
   private Integer numTicket;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
   private Status status;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
+
   private Priorite priorite;
 
   @Temporal(TemporalType.DATE)
@@ -38,22 +30,12 @@ public class TicketDTO {
   @Temporal(TemporalType.DATE)
   private Date dateCreation;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
+ 
   private String creationUser;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
+
   private String collaborateur;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
   private String echeance;
 
   private Client idClient;

@@ -7,25 +7,18 @@ import java.util.List;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
 
 public class EquipeDTO {
   @NotNull
   private Integer id;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
+
   private String nomEquipe;
 
   @Temporal(TemporalType.DATE)
   private Date creationDate;
 
-  @Size(
-      min = 0,
-      max = 30
-  )
   private String creationUser;
 
   private List ticketList;
