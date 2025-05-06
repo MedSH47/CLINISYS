@@ -20,7 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
+
 
 
 import com.csys.template.domain.enum_identifier.Priorite;
@@ -74,7 +74,7 @@ public class Ticket implements Serializable {
     @ManyToOne
     private Module idModule;
 
-    public Ticket(@NotNull Integer id, Integer numTicket, Status status,
+    public Ticket(Integer id, Integer numTicket, Status status,
              Priorite priorite, Date dateEffectationEquip, Date dateCreation,
             String creationUser, String collaborateur, String echeance,
             Client idClient, Equipe idEquip, Module idModule) {

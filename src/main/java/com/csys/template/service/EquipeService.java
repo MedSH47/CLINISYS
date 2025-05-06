@@ -7,6 +7,8 @@ import com.csys.template.repository.EquipeRepository;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
 import java.util.Collection;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,12 +28,7 @@ public class EquipeService {
     this.equipeRepository=equipeRepository;
   }
 
-  /**
-   * Save a equipeDTO.
-   *
-   * @param equipeDTO
-   * @return the persisted entity
-   */
+  
   public EquipeDTO save(EquipeDTO equipeDTO) {
     log.debug("Request to save Equipe: {}",equipeDTO);
     Equipe equipe = EquipeFactory.equipeDTOToEquipe(equipeDTO);
@@ -92,14 +89,16 @@ public class EquipeService {
    *
    * @return the the list of entities
    */
-  @Transactional(
-      readOnly = true
-  )
-  public Collection<EquipeDTO> findAll() {
-    log.debug("Request to get All Equipes");
-    Collection<Equipe> result= equipeRepository.findAll();
-    return EquipeFactory.equipeToEquipeDTOs(result);
-  }
+  
+  
+    public List<EquipeDTO> findAll() {
+        List<Equipe> equipes = equipeRepository.findAll();
+        equipes.forEach(e -> {
+            e.getUtilisateurList().size();
+            e.getTicketList().size();
+        });
+        return (List<EquipeDTO>) EquipeFactory.equipeToEquipeDTOs(equipes);
+    }
 
   /**
    * Delete equipe by id.

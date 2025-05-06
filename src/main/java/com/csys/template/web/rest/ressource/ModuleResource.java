@@ -42,20 +42,11 @@ public class ModuleResource {
     this.moduleService=moduleService;
   }
 
-  /**
-   * POST  /modules : Create a new module.
-   *
-   * @param moduleDTO
-   * @param bindingResult
-   * @return the ResponseEntity with status 201 (Created) and with body the new module, or with status 400 (Bad Request) if the module has already an ID
-   * @throws URISyntaxException if the Location URI syntax is incorrect
-   * @throws org.springframework.web.bind.MethodArgumentNotValidException
-   */
   @PostMapping("/modules")
   public ResponseEntity<ModuleDTO> createModule(@Valid @RequestBody ModuleDTO moduleDTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
     log.debug("REST request to save Module : {}", moduleDTO);
     if ( moduleDTO.getId() != null) {
-      bindingResult.addError( new FieldError("ModuleDTO","id","POST method does not accepte "+ENTITY_NAME+" with code"));
+      bindingResult.addError( new FieldError("ModuleDTO","id","POST method does not accepte "+ENTITY_NAME+" with ID"));
       throw new MethodArgumentNotValidException(null, bindingResult);
     }
     if (bindingResult.hasErrors()) {
@@ -65,16 +56,7 @@ public class ModuleResource {
     return ResponseEntity.created( new URI("/api/modules/"+ result.getId())).body(result);
   }
 
-  /**
-   * PUT  /modules : Updates an existing module.
-   *
-   * @param id
-   * @param moduleDTO the module to update
-   * @return the ResponseEntity with status 200 (OK) and with body the updated module,
-   * or with status 400 (Bad Request) if the module is not valid,
-   * or with status 500 (Internal Server Error) if the module couldn't be updated
-   * @throws org.springframework.web.bind.MethodArgumentNotValidException
-   */
+
   @PutMapping("/modules/{id}")
   public ResponseEntity<ModuleDTO> updateModule(@PathVariable Integer id, @Valid @RequestBody ModuleDTO moduleDTO) throws MethodArgumentNotValidException {
     log.debug("Request to update Module: {}",id);
@@ -83,12 +65,7 @@ public class ModuleResource {
     return ResponseEntity.ok().body(result);
   }
 
-  /**
-   * GET /modules/{id} : get the "id" module.
-   *
-   * @param id the id of the module to retrieve
-   * @return the ResponseEntity with status 200 (OK) and with body of module, or with status 404 (Not Found)
-   */
+
   @GetMapping("/modules/{id}")
   public ResponseEntity<ModuleDTO> getModule(@PathVariable Integer id) {
     log.debug("Request to get Module: {}",id);
@@ -97,23 +74,14 @@ public class ModuleResource {
     return ResponseEntity.ok().body(dto);
   }
 
-  /**
-   * GET /modules : get all the modules.
-   *
-   * @return the ResponseEntity with status 200 (OK) and the list of modules in body
-   */
+ 
   @GetMapping("/modules")
   public Collection<ModuleDTO> getAllModules() {
     log.debug("Request to get all  Modules : {}");
     return moduleService.findAll();
   }
 
-  /**
-   * DELETE  /modules/{id} : delete the "id" module.
-   *
-   * @param id the id of the module to delete
-   * @return the ResponseEntity with status 200 (OK)
-   */
+  
   @DeleteMapping("/modules/{id}")
   public ResponseEntity<Void> deleteModule(@PathVariable Integer id) {
     log.debug("Request to delete Module: {}",id);

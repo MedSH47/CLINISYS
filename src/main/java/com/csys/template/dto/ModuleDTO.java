@@ -6,11 +6,11 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
+
 
 
 public class ModuleDTO {
-  @NotNull
+  
   private Integer id;
 
 

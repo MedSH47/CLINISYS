@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +19,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Table(name = "Equipe")
@@ -27,7 +30,7 @@ public class Equipe implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
@@ -40,12 +43,15 @@ public class Equipe implements Serializable {
    
     @Column(name = "creation_user")
     private String creationUser;
-    @OneToMany(mappedBy = "idEquip")
+   @OneToMany(mappedBy = "idEquip", fetch = FetchType.LAZY)
+    @JsonIgnore // Prevent infinite recursion (optional if using DTOs)
     private List<Ticket> ticketList;
-    @OneToMany(mappedBy = "idEquip")
+
+    @OneToMany(mappedBy = "idEquip", fetch = FetchType.LAZY)
+    @JsonIgnore // Prevent infinite recursion (optional if using DTOs)
     private List<Utilisateur> utilisateurList;
 
-    public Equipe(@NotNull Integer id,  String nomEquipe, Date creationDate,
+    public Equipe(Integer id,  String nomEquipe, Date creationDate,
            String creationUser, List<Ticket> ticketList, List<Utilisateur> utilisateurList) {
         this.id = id;
         this.nomEquipe = nomEquipe;

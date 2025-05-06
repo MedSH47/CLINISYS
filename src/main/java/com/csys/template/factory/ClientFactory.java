@@ -9,6 +9,7 @@ import java.util.List;
 public class ClientFactory {
   public static ClientDTO clientToClientDTO(Client client) {
     ClientDTO clientDTO=new ClientDTO();
+    clientDTO.setId(client.getId());
     clientDTO.setNumClient(client.getNumClient());
     clientDTO.setAdress(client.getAdress());
     clientDTO.setTelephone(client.getTelephone());
@@ -23,6 +24,7 @@ public class ClientFactory {
   @SuppressWarnings("unchecked")
   public static Client clientDTOToClient(ClientDTO clientDTO) {
     Client client=new Client();
+    client.setId(clientDTO.getId());
     client.setNumClient(clientDTO.getNumClient());
     client.setAdress(clientDTO.getAdress());
     client.setTelephone(clientDTO.getTelephone());

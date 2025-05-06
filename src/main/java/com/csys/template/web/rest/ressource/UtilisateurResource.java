@@ -146,7 +146,6 @@ public class UtilisateurResource {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .body(Collections.singletonMap("error", "Authorization header is missing or invalid"));
     }
-
     try {
       String token = authorizationHeader.substring(7);
 

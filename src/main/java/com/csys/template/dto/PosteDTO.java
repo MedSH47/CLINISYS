@@ -4,7 +4,6 @@ import java.lang.Integer;
 import java.lang.String;
 import java.util.List;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 public class PosteDTO {
   @NotNull

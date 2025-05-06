@@ -11,10 +11,9 @@ import java.lang.String;
 import java.util.Date;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 public class TicketDTO {
-  @NotNull
+ 
   private Integer id;
 
   private Integer numTicket;
