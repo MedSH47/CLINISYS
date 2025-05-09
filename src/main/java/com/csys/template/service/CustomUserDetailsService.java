@@ -28,4 +28,5 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .roles(utilisateur.getRole().name()) // Converts enum to ROLE_ format
                 .build();
     }
+    
 }

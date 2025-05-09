@@ -74,10 +74,21 @@ public class Ticket implements Serializable {
     @ManyToOne
     private Module idModule;
 
+    @Column(name = "designation")
+    private String designation;
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
+    }
+
     public Ticket(Integer id, Integer numTicket, Status status,
              Priorite priorite, Date dateEffectationEquip, Date dateCreation,
             String creationUser, String collaborateur, String echeance,
-            Client idClient, Equipe idEquip, Module idModule) {
+            Client idClient, Equipe idEquip, Module idModule,String designation) {
         this.id = id;
         this.numTicket = numTicket;
         this.status = status;
@@ -90,6 +101,7 @@ public class Ticket implements Serializable {
         this.idClient = idClient;
         this.idEquip = idEquip;
         this.idModule = idModule;
+        this.designation=designation;
     }
 
     public Ticket() {

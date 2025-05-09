@@ -37,6 +37,16 @@ public class TicketDTO {
 
   private String echeance;
 
+  private String designation;
+
+  public String getDesignation() {
+    return designation;
+  }
+
+  public void setDesignation(String designation) {
+    this.designation = designation;
+  }
+
   private Client idClient;
 
   private Equipe idEquip;

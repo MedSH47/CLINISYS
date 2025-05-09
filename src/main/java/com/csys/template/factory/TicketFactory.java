@@ -11,6 +11,7 @@ public class TicketFactory {
     TicketDTO ticketDTO=new TicketDTO();
     ticketDTO.setId(ticket.getId());
     ticketDTO.setNumTicket(ticket.getNumTicket());
+    ticketDTO.setDesignation(ticket.getDesignation());
     ticketDTO.setStatus(ticket.getStatus());
     ticketDTO.setPriorite(ticket.getPriorite());
     ticketDTO.setDateEffectationEquip(ticket.getDateEffectationEquip());
@@ -27,6 +28,7 @@ public class TicketFactory {
   public static Ticket ticketDTOToTicket(TicketDTO ticketDTO) {
     Ticket ticket=new Ticket();
     ticket.setId(ticketDTO.getId());
+    ticket.setDesignation(ticketDTO.getDesignation());
     ticket.setNumTicket(ticketDTO.getNumTicket());
     ticket.setStatus(ticketDTO.getStatus());
     ticket.setPriorite(ticketDTO.getPriorite());
