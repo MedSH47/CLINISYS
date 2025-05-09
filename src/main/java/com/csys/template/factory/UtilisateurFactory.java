@@ -21,6 +21,7 @@ public class UtilisateurFactory {
     utilisateurDTO.setRole(utilisateur.getRole());
     utilisateurDTO.setIdEquip(utilisateur.getIdEquip());
     utilisateurDTO.setIdPoste(utilisateur.getIdPoste());
+    utilisateurDTO.setTickets(utilisateur.getTickets());
     return utilisateurDTO;
   }
 
@@ -39,6 +40,7 @@ public class UtilisateurFactory {
     utilisateur.setRole(utilisateurDTO.getRole());
     utilisateur.setIdEquip(utilisateurDTO.getIdEquip());
     utilisateur.setIdPoste(utilisateurDTO.getIdPoste());
+    utilisateur.setTicket(utilisateur.getTickets());
     return utilisateur;
   }
 

@@ -1,7 +1,10 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -69,9 +73,17 @@ public class Utilisateur implements Serializable {
     @JoinColumn(name = "id_poste", referencedColumnName = "id")
     @ManyToOne
     private Poste idPoste;
-    @JsonIgnore
-    @OneToOne(mappedBy = "collaborateur",fetch = FetchType.LAZY)
-    private Ticket ticket;
+    
+    @OneToMany(mappedBy = "collaborateur", fetch = FetchType.EAGER)
+    private List<Ticket> tickets = new ArrayList<>();
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
+    }
 
     // Constructors
     public Utilisateur() {
@@ -79,7 +91,7 @@ public class Utilisateur implements Serializable {
 
     public Utilisateur(Integer id, String login, String password, Date creationDate, String creationUser, Boolean actif,
             String nom, String prenom, Integer cin, Role role, Equipe idEquip, Poste idPoste, Integer telephone,
-            Ticket ticket) {
+            List<Ticket> tickets) {
         this.id = id;
         this.login = login;
         this.password = password;
@@ -93,7 +105,7 @@ public class Utilisateur implements Serializable {
         this.idEquip = idEquip;
         this.idPoste = idPoste;
         this.telephone = telephone;
-        this.ticket = ticket;
+        this.tickets = tickets;
     }
 
     // Getters and Setters
@@ -105,12 +117,12 @@ public class Utilisateur implements Serializable {
         this.id = id;
     }
 
-    public Ticket getTicket() {
-        return ticket;
+    public List<Ticket> getTicket() {
+        return tickets;
     }
 
-    public void setTicket(Ticket ticket) {
-        this.ticket = ticket;
+    public void setTicket(List<Ticket> tickets) {
+        this.tickets = tickets;
     }
 
     public String getLogin() {

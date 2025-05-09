@@ -52,25 +52,10 @@ public class TicketService {
    */
   public ResponseEntity< ?> update(TicketDTO ticketDTO) {
     log.debug("Request to update Ticket: {}", ticketDTO);
-    
-    // Check if ticket exists
-    Ticket inBase = ticketRepository.findById(ticketDTO.getId())
-        .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
-    
     // Convert DTO to entity
     Ticket ticket = TicketFactory.ticketDTOToTicket(ticketDTO);
     
-    // Validate collaborator assignment
-    if (ticket.getCollaborateur() != null) {
-        Optional<Ticket> existingTicket = ticketRepository.findByCollaborateurAndIdNot(
-            ticket.getCollaborateur(), 
-            ticket.getId()
-        );
-        
-        if (existingTicket.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Collaborator is already assigned to ticket ID: " + existingTicket.get().getId());
-        }
-    }
+    
     
     // Save the updated ticket
     ticket = ticketRepository.save(ticket);

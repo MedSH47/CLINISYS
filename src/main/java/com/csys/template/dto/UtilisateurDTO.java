@@ -2,6 +2,7 @@ package com.csys.template.dto;
 
 import com.csys.template.domain.Equipe;
 import com.csys.template.domain.Poste;
+import com.csys.template.domain.Ticket;
 import com.csys.template.domain.enum_identifier.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -9,6 +10,7 @@ import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -37,7 +39,7 @@ public class UtilisateurDTO {
   private String prenom;
   private Integer cin;
   private Integer telephone;
-  
+  private List<Ticket> tickets;
 
   public Integer getTelephone() {
     return telephone;
@@ -45,6 +47,14 @@ public class UtilisateurDTO {
 
   public void setTelephone(Integer telephone) {
     this.telephone = telephone;
+  }
+
+  public List<Ticket> getTickets() {
+    return tickets;
+  }
+
+  public void setTickets(List<Ticket> tickets) {
+    this.tickets = tickets;
   }
 
   public String getNom() {

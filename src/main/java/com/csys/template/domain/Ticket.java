@@ -25,6 +25,7 @@ import javax.persistence.TemporalType;
 
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -59,7 +60,8 @@ public class Ticket implements Serializable {
     @Column(name = "creation_user")
     private String creationUser;
    
-     @OneToOne
+    @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "collaborateur", referencedColumnName = "id")
     private Utilisateur collaborateur;
    
