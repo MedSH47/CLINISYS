@@ -7,8 +7,12 @@ import com.csys.template.repository.TicketRepository;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
 import java.util.Collection;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,16 +50,32 @@ public class TicketService {
    * @param ticketDTO
    * @return the updated entity
    */
-  public TicketDTO update(TicketDTO ticketDTO) {
-    log.debug("Request to update Ticket: {}",ticketDTO);
-    Ticket inBase= ticketRepository.findById(ticketDTO.getId()).orElse(null);
-    Preconditions.checkArgument(inBase != null, "ticket.NotFound");
+  public ResponseEntity< ?> update(TicketDTO ticketDTO) {
+    log.debug("Request to update Ticket: {}", ticketDTO);
+    
+    // Check if ticket exists
+    Ticket inBase = ticketRepository.findById(ticketDTO.getId())
+        .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
+    
+    // Convert DTO to entity
     Ticket ticket = TicketFactory.ticketDTOToTicket(ticketDTO);
+    
+    // Validate collaborator assignment
+    if (ticket.getCollaborateur() != null) {
+        Optional<Ticket> existingTicket = ticketRepository.findByCollaborateurAndIdNot(
+            ticket.getCollaborateur(), 
+            ticket.getId()
+        );
+        
+        if (existingTicket.isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Collaborator is already assigned to ticket ID: " + existingTicket.get().getId());
+        }
+    }
+    
+    // Save the updated ticket
     ticket = ticketRepository.save(ticket);
-    TicketDTO resultDTO = TicketFactory.ticketToTicketDTO(ticket);
-    return resultDTO;
-  }
-
+    return ResponseEntity.ok().body(TicketFactory.ticketToTicketDTO(ticket)) ;
+}
   /**
    * Get one ticketDTO by id.
    *
@@ -110,5 +130,7 @@ public class TicketService {
     log.debug("Request to delete Ticket: {}",id);
     ticketRepository.deleteById(id);
   }
+
+ 
 }
 

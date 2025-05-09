@@ -58,7 +58,7 @@ spring:
                         enable: false    
     jackson:
         serialization:
-            write_dates_as_timestamps : false
+            write-dates-as-timestamps : false
     
 lang:
     secondary: ar

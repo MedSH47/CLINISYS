@@ -8,6 +8,10 @@ import java.util.List;
 public class UtilisateurFactory {
   public static UtilisateurDTO utilisateurToUtilisateurDTO(Utilisateur utilisateur) {
     UtilisateurDTO utilisateurDTO=new UtilisateurDTO();
+    utilisateurDTO.setTelephone(utilisateur.getTelephone());
+    utilisateurDTO.setCin(utilisateur.getCin());
+    utilisateurDTO.setPrenom(utilisateur.getPrenom());
+    utilisateurDTO.setNom(utilisateur.getNom());
     utilisateurDTO.setId(utilisateur.getId());
     utilisateurDTO.setLogin(utilisateur.getLogin());
     utilisateurDTO.setPassword(utilisateur.getPassword());
@@ -22,6 +26,10 @@ public class UtilisateurFactory {
 
   public static Utilisateur utilisateurDTOToUtilisateur(UtilisateurDTO utilisateurDTO) {
     Utilisateur utilisateur=new Utilisateur();
+    utilisateur.setCin(utilisateurDTO.getCin());
+    utilisateur.setTelephone(utilisateurDTO.getTelephone());
+    utilisateur.setPrenom(utilisateurDTO.getPrenom());
+    utilisateur.setNom(utilisateurDTO.getNom());
     utilisateur.setId(utilisateurDTO.getId());
     utilisateur.setLogin(utilisateurDTO.getLogin());
     utilisateur.setPassword(utilisateurDTO.getPassword());

@@ -8,6 +8,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import liquibase.pro.packaged.aA;
+
 
 public class EquipeDTO {
   @NotNull
@@ -20,9 +24,8 @@ public class EquipeDTO {
   private Date creationDate;
 
   private String creationUser;
-
+  
   private List ticketList;
-
   private List utilisateurList;
 
   public Integer getId() {

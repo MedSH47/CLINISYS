@@ -16,7 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -59,8 +59,9 @@ public class Ticket implements Serializable {
     @Column(name = "creation_user")
     private String creationUser;
    
-    @Column(name = "collaborateur")
-    private String collaborateur;
+     @OneToOne
+    @JoinColumn(name = "collaborateur", referencedColumnName = "id")
+    private Utilisateur collaborateur;
    
     @Column(name = "echeance")
     private String echeance;
@@ -87,7 +88,7 @@ public class Ticket implements Serializable {
 
     public Ticket(Integer id, Integer numTicket, Status status,
              Priorite priorite, Date dateEffectationEquip, Date dateCreation,
-            String creationUser, String collaborateur, String echeance,
+            String creationUser, Utilisateur collaborateur, String echeance,
             Client idClient, Equipe idEquip, Module idModule,String designation) {
         this.id = id;
         this.numTicket = numTicket;
@@ -167,11 +168,11 @@ public class Ticket implements Serializable {
         this.creationUser = creationUser;
     }
 
-    public String getCollaborateur() {
+    public Utilisateur getCollaborateur() {
         return collaborateur;
     }
 
-    public void setCollaborateur(String collaborateur) {
+    public void setCollaborateur(Utilisateur collaborateur) {
         this.collaborateur = collaborateur;
     }
 

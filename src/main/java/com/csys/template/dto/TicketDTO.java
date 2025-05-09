@@ -3,6 +3,7 @@ package com.csys.template.dto;
 import com.csys.template.domain.Client;
 import com.csys.template.domain.Equipe;
 import com.csys.template.domain.Module;
+import com.csys.template.domain.Utilisateur;
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 
@@ -33,7 +34,7 @@ public class TicketDTO {
   private String creationUser;
 
 
-  private String collaborateur;
+  private Utilisateur collaborateur;
 
   private String echeance;
 
@@ -109,11 +110,11 @@ public class TicketDTO {
     this.creationUser = creationUser;
   }
 
-  public String getCollaborateur() {
+  public Utilisateur getCollaborateur() {
     return collaborateur;
   }
 
-  public void setCollaborateur(String collaborateur) {
+  public void setCollaborateur(Utilisateur collaborateur) {
     this.collaborateur = collaborateur;
   }
 

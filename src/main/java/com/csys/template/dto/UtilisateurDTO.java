@@ -16,29 +16,60 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 public class UtilisateurDTO {
-  
+
   private Integer id;
-
-
   private String login;
-
   @JsonIgnore
   private String password;
 
   @Temporal(TemporalType.DATE)
   private Date creationDate;
 
- 
   private String creationUser;
-
   private Boolean actif;
 
   @Enumerated(EnumType.STRING)
   private Role role;
 
   private Equipe idEquip;
-
   private Poste idPoste;
+  private String nom;
+  private String prenom;
+  private Integer cin;
+  private Integer telephone;
+  
+
+  public Integer getTelephone() {
+    return telephone;
+  }
+
+  public void setTelephone(Integer telephone) {
+    this.telephone = telephone;
+  }
+
+  public String getNom() {
+    return nom;
+  }
+
+  public void setNom(String nom) {
+    this.nom = nom;
+  }
+
+  public String getPrenom() {
+    return prenom;
+  }
+
+  public void setPrenom(String prenom) {
+    this.prenom = prenom;
+  }
+
+  public Integer getCin() {
+    return cin;
+  }
+
+  public void setCin(Integer cin) {
+    this.cin = cin;
+  }
 
   public Integer getId() {
     return id;
@@ -112,4 +143,3 @@ public class UtilisateurDTO {
     this.idPoste = idPoste;
   }
 }
-

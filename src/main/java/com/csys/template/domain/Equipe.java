@@ -34,6 +34,7 @@ public class Equipe implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+    
 
     @Column(name = "nom_equipe")
     private String nomEquipe;
