@@ -9,6 +9,7 @@ import java.lang.Integer;
 import java.lang.String;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -21,16 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -71,6 +63,7 @@ public class UtilisateurResource {
         existing.setCreationUser(dto.getCreationUser());
         existing.setIdEquip(dto.getIdEquip());
         existing.setIdPoste(dto.getIdPoste());
+        existing.setChefEquipe(dto.getChefEquipe());
         
         UtilisateurDTO saved = utilisateurService.update(existing);
         return ResponseEntity.ok(saved);
@@ -138,49 +131,8 @@ public class UtilisateurResource {
     return utilisateurService.createUtilisateur(utilisateur);
   }
   @GetMapping("/utilisateurs")
-  public ResponseEntity<?> getAllUtilisateurs(@RequestHeader(value = "Authorization", required = true) String authorizationHeader) {
-    log.debug("Request to get all Utilisateurs");
-
-    // Check if Authorization header is present
-    if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(Collections.singletonMap("error", "Authorization header is missing or invalid"));
-    }
-    try {
-      String token = authorizationHeader.substring(7);
-
-      // First check if token can be parsed (without validation)
-      try {
-        jwtUtil.extractUsername(token); // This will throw SignatureException if invalid
-      } catch (io.jsonwebtoken.security.SignatureException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(Collections.singletonMap("error", "Invalid JWT signature"));
-      } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(Collections.singletonMap("error", "Invalid JWT token"));
-      }
-
-      // Now do full validation
-      String username = jwtUtil.extractUsername(token);
-      if (username == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(Collections.singletonMap("error", "Invalid JWT token"));
-      }
-
-      UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-      if (!jwtUtil.validateToken(token, userDetails)) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(Collections.singletonMap("error", "Invalid or expired JWT token"));
-      }
-
-      // If everything is valid, return the users
-      return ResponseEntity.ok(utilisateurService.findAll());
-
-    } catch (Exception e) {
-      log.error("JWT validation error", e);
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(Collections.singletonMap("error", "Authentication failed"));
-    }
+  public ResponseEntity<List<UtilisateurDTO>> getAllUtilisateurs() {
+    return ResponseEntity.ok(utilisateurService.findAll());
   }
 
   @DeleteMapping("/utilisateurs/{id}")
@@ -264,9 +216,13 @@ public ResponseEntity<Utilisateur> me(Principal principal) {
   return ResponseEntity.ok(u);
 }
 
-@GetMapping("/{id}")
-public Optional<Utilisateur> getMethodName(@PathVariable Integer id) {
-    return utilisateurService.findById(id);
+@GetMapping("utilisateurs/{id}")
+public ResponseEntity<?> getMethodName(@PathVariable Integer id) {
+    UtilisateurDTO util = utilisateurService.findOne(id);
+    if (util==null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("user not found");
+    }
+    return ResponseEntity.ok().body(util);
 }
 
 

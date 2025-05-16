@@ -4,21 +4,14 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-import javax.persistence.OneToMany;
-import javax.persistence.Table; 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
+import com.csys.template.config.jpa.audit.log.listener.EntityLogger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Client")
-
+@EntityListeners(EntityLogger.class)
 public class Client implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,6 +40,7 @@ public class Client implements Serializable {
     @Column(name = "creation_user")
     private String creationUser;
     @OneToMany(mappedBy = "idClient")
+    @JsonIgnore
     private List<Ticket> ticketList;
 
     public Client(Integer id, Integer numClient,String adress,

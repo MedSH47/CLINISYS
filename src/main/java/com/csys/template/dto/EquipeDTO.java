@@ -8,9 +8,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import com.csys.template.domain.Utilisateur;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import liquibase.pro.packaged.aA;
 
 
 public class EquipeDTO {
@@ -25,8 +25,18 @@ public class EquipeDTO {
 
   private String creationUser;
   
-  private List ticketList;
-  private List utilisateurList;
+  private List<TicketDTO> ticketList;
+  private List<UtilisateurDTO> utilisateurList;
+
+  private Utilisateur chef;
+
+  public Utilisateur getChef() {
+    return chef;
+  }
+
+  public void setChef(Utilisateur chef) {
+    this.chef = chef;
+  }
 
   public Integer getId() {
     return id;

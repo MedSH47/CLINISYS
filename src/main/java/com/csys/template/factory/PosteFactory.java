@@ -19,7 +19,7 @@ public class PosteFactory {
   @SuppressWarnings("unchecked")
   public static Poste posteDTOToPoste(PosteDTO posteDTO) {
     Poste poste=new Poste();
-    poste.setId(posteDTO.getId());
+    
     poste.setDesignation(posteDTO.getDesignation());
     poste.setCode(posteDTO.getCode());
     poste.setUtilisateurList(posteDTO.getUtilisateurList());

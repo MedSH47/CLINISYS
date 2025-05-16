@@ -48,7 +48,7 @@ public class PosteResource {
   public ResponseEntity<PosteDTO> createPoste(@Valid @RequestBody PosteDTO posteDTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
     log.debug("REST request to save Poste : {}", posteDTO);
     if ( posteDTO.getId() != null) {
-      bindingResult.addError( new FieldError("PosteDTO","id","POST method does not accepte "+ENTITY_NAME+" with code"));
+      bindingResult.addError( new FieldError("PosteDTO","id","POST method does not accepte "));
       throw new MethodArgumentNotValidException(null, bindingResult);
     }
     if (bindingResult.hasErrors()) {

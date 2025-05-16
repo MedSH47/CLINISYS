@@ -5,26 +5,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
+
+import com.csys.template.config.jpa.audit.log.listener.EntityLogger;
 import com.csys.template.domain.enum_identifier.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Utilisateur")
+@EntityListeners(EntityLogger.class)
 public class Utilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,6 +25,9 @@ public class Utilisateur implements Serializable {
 
     @Column(name = "login")
     private String login;
+    @JsonIgnore
+    @OneToOne(mappedBy = "chef")
+    private Equipe chefEquipe;
 
     @Column(name = "password")
     private String password;
@@ -73,8 +65,9 @@ public class Utilisateur implements Serializable {
     @JoinColumn(name = "id_poste", referencedColumnName = "id")
     @ManyToOne
     private Poste idPoste;
-    
+
     @OneToMany(mappedBy = "collaborateur", fetch = FetchType.EAGER)
+    @JsonIgnore     
     private List<Ticket> tickets = new ArrayList<>();
 
     public List<Ticket> getTickets() {
@@ -91,7 +84,7 @@ public class Utilisateur implements Serializable {
 
     public Utilisateur(Integer id, String login, String password, Date creationDate, String creationUser, Boolean actif,
             String nom, String prenom, Integer cin, Role role, Equipe idEquip, Poste idPoste, Integer telephone,
-            List<Ticket> tickets) {
+            List<Ticket> tickets, Equipe chefEquipe) {
         this.id = id;
         this.login = login;
         this.password = password;
@@ -106,9 +99,18 @@ public class Utilisateur implements Serializable {
         this.idPoste = idPoste;
         this.telephone = telephone;
         this.tickets = tickets;
+        this.chefEquipe = chefEquipe;
     }
 
     // Getters and Setters
+    public Equipe getChefEquipe() {
+        return chefEquipe;
+    }
+
+    public void setChefEquipe(Equipe chefEquipe) {
+        this.chefEquipe = chefEquipe;
+    }
+
     public Integer getId() {
         return id;
     }

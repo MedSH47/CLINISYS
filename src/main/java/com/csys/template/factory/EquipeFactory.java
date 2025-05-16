@@ -15,6 +15,7 @@ public class EquipeFactory {
     equipeDTO.setCreationUser(equipe.getCreationUser());
     equipeDTO.setTicketList(equipe.getTicketList());
     equipeDTO.setUtilisateurList(equipe.getUtilisateurList());
+    equipeDTO.setChef(equipe.getChef());
     return equipeDTO;
   }
 
@@ -27,6 +28,7 @@ public class EquipeFactory {
     equipe.setCreationUser(equipeDTO.getCreationUser());
     equipe.setTicketList(equipeDTO.getTicketList());
     equipe.setUtilisateurList(equipeDTO.getUtilisateurList());
+    equipe.setChef(equipeDTO.getChef());
     return equipe;
   }
 

@@ -6,23 +6,14 @@ package com.csys.template.domain;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.persistence.*;
 
+import com.csys.template.config.jpa.audit.log.listener.EntityLogger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Poste")
-
+@EntityListeners(EntityLogger.class)
 public class Poste implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,8 +29,9 @@ public class Poste implements Serializable {
     @Column(name = "code")
     private Integer code;
     
-    @JsonIgnore
+    
     @OneToMany(mappedBy = "idPoste", fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Utilisateur> utilisateurList;
 
     

@@ -14,7 +14,7 @@
     <name>template-core</name>
     <description>Demo project for Spring Boot</description>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-cloud.version>2021.0.4</spring-cloud.version>
@@ -25,12 +25,6 @@
 
     </properties>
     <dependencies>
-        <!--        <dependency>
-            <groupId>com.csys</groupId>
-            <artifactId>csys-spring-boot-starter</artifactId>
-            <version>2.7.4</version>
-        </dependency>-->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -104,6 +98,14 @@
 		</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
@@ -119,6 +121,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate5</artifactId>
+            <version>2.13.4</version>
             <type>jar</type>
         </dependency>
 
@@ -158,10 +161,7 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
+       
 
         <dependency>
             <groupId>junit</groupId>
@@ -242,7 +242,7 @@
 <dependency>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-ooxml</artifactId>
-    <version>3.13</version>
+    <version>5.1.0</version>
     <type>jar</type>
 </dependency>
     </dependencies>
@@ -294,43 +294,44 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.liquibase</groupId>
-                    <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>3.8.0</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>javax.validation</groupId>
-                            <artifactId>validation-api</artifactId>
-                            <version>1.1.0.Final</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.javassist</groupId>
-                            <artifactId>javassist</artifactId>
-                            <version>3.21.0-GA</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-starter-data-jpa</artifactId>
-                            <version>${project.parent.version}</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <changeLogFile>src/main/resources/config/liquibase/master.xml</changeLogFile>
-                        <diffChangeLogFile>
-                            src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml
-                        </diffChangeLogFile>
-                        <driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-                        <url>jdbc:sqlserver://192.168.0.117:1415;databaseName=gclinique_egypte;</url>
+    <groupId>org.liquibase</groupId>
+    <artifactId>liquibase-maven-plugin</artifactId>
+    <version>3.8.0</version> <!-- Consider upgrading this too -->
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.21.0-GA</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+    <configuration>
+        <changeLogFile>src/main/resources/config/liquibase/master.xml</changeLogFile>
+        <diffChangeLogFile>
+            src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml
+        </diffChangeLogFile>
+        <driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
+        <url>jdbc:sqlserver://192.168.0.117:1415;databaseName=gclinique_egypte;</url>
+        <defaultSchemaName>Recept</defaultSchemaName>
+        <username>sa</username>
+        <password>123</password>
+        <referenceUrl>
+            hibernate:spring:com.csys.reception.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl&amp;hibernate.implicit_naming_strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        </referenceUrl>
+        <verbose>true</verbose>
+        <logging>debug</logging>
+    </configuration>
+</plugin>
 
-
-                        <defaultSchemaName>Recept</defaultSchemaName>
-                        <username>sa</username>
-                        <password>123</password>
-                        <referenceUrl>hibernate:spring:com.csys.reception.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl&amp;hibernate.implicit_naming_strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl</referenceUrl>
-                        <verbose>true</verbose>
-                        <logging>debug</logging>
-                    </configuration>
-                </plugin>
 
 <!--                <plugin>
                     <groupId>pl.project13.maven</groupId>

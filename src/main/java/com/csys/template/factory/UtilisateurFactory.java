@@ -22,6 +22,7 @@ public class UtilisateurFactory {
     utilisateurDTO.setIdEquip(utilisateur.getIdEquip());
     utilisateurDTO.setIdPoste(utilisateur.getIdPoste());
     utilisateurDTO.setTickets(utilisateur.getTickets());
+    utilisateurDTO.setChefEquipe(utilisateur.getChefEquipe());
     return utilisateurDTO;
   }
 
@@ -41,6 +42,7 @@ public class UtilisateurFactory {
     utilisateur.setIdEquip(utilisateurDTO.getIdEquip());
     utilisateur.setIdPoste(utilisateurDTO.getIdPoste());
     utilisateur.setTicket(utilisateur.getTickets());
+    utilisateur.setChefEquipe(utilisateurDTO.getChefEquipe());
     return utilisateur;
   }
 

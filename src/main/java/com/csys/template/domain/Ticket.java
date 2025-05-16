@@ -6,23 +6,9 @@ package com.csys.template.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
-
-
+import com.csys.template.config.jpa.audit.log.listener.EntityLogger;
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Ticket")
-
+@EntityListeners(EntityLogger.class)
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,19 +48,22 @@ public class Ticket implements Serializable {
    
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "collaborateur", referencedColumnName = "id")
+    @JoinColumn(name = "id_utilisateur", referencedColumnName = "id")
     private Utilisateur collaborateur;
    
     @Column(name = "echeance")
     private String echeance;
     @JoinColumn(name = "id_client", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Client idClient;
     @JoinColumn(name = "id_equip", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Equipe idEquip;
     @JoinColumn(name = "id_module", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Module idModule;
 
     @Column(name = "designation")

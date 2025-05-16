@@ -3,10 +3,10 @@ package com.csys.template.dto;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.List;
-import javax.validation.constraints.NotNull;
+
 
 public class PosteDTO {
-  @NotNull
+  
   private Integer id;
 
 

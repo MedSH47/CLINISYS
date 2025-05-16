@@ -40,6 +40,15 @@ public class UtilisateurDTO {
   private Integer cin;
   private Integer telephone;
   private List<Ticket> tickets;
+  private Equipe chefEquipe;
+
+  public Equipe getChefEquipe() {
+    return chefEquipe;
+  }
+
+  public void setChefEquipe(Equipe chefEquipe) {
+    this.chefEquipe = chefEquipe;
+  }
 
   public Integer getTelephone() {
     return telephone;
