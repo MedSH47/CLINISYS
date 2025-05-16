@@ -86,6 +86,7 @@ public class Log {
     public void setAction(String action) {
         this.action = action;
     }
+    
 
     public String getPerformedBy() {
         return performedBy;
