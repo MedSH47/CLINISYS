@@ -110,15 +110,5 @@ public class ClientService {
     log.debug("Request to delete Client: {}",id);
     clientRepository.deleteById(id);
   }
-
-  public boolean existsBynumClient(Integer id){
-    return clientRepository.existsBynumClient(id);
-  }
-
-  // not working
-  public Client findBynumClient(Integer id){
-    return clientRepository.findBynumClient(id);
-  }
-  // not working
 }
 

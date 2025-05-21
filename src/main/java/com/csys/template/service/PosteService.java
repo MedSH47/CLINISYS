@@ -6,13 +6,15 @@ import com.csys.template.factory.PosteFactory;
 import com.csys.template.repository.PosteRepository;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
-import java.util.List;
-
+import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service Implementation for managing Poste.
+ */
 @Service
 @Transactional
 public class PosteService {
@@ -24,6 +26,12 @@ public class PosteService {
     this.posteRepository=posteRepository;
   }
 
+  /**
+   * Save a posteDTO.
+   *
+   * @param posteDTO
+   * @return the persisted entity
+   */
   public PosteDTO save(PosteDTO posteDTO) {
     log.debug("Request to save Poste: {}",posteDTO);
     Poste poste = PosteFactory.posteDTOToPoste(posteDTO);
@@ -32,6 +40,12 @@ public class PosteService {
     return resultDTO;
   }
 
+  /**
+   * Update a posteDTO.
+   *
+   * @param posteDTO
+   * @return the updated entity
+   */
   public PosteDTO update(PosteDTO posteDTO) {
     log.debug("Request to update Poste: {}",posteDTO);
     Poste inBase= posteRepository.findById(posteDTO.getId()).orElse(null);
@@ -42,6 +56,12 @@ public class PosteService {
     return resultDTO;
   }
 
+  /**
+   * Get one posteDTO by id.
+   *
+   * @param id the id of the entity
+   * @return the entity DTO
+   */
   @Transactional(
       readOnly = true
   )
@@ -52,7 +72,12 @@ public class PosteService {
     return dto;
   }
 
- 
+  /**
+   * Get one poste by id.
+   *
+   * @param id the id of the entity
+   * @return the entity
+   */
   @Transactional(
       readOnly = true
   )
@@ -62,17 +87,25 @@ public class PosteService {
     return poste;
   }
 
-  
+  /**
+   * Get all the postes.
+   *
+   * @return the the list of entities
+   */
   @Transactional(
       readOnly = true
   )
-  public List<PosteDTO> findAll() {
+  public Collection<PosteDTO> findAll() {
     log.debug("Request to get All Postes");
-    List<Poste> result= posteRepository.findAll();
+    Collection<Poste> result= posteRepository.findAll();
     return PosteFactory.posteToPosteDTOs(result);
   }
 
- 
+  /**
+   * Delete poste by id.
+   *
+   * @param id the id of the entity
+   */
   public void delete(Integer id) {
     log.debug("Request to delete Poste: {}",id);
     posteRepository.deleteById(id);

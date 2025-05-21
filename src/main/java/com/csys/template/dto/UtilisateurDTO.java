@@ -1,69 +1,69 @@
 package com.csys.template.dto;
 
-import com.csys.template.domain.Equipe;
 import com.csys.template.domain.Poste;
-import com.csys.template.domain.Ticket;
 import com.csys.template.domain.enum_identifier.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
+import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
 public class UtilisateurDTO {
-
+  
   private Integer id;
-  private String login;
-  @JsonIgnore
-  private String password;
+
+  @Size(
+      min = 0,
+      max = 50
+  )
+  private String nom;
+
+  @Size(
+      min = 0,
+      max = 50
+  )
+  private String prenom;
+
+  private BigInteger numTelephone;
+
+  @Size(
+      min = 0,
+      max = 100
+  )
+  private String email;
+
+  @Size(
+      min = 0,
+      max = 50
+  )
+  private String userCreation;
 
   @Temporal(TemporalType.DATE)
-  private Date creationDate;
+  private Date dateCreation;
 
-  private String creationUser;
-  private Boolean actif;
+
+  private String motDePasse;
 
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  private Equipe idEquip;
+  private Boolean activite;
+
   private Poste idPoste;
-  private String nom;
-  private String prenom;
-  private Integer cin;
-  private Integer telephone;
-  private List<Ticket> tickets;
-  private Equipe chefEquipe;
 
-  public Equipe getChefEquipe() {
-    return chefEquipe;
+  public Integer getId() {
+    return id;
   }
 
-  public void setChefEquipe(Equipe chefEquipe) {
-    this.chefEquipe = chefEquipe;
-  }
-
-  public Integer getTelephone() {
-    return telephone;
-  }
-
-  public void setTelephone(Integer telephone) {
-    this.telephone = telephone;
-  }
-
-  public List<Ticket> getTickets() {
-    return tickets;
-  }
-
-  public void setTickets(List<Ticket> tickets) {
-    this.tickets = tickets;
+  public void setId(Integer id) {
+    this.id = id;
   }
 
   public String getNom() {
@@ -82,60 +82,44 @@ public class UtilisateurDTO {
     this.prenom = prenom;
   }
 
-  public Integer getCin() {
-    return cin;
+  public BigInteger getNumTelephone() {
+    return numTelephone;
   }
 
-  public void setCin(Integer cin) {
-    this.cin = cin;
+  public void setNumTelephone(BigInteger numTelephone) {
+    this.numTelephone = numTelephone;
   }
 
-  public Integer getId() {
-    return id;
+  public String getEmail() {
+    return email;
   }
 
-  public void setId(Integer id) {
-    this.id = id;
+  public void setEmail(String email) {
+    this.email = email;
   }
 
-  public String getLogin() {
-    return login;
+  public String getUserCreation() {
+    return userCreation;
   }
 
-  public void setLogin(String login) {
-    this.login = login;
+  public void setUserCreation(String userCreation) {
+    this.userCreation = userCreation;
   }
 
-  public String getPassword() {
-    return password;
+  public Date getDateCreation() {
+    return dateCreation;
   }
 
-  public void setPassword(String password) {
-    this.password = password;
+  public void setDateCreation(Date dateCreation) {
+    this.dateCreation = dateCreation;
   }
 
-  public Date getCreationDate() {
-    return creationDate;
+  public String getMotDePasse() {
+    return motDePasse;
   }
 
-  public void setCreationDate(Date creationDate) {
-    this.creationDate = creationDate;
-  }
-
-  public String getCreationUser() {
-    return creationUser;
-  }
-
-  public void setCreationUser(String creationUser) {
-    this.creationUser = creationUser;
-  }
-
-  public Boolean getActif() {
-    return actif;
-  }
-
-  public void setActif(Boolean actif) {
-    this.actif = actif;
+  public void setMotDePasse(String motDePasse) {
+    this.motDePasse = motDePasse;
   }
 
   public Role getRole() {
@@ -146,12 +130,12 @@ public class UtilisateurDTO {
     this.role = role;
   }
 
-  public Equipe getIdEquip() {
-    return idEquip;
+  public Boolean getActivite() {
+    return activite;
   }
 
-  public void setIdEquip(Equipe idEquip) {
-    this.idEquip = idEquip;
+  public void setActivite(Boolean activite) {
+    this.activite = activite;
   }
 
   public Poste getIdPoste() {
@@ -162,3 +146,4 @@ public class UtilisateurDTO {
     this.idPoste = idPoste;
   }
 }
+

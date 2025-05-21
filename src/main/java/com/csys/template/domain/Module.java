@@ -5,51 +5,39 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
-
-import com.csys.template.config.jpa.audit.log.listener.EntityLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import java.util.Collection;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 @Entity
 @Table(name = "Module")
-@EntityListeners(EntityLogger.class)
 public class Module implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    
+    @NotNull
     @Column(name = "id")
     private Integer id;
-   
+    @Size(max = 100)
     @Column(name = "designation")
     private String designation;
-    @Column(name = "creation_date")
-    @Temporal(TemporalType.DATE)
-    private Date creationDate;
-    
-    @Column(name = "creation_user")
-    private String creationUser;
-    @Column(name = "code")
-    private Integer code;
-    @OneToMany(mappedBy = "idModule" ,fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<Ticket> ticketList;
-
-    public Module(Integer id,  String designation, Date creationDate,
-             String creationUser, Integer code, List<Ticket> ticketList) {
-        this.id = id;
-        this.designation = designation;
-        this.creationDate = creationDate;
-        this.creationUser = creationUser;
-        this.code = code;
-        this.ticketList = ticketList;
-    }
+    @OneToMany(mappedBy = "idModule", fetch = FetchType.EAGER)
+    private Collection<Ticket> ticketCollection;
+    @JoinColumn(name = "id_equipe", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Equipe idEquipe;
 
     public Module() {
     }
@@ -74,36 +62,21 @@ public class Module implements Serializable {
         this.designation = designation;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
+    @XmlTransient
+    public Collection<Ticket> getTicketCollection() {
+        return ticketCollection;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+    public void setTicketCollection(Collection<Ticket> ticketCollection) {
+        this.ticketCollection = ticketCollection;
     }
 
-    public String getCreationUser() {
-        return creationUser;
+    public Equipe getIdEquipe() {
+        return idEquipe;
     }
 
-    public void setCreationUser(String creationUser) {
-        this.creationUser = creationUser;
-    }
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public List<Ticket> getTicketList() {
-        return ticketList;
-    }
-
-    public void setTicketList(List<Ticket> ticketList) {
-        this.ticketList = ticketList;
+    public void setIdEquipe(Equipe idEquipe) {
+        this.idEquipe = idEquipe;
     }
 
     @Override
@@ -115,7 +88,7 @@ public class Module implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Module)) {
             return false;
         }
@@ -128,7 +101,7 @@ public class Module implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.domain.Module[ id=" + id + " ]";
+        return "com.csys.template.config.jpa.audit.log.demain.Module[ id=" + id + " ]";
     }
     
 }

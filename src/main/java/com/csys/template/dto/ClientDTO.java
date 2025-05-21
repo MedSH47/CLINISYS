@@ -1,35 +1,43 @@
 package com.csys.template.dto;
 
+import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
+import java.util.Collection;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ClientDTO {
+  @NotNull
   private Integer id;
-  private Integer numClient;
 
+  @Size(
+      min = 0,
+      max = 100
+  )
+  private String nomComplet;
 
+  @Size(
+      min = 0,
+      max = 200
+  )
   private String adress;
 
- 
-  private String telephone;
+  @Size(
+      min = 0,
+      max = 100
+  )
+  private String email;
 
-  private String nom;
+  @Size(
+      min = 0,
+      max = 50
+  )
+  private String region;
 
-  
-  private String prenom;
+  private Boolean actif;
 
-  @Temporal(TemporalType.DATE)
-  private Date creationDate;
-
- 
-  private String creationUser;
-
-  private List ticketList;
+  private Collection<TicketDTO> ticketCollection;
 
   public Integer getId() {
     return id;
@@ -39,12 +47,12 @@ public class ClientDTO {
     this.id = id;
   }
 
-  public Integer getNumClient() {
-    return numClient;
+  public String getNomComplet() {
+    return nomComplet;
   }
 
-  public void setNumClient(Integer numClient) {
-    this.numClient = numClient;
+  public void setNomComplet(String nomComplet) {
+    this.nomComplet = nomComplet;
   }
 
   public String getAdress() {
@@ -55,52 +63,36 @@ public class ClientDTO {
     this.adress = adress;
   }
 
-  public String getTelephone() {
-    return telephone;
+  public String getEmail() {
+    return email;
   }
 
-  public void setTelephone(String telephone) {
-    this.telephone = telephone;
+  public void setEmail(String email) {
+    this.email = email;
   }
 
-  public String getNom() {
-    return nom;
+  public String getRegion() {
+    return region;
   }
 
-  public void setNom(String nom) {
-    this.nom = nom;
+  public void setRegion(String region) {
+    this.region = region;
   }
 
-  public String getPrenom() {
-    return prenom;
+  public Boolean getActif() {
+    return actif;
   }
 
-  public void setPrenom(String prenom) {
-    this.prenom = prenom;
+  public void setActif(Boolean actif) {
+    this.actif = actif;
   }
 
-  public Date getCreationDate() {
-    return creationDate;
+  public Collection<TicketDTO> getTicketCollection() {
+    return ticketCollection;
   }
 
-  public void setCreationDate(Date creationDate) {
-    this.creationDate = creationDate;
-  }
-
-  public String getCreationUser() {
-    return creationUser;
-  }
-
-  public void setCreationUser(String creationUser) {
-    this.creationUser = creationUser;
-  }
-
-  public List getTicketList() {
-    return ticketList;
-  }
-
-  public void setTicketList(List ticketList) {
-    this.ticketList = ticketList;
+  public void setTicketCollection(Collection<TicketDTO> ticketCollection) {
+    this.ticketCollection = ticketCollection;
   }
 }
 

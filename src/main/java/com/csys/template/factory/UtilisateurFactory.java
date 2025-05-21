@@ -3,50 +3,43 @@ package com.csys.template.factory;
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.dto.UtilisateurDTO;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class UtilisateurFactory {
   public static UtilisateurDTO utilisateurToUtilisateurDTO(Utilisateur utilisateur) {
     UtilisateurDTO utilisateurDTO=new UtilisateurDTO();
-    utilisateurDTO.setTelephone(utilisateur.getTelephone());
-    utilisateurDTO.setCin(utilisateur.getCin());
-    utilisateurDTO.setPrenom(utilisateur.getPrenom());
-    utilisateurDTO.setNom(utilisateur.getNom());
     utilisateurDTO.setId(utilisateur.getId());
-    utilisateurDTO.setLogin(utilisateur.getLogin());
-    utilisateurDTO.setPassword(utilisateur.getPassword());
-    utilisateurDTO.setCreationDate(utilisateur.getCreationDate());
-    utilisateurDTO.setCreationUser(utilisateur.getCreationUser());
-    utilisateurDTO.setActif(utilisateur.getActif());
+    utilisateurDTO.setNom(utilisateur.getNom());
+    utilisateurDTO.setPrenom(utilisateur.getPrenom());
+    utilisateurDTO.setNumTelephone(utilisateur.getNumTelephone());
+    utilisateurDTO.setEmail(utilisateur.getEmail());
+    utilisateurDTO.setUserCreation(utilisateur.getUserCreation());
+    utilisateurDTO.setDateCreation(utilisateur.getDateCreation());
+    utilisateurDTO.setMotDePasse(utilisateur.getMotDePasse());
     utilisateurDTO.setRole(utilisateur.getRole());
-    utilisateurDTO.setIdEquip(utilisateur.getIdEquip());
+    utilisateurDTO.setActivite(utilisateur.getActivite());
     utilisateurDTO.setIdPoste(utilisateur.getIdPoste());
-    utilisateurDTO.setTickets(utilisateur.getTickets());
-    utilisateurDTO.setChefEquipe(utilisateur.getChefEquipe());
     return utilisateurDTO;
   }
 
   public static Utilisateur utilisateurDTOToUtilisateur(UtilisateurDTO utilisateurDTO) {
     Utilisateur utilisateur=new Utilisateur();
-    utilisateur.setCin(utilisateurDTO.getCin());
-    utilisateur.setTelephone(utilisateurDTO.getTelephone());
-    utilisateur.setPrenom(utilisateurDTO.getPrenom());
-    utilisateur.setNom(utilisateurDTO.getNom());
     utilisateur.setId(utilisateurDTO.getId());
-    utilisateur.setLogin(utilisateurDTO.getLogin());
-    utilisateur.setPassword(utilisateurDTO.getPassword());
-    utilisateur.setCreationDate(utilisateurDTO.getCreationDate());
-    utilisateur.setCreationUser(utilisateurDTO.getCreationUser());
-    utilisateur.setActif(utilisateurDTO.getActif());
+    utilisateur.setNom(utilisateurDTO.getNom());
+    utilisateur.setPrenom(utilisateurDTO.getPrenom());
+    utilisateur.setNumTelephone(utilisateurDTO.getNumTelephone());
+    utilisateur.setEmail(utilisateurDTO.getEmail());
+    utilisateur.setUserCreation(utilisateurDTO.getUserCreation());
+    utilisateur.setDateCreation(utilisateurDTO.getDateCreation());
+    utilisateur.setMotDePasse(utilisateurDTO.getMotDePasse());
     utilisateur.setRole(utilisateurDTO.getRole());
-    utilisateur.setIdEquip(utilisateurDTO.getIdEquip());
+    utilisateur.setActivite(utilisateurDTO.getActivite());
     utilisateur.setIdPoste(utilisateurDTO.getIdPoste());
-    utilisateur.setTicket(utilisateur.getTickets());
-    utilisateur.setChefEquipe(utilisateurDTO.getChefEquipe());
     return utilisateur;
   }
 
-  public static List<UtilisateurDTO> utilisateurToUtilisateurDTOs(List<Utilisateur> utilisateurs) {
+  public static Collection<UtilisateurDTO> utilisateurToUtilisateurDTOs(Collection<Utilisateur> utilisateurs) {
     List<UtilisateurDTO> utilisateursDTO=new ArrayList<>();
     utilisateurs.forEach(x -> {
       utilisateursDTO.add(utilisateurToUtilisateurDTO(x));

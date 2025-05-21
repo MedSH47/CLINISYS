@@ -1,21 +1,15 @@
 package com.csys.template.web.rest.ressource;
-
-import com.csys.template.domain.Ticket;
-import com.csys.template.domain.Utilisateur;
-import com.csys.template.dto.TicketDTO;
-import com.csys.template.service.TicketService;
 import com.csys.template.util.RestPreconditions;
 
+import com.csys.template.dto.TicketDTO;
+import com.csys.template.service.TicketService;
 import java.lang.Integer;
 import java.lang.String;
 import java.lang.Void;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.List;
-
 import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +24,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 /**
  * REST controller for managing Ticket.
@@ -83,13 +75,11 @@ public class TicketResource {
    * @throws org.springframework.web.bind.MethodArgumentNotValidException
    */
   @PutMapping("/tickets/{id}")
-  public ResponseEntity<?> updateTicket(
-          @PathVariable Integer id,
-          @Valid @RequestBody TicketDTO ticketDTO) {
-      log.debug("Request to update Ticket: {}", id);
-      ticketDTO.setId(id);
-      return ticketService.update(ticketDTO);
-      
+  public ResponseEntity<TicketDTO> updateTicket(@PathVariable Integer id, @Valid @RequestBody TicketDTO ticketDTO) throws MethodArgumentNotValidException {
+    log.debug("Request to update Ticket: {}",id);
+    ticketDTO.setId(id);
+    TicketDTO result =ticketService.update(ticketDTO);
+    return ResponseEntity.ok().body(result);
   }
 
   /**
@@ -129,8 +119,5 @@ public class TicketResource {
     ticketService.delete(id);
     return ResponseEntity.ok().build();
   }
-
-
-  
 }
 

@@ -4,59 +4,45 @@
  */
 package com.csys.template.domain;
 
-
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
+import java.util.Collection;
+import java.util.Set;
 
-import com.csys.template.config.jpa.audit.log.listener.EntityLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author harra
+ */
 @Entity
 @Table(name = "Equipe")
-@EntityListeners(EntityLogger.class)
 public class Equipe implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     @Column(name = "id")
     private Integer id;
-
-    @Column(name = "nom_equipe")
-    private String nomEquipe;
-    @Column(name = "creation_date")
-    @Temporal(TemporalType.DATE)
-    private Date creationDate;
-
-    @OneToOne
-    @JoinColumn(name = "id_utilisateur_chef")
-    @JsonIgnore
-    private Utilisateur chef;
-
-    @Column(name = "creation_user")
-    private String creationUser;
-    @OneToMany(mappedBy = "idEquip", fetch = FetchType.LAZY)
-    @JsonIgnore // Prevent infinite recursion (optional if using DTOs)
-    private List<Ticket> ticketList;
-
-    @OneToMany(mappedBy = "idEquip", fetch = FetchType.LAZY)
-    @JsonIgnore // Prevent infinite recursion (optional if using DTOs)
-    private List<Utilisateur> utilisateurList;
-
-    public Equipe(Integer id, String nomEquipe, Date creationDate,
-            String creationUser, List<Ticket> ticketList, List<Utilisateur> utilisateurList, Utilisateur chef) {
-        this.id = id;
-        this.nomEquipe = nomEquipe;
-        this.creationDate = creationDate;
-        this.creationUser = creationUser;
-        this.ticketList = ticketList;
-        this.utilisateurList = utilisateurList;
-        this.chef = chef;
-    }
+    @Size(max = 100)
+    @Column(name = "designation")
+    private String designation;
+    @OneToMany(mappedBy = "idEquipe", fetch = FetchType.EAGER)
+    private Set<EquipePoste> equipePosteCollection;
+    @OneToMany(mappedBy = "idEquipe", fetch = FetchType.EAGER)
+    private Set<Module> moduleCollection;
 
     public Equipe() {
     }
@@ -73,52 +59,30 @@ public class Equipe implements Serializable {
         this.id = id;
     }
 
-    public Utilisateur getChef() {
-        return chef;
+    public String getDesignation() {
+        return designation;
     }
 
-    public void setChef(Utilisateur chef) {
-        this.chef = chef;
+    public void setDesignation(String designation) {
+        this.designation = designation;
     }
 
-    public String getNomEquipe() {
-        return nomEquipe;
+    @XmlTransient
+    public Set<EquipePoste> getEquipePosteCollection() {
+        return equipePosteCollection;
     }
 
-    public void setNomEquipe(String nomEquipe) {
-        this.nomEquipe = nomEquipe;
+    public void setEquipePosteCollection(Set<EquipePoste> equipePosteCollection) {
+        this.equipePosteCollection = equipePosteCollection;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
+    @XmlTransient
+    public Set<Module> getModuleCollection() {
+        return moduleCollection;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getCreationUser() {
-        return creationUser;
-    }
-
-    public void setCreationUser(String creationUser) {
-        this.creationUser = creationUser;
-    }
-
-    public List<Ticket> getTicketList() {
-        return ticketList;
-    }
-
-    public void setTicketList(List<Ticket> ticketList) {
-        this.ticketList = ticketList;
-    }
-
-    public List<Utilisateur> getUtilisateurList() {
-        return utilisateurList;
-    }
-
-    public void setUtilisateurList(List<Utilisateur> utilisateurList) {
-        this.utilisateurList = utilisateurList;
+    public void setModuleCollection(Set<Module> moduleCollection) {
+        this.moduleCollection = moduleCollection;
     }
 
     @Override
@@ -130,7 +94,7 @@ public class Equipe implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Equipe)) {
             return false;
         }
@@ -143,7 +107,7 @@ public class Equipe implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.domain.Equipe[ id=" + id + " ]";
+        return "com.csys.template.config.jpa.audit.log.demain.Equipe[ id=" + id + " ]";
     }
-
+    
 }

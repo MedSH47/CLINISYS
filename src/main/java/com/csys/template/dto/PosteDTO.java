@@ -2,20 +2,25 @@ package com.csys.template.dto;
 
 import java.lang.Integer;
 import java.lang.String;
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class PosteDTO {
-  
+  @NotNull
   private Integer id;
 
-
+  @Size(
+      min = 0,
+      max = 100
+  )
   private String designation;
 
-  private Integer code;
+  private Set<EquipePosteDTO> equipePosteCollection;
 
-  private List utilisateurList;
-
+  private Set<UtilisateurDTO> utilisateurCollection;
 
   public Integer getId() {
     return id;
@@ -33,20 +38,20 @@ public class PosteDTO {
     this.designation = designation;
   }
 
-  public Integer getCode() {
-    return code;
+  public Set<EquipePosteDTO> getEquipePosteCollection() {
+    return equipePosteCollection;
   }
 
-  public void setCode(Integer code) {
-    this.code = code;
+  public void setEquipePosteCollection(Set<EquipePosteDTO> equipePosteCollection) {
+    this.equipePosteCollection = equipePosteCollection;
   }
 
-  public List getUtilisateurList() {
-    return utilisateurList;
+  public Set<UtilisateurDTO> getUtilisateurCollection() {
+    return utilisateurCollection;
   }
 
-  public void setUtilisateurList(List utilisateurList) {
-    this.utilisateurList = utilisateurList;
+  public void setUtilisateurCollection(Set<UtilisateurDTO> utilisateurCollection) {
+    this.utilisateurCollection = utilisateurCollection;
   }
 }
 

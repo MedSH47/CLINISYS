@@ -5,96 +5,62 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
-import javax.persistence.*;
+import java.util.Set;
 
-import com.csys.template.config.jpa.audit.log.listener.EntityLogger;
-import com.csys.template.domain.enum_identifier.Priorite;
-import com.csys.template.domain.enum_identifier.Status;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "Ticket")
-@EntityListeners(EntityLogger.class)
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     @Column(name = "id")
     private Integer id;
-    @Column(name = "num_ticket")
-    private Integer numTicket;
-  
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    
-    private Status status;
-   
-    @Column(name = "priorite")
-    @Enumerated(EnumType.STRING)
-    private Priorite priorite;
-    @Column(name = "date_effectation_equip")
-    @Temporal(TemporalType.DATE)
-    private Date dateEffectationEquip;
+    @Column(name = "id_ticket_parent")
+    private Integer idTicketParent;
+    @Size(max = 200)
+    @Column(name = "titre")
+    private String titre;
+    @Size(max = 2147483647)
+    @Column(name = "description")
+    private String description;
+    @Size(max = 50)
+    @Column(name = "user_creation")
+    private String userCreation;
     @Column(name = "date_creation")
     @Temporal(TemporalType.DATE)
     private Date dateCreation;
-   
-    @Column(name = "creation_user")
-    private String creationUser;
-   
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "id_utilisateur", referencedColumnName = "id")
-    private Utilisateur collaborateur;
-   
-    @Column(name = "echeance")
-    private String echeance;
+    @Size(max = 20)
+    @Column(name = "statue")
+    private String statue;
+    @OneToMany(mappedBy = "idTicket", fetch = FetchType.EAGER)
+    private Set<Avancement> avancementCollection;
     @JoinColumn(name = "id_client", referencedColumnName = "id")
-    @ManyToOne
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     private Client idClient;
-    @JoinColumn(name = "id_equip", referencedColumnName = "id")
-    @ManyToOne
-    @JsonIgnore
-    private Equipe idEquip;
     @JoinColumn(name = "id_module", referencedColumnName = "id")
-    @ManyToOne
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     private Module idModule;
-
-    @Column(name = "designation")
-    private String designation;
-
-    public String getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(String designation) {
-        this.designation = designation;
-    }
-
-    public Ticket(Integer id, Integer numTicket, Status status,
-             Priorite priorite, Date dateEffectationEquip, Date dateCreation,
-            String creationUser, Utilisateur collaborateur, String echeance,
-            Client idClient, Equipe idEquip, Module idModule,String designation) {
-        this.id = id;
-        this.numTicket = numTicket;
-        this.status = status;
-        this.priorite = priorite;
-        this.dateEffectationEquip = dateEffectationEquip;
-        this.dateCreation = dateCreation;
-        this.creationUser = creationUser;
-        this.collaborateur = collaborateur;
-        this.echeance = echeance;
-        this.idClient = idClient;
-        this.idEquip = idEquip;
-        this.idModule = idModule;
-        this.designation=designation;
-    }
+    @OneToMany(mappedBy = "idTicket", fetch = FetchType.EAGER)
+    private Set<Ticketfichier> ticketfichierCollection;
 
     public Ticket() {
     }
@@ -111,36 +77,36 @@ public class Ticket implements Serializable {
         this.id = id;
     }
 
-    public Integer getNumTicket() {
-        return numTicket;
+    public Integer getIdTicketParent() {
+        return idTicketParent;
     }
 
-    public void setNumTicket(Integer numTicket) {
-        this.numTicket = numTicket;
+    public void setIdTicketParent(Integer idTicketParent) {
+        this.idTicketParent = idTicketParent;
     }
 
-    public Status getStatus() {
-        return status;
+    public String getTitre() {
+        return titre;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setTitre(String titre) {
+        this.titre = titre;
     }
 
-    public Priorite getPriorite() {
-        return priorite;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPriorite(Priorite priorite) {
-        this.priorite = priorite;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Date getDateEffectationEquip() {
-        return dateEffectationEquip;
+    public String getUserCreation() {
+        return userCreation;
     }
 
-    public void setDateEffectationEquip(Date dateEffectationEquip) {
-        this.dateEffectationEquip = dateEffectationEquip;
+    public void setUserCreation(String userCreation) {
+        this.userCreation = userCreation;
     }
 
     public Date getDateCreation() {
@@ -151,28 +117,21 @@ public class Ticket implements Serializable {
         this.dateCreation = dateCreation;
     }
 
-    public String getCreationUser() {
-        return creationUser;
+    public String getStatue() {
+        return statue;
     }
 
-    public void setCreationUser(String creationUser) {
-        this.creationUser = creationUser;
+    public void setStatue(String statue) {
+        this.statue = statue;
     }
 
-    public Utilisateur getCollaborateur() {
-        return collaborateur;
+    @XmlTransient
+    public Set<Avancement> getAvancementCollection() {
+        return avancementCollection;
     }
 
-    public void setCollaborateur(Utilisateur collaborateur) {
-        this.collaborateur = collaborateur;
-    }
-
-    public String getEcheance() {
-        return echeance;
-    }
-
-    public void setEcheance(String echeance) {
-        this.echeance = echeance;
+    public void setAvancementCollection(Set<Avancement> avancementCollection) {
+        this.avancementCollection = avancementCollection;
     }
 
     public Client getIdClient() {
@@ -183,20 +142,21 @@ public class Ticket implements Serializable {
         this.idClient = idClient;
     }
 
-    public Equipe getIdEquip() {
-        return idEquip;
-    }
-
-    public void setIdEquip(Equipe idEquip) {
-        this.idEquip = idEquip;
-    }
-
     public Module getIdModule() {
         return idModule;
     }
 
     public void setIdModule(Module idModule) {
         this.idModule = idModule;
+    }
+
+    @XmlTransient
+    public Set<Ticketfichier> getTicketfichierCollection() {
+        return ticketfichierCollection;
+    }
+
+    public void setTicketfichierCollection(Set<Ticketfichier> ticketfichierCollection) {
+        this.ticketfichierCollection = ticketfichierCollection;
     }
 
     @Override
@@ -208,7 +168,7 @@ public class Ticket implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Ticket)) {
             return false;
         }
@@ -221,7 +181,7 @@ public class Ticket implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.domain.Ticket[ id=" + id + " ]";
+        return "com.csys.template.config.jpa.audit.log.demain.Ticket[ id=" + id + " ]";
     }
-    
+
 }

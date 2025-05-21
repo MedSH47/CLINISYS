@@ -10,6 +10,18 @@
     <class>com.csys.template.domain.Client</class>
     <class>com.csys.template.domain.Ticket</class>
     <class>com.csys.template.domain.Utilisateur</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Avancement</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Fichiersjointes</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Ticketfichier</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Equipe</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Utilisateur</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Ticket</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Commentaire</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Module</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Poste</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Sysdiagrams</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.Client</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.EquipePoste</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://10.12.12.10:1420;databaseName=gcliniquenew"/>
       <property name="javax.persistence.jdbc.user" value="sa"/>

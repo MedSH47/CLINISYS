@@ -1,116 +1,102 @@
 package com.csys.template.service;
 
 import com.csys.template.domain.Utilisateur;
-import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.dto.UtilisateurDTO;
 import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.UtilisateurRepository;
 import com.google.common.base.Preconditions;
-
 import java.lang.Integer;
-
-import java.util.List;
-import java.util.Optional;
-
-import javax.persistence.EntityNotFoundException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Service
 public class UtilisateurService {
-  private final Logger log = LoggerFactory.getLogger(UtilisateurService.class);
 
-  @Autowired
-  private UtilisateurRepository utilisateurRepository;
+  private final UtilisateurRepository utilisateurRepository;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+  
+  private final PasswordEncoder passwordEncoder;
 
+  public UtilisateurService(UtilisateurRepository utilisateurRepository,PasswordEncoder passwordEncoder) {
+    this.utilisateurRepository=utilisateurRepository;
+    this.passwordEncoder=passwordEncoder;
+    
+  }
+
+  
   public ResponseEntity<?> createUtilisateur(Utilisateur utilisateur) {
-    if (utilisateurRepository.existsBylogin(utilisateur.getLogin())) {
-      return ResponseEntity.badRequest().body("User already exists");
-    }
-    if (utilisateur.getId() == null) {
-      utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
-      utilisateurRepository.save(utilisateur);
-      return ResponseEntity.ok().body(utilisateur.getLogin() + " created successfully");
-    }
-    return ResponseEntity.badRequest().body("User must not have ID");
+    String hashedpassword = passwordEncoder.encode(utilisateur.getMotDePasse());
+    utilisateur.setMotDePasse(hashedpassword);
+    Utilisateur newuser = utilisateurRepository.save(utilisateur);
+    return ResponseEntity.status(HttpStatus.CREATED).body(newuser);
   }
 
-  public List<Utilisateur> getAllUtilisateurs() {
-    return utilisateurRepository.findAll();
-  }
+ public UtilisateurDTO update(UtilisateurDTO utilisateurDTO) {
 
-  public Optional<Utilisateur> getUtilisateurById(Integer id) {
-    return utilisateurRepository.findById(id);
-  }
-
-  public UtilisateurDTO update(UtilisateurDTO utilisateurDTO) {
-    log.debug("Request to update Utilisateur: {}", utilisateurDTO);
     Utilisateur inBase = utilisateurRepository.findById(utilisateurDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "utilisateur.NotFound");
+
+    // Ne pas ré-encoder si aucun nouveau mot de passe n’a été fourni
+    if (utilisateurDTO.getMotDePasse() != null && 
+        !passwordEncoder.matches(utilisateurDTO.getMotDePasse(), inBase.getMotDePasse())) {
+        utilisateurDTO.setMotDePasse(passwordEncoder.encode(utilisateurDTO.getMotDePasse()));
+    } else {
+        utilisateurDTO.setMotDePasse(inBase.getMotDePasse());
+    }
+
     Utilisateur utilisateur = UtilisateurFactory.utilisateurDTOToUtilisateur(utilisateurDTO);
     utilisateur = utilisateurRepository.save(utilisateur);
-    UtilisateurDTO resultDTO = UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur);
-    return resultDTO;
-  }
+    return UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur);
+}
 
+  @Transactional(
+      readOnly = true
+  )
   public UtilisateurDTO findOne(Integer id) {
-    log.debug("Request to get Utilisateur: {}", id);
-    Utilisateur utilisateur = utilisateurRepository.findById(id).orElse(null);
+    Utilisateur utilisateur= utilisateurRepository.findById(id).orElse(null);
     UtilisateurDTO dto = UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur);
     return dto;
   }
 
+  @Transactional(
+      readOnly = true
+  )
   public Utilisateur findUtilisateur(Integer id) {
-    log.debug("Request to get Utilisateur: {}", id);
-    Utilisateur utilisateur = utilisateurRepository.findById(id).orElse(null);
+    Utilisateur utilisateur= utilisateurRepository.findById(id).orElse(null);
     return utilisateur;
   }
 
-  @Transactional(readOnly = true)
-  public List<UtilisateurDTO> findAll() {
-    log.debug("Request to get All Utilisateurs");
-    List<Utilisateur> result = utilisateurRepository.findAll();
+
+  @Transactional(
+      readOnly = true
+  )
+  public Collection<UtilisateurDTO> findAll() {
+    Collection<Utilisateur> result= utilisateurRepository.findAll();
     return UtilisateurFactory.utilisateurToUtilisateurDTOs(result);
   }
 
+  
   public void delete(Integer id) {
-    log.debug("Request to delete Utilisateur: {}", id);
     utilisateurRepository.deleteById(id);
   }
 
-  public boolean existsById(Integer id) {
-    return utilisateurRepository.existsById(id);
+  public boolean existeByemail(String email) {
+    // TODO Auto-generated method stub
+    return utilisateurRepository.existsByemail(email);
   }
 
-  public Role getRole(Integer id) {
-    if (id == null) {
-      throw new IllegalArgumentException("User ID cannot be null");
-    }
+  public Utilisateur findByemail(String email) {
+    // TODO Auto-generated method stub
+    return utilisateurRepository.findByemail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé avec l'email : " + email));
 
-    Optional<Utilisateur> userOptional = utilisateurRepository.findById(id);
-
-    if (userOptional.isPresent()) {
-      Utilisateur user = userOptional.get();
-      return user.getRole();
-    }
-
-    throw new EntityNotFoundException("User not found with ID: " + id);
-  }
-
-  public Utilisateur findBylogin(String login) {
-    return utilisateurRepository.findBylogin(login);
-  }
-
-  public Optional<Utilisateur> findById(Integer id) {
-    return utilisateurRepository.findById(id);
   }
 }
+

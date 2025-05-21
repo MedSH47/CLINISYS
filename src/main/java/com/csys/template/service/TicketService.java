@@ -7,12 +7,8 @@ import com.csys.template.repository.TicketRepository;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
 import java.util.Collection;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,17 +46,16 @@ public class TicketService {
    * @param ticketDTO
    * @return the updated entity
    */
-  public ResponseEntity< ?> update(TicketDTO ticketDTO) {
-    log.debug("Request to update Ticket: {}", ticketDTO);
-    // Convert DTO to entity
+  public TicketDTO update(TicketDTO ticketDTO) {
+    log.debug("Request to update Ticket: {}",ticketDTO);
+    Ticket inBase= ticketRepository.findById(ticketDTO.getId()).orElse(null);
+    Preconditions.checkArgument(inBase != null, "ticket.NotFound");
     Ticket ticket = TicketFactory.ticketDTOToTicket(ticketDTO);
-    
-    
-    
-    // Save the updated ticket
     ticket = ticketRepository.save(ticket);
-    return ResponseEntity.ok().body(TicketFactory.ticketToTicketDTO(ticket)) ;
-}
+    TicketDTO resultDTO = TicketFactory.ticketToTicketDTO(ticket);
+    return resultDTO;
+  }
+
   /**
    * Get one ticketDTO by id.
    *
@@ -115,7 +110,5 @@ public class TicketService {
     log.debug("Request to delete Ticket: {}",id);
     ticketRepository.deleteById(id);
   }
-
- 
 }
 

@@ -1,114 +1,69 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 
-import javax.persistence.*;
-
-import com.csys.template.config.jpa.audit.log.listener.EntityLogger;
 import com.csys.template.domain.enum_identifier.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name = "Utilisateur")
-@EntityListeners(EntityLogger.class)
 public class Utilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-
-    @Column(name = "login")
-    private String login;
-    @JsonIgnore
-    @OneToOne(mappedBy = "chef")
-    private Equipe chefEquipe;
-
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "creation_date")
-    @Temporal(TemporalType.DATE)
-    private Date creationDate;
-
-    @Column(name = "creation_user")
-    private String creationUser;
-
-    @Column(name = "actif")
-    private Boolean actif = false;
-
+    @Size(max = 50)
     @Column(name = "nom")
     private String nom;
-
+    @Size(max = 50)
     @Column(name = "prenom")
     private String prenom;
-
-    @Column(name = "cin")
-    private Integer cin;
-
-    @Column(name = "telephone")
-    private Integer telephone;
-
-    @Column(name = "role")
+    @Column(name = "num_telephone")
+    private BigInteger numTelephone;
+    @Size(max = 100)
+    @Column(name = "email",unique = true)
+    private String email;
+    @Size(max = 50)
+    @Column(name = "user_creation")
+    private String userCreation;
+    @Column(name = "date_creation")
+    @Temporal(TemporalType.DATE)
+    private Date dateCreation;
+    @Column(name = "mot_de_passe")
+    private String motDePasse;
+    
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private Role role;
-
-    @JoinColumn(name = "id_equip", referencedColumnName = "id")
-    @ManyToOne
-    private Equipe idEquip;
-
+    @Column(name = "activite")
+    private Boolean activite;
     @JoinColumn(name = "id_poste", referencedColumnName = "id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    
     private Poste idPoste;
 
-    @OneToMany(mappedBy = "collaborateur", fetch = FetchType.EAGER)
-    @JsonIgnore     
-    private List<Ticket> tickets = new ArrayList<>();
-
-    public List<Ticket> getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets = tickets;
-    }
-
-    // Constructors
     public Utilisateur() {
     }
 
-    public Utilisateur(Integer id, String login, String password, Date creationDate, String creationUser, Boolean actif,
-            String nom, String prenom, Integer cin, Role role, Equipe idEquip, Poste idPoste, Integer telephone,
-            List<Ticket> tickets, Equipe chefEquipe) {
+    public Utilisateur(Integer id) {
         this.id = id;
-        this.login = login;
-        this.password = password;
-        this.creationDate = creationDate;
-        this.creationUser = creationUser;
-        this.actif = actif;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.cin = cin;
-        this.role = role;
-        this.idEquip = idEquip;
-        this.idPoste = idPoste;
-        this.telephone = telephone;
-        this.tickets = tickets;
-        this.chefEquipe = chefEquipe;
-    }
-
-    // Getters and Setters
-    public Equipe getChefEquipe() {
-        return chefEquipe;
-    }
-
-    public void setChefEquipe(Equipe chefEquipe) {
-        this.chefEquipe = chefEquipe;
     }
 
     public Integer getId() {
@@ -117,54 +72,6 @@ public class Utilisateur implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public List<Ticket> getTicket() {
-        return tickets;
-    }
-
-    public void setTicket(List<Ticket> tickets) {
-        this.tickets = tickets;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getCreationUser() {
-        return creationUser;
-    }
-
-    public void setCreationUser(String creationUser) {
-        this.creationUser = creationUser;
-    }
-
-    public Boolean getActif() {
-        return actif;
-    }
-
-    public void setActif(Boolean actif) {
-        this.actif = actif;
     }
 
     public String getNom() {
@@ -183,20 +90,44 @@ public class Utilisateur implements Serializable {
         this.prenom = prenom;
     }
 
-    public Integer getCin() {
-        return cin;
+    public BigInteger getNumTelephone() {
+        return numTelephone;
     }
 
-    public void setCin(Integer cin) {
-        this.cin = cin;
+    public void setNumTelephone(BigInteger numTelephone) {
+        this.numTelephone = numTelephone;
     }
 
-    public Integer getTelephone() {
-        return telephone;
+    public String getEmail() {
+        return email;
     }
 
-    public void setTelephone(Integer telephone) {
-        this.telephone = telephone;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getUserCreation() {
+        return userCreation;
+    }
+
+    public void setUserCreation(String userCreation) {
+        this.userCreation = userCreation;
+    }
+
+    public Date getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(Date dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public String getMotDePasse() {
+        return motDePasse;
+    }
+
+    public void setMotDePasse(String motDePasse) {
+        this.motDePasse = motDePasse;
     }
 
     public Role getRole() {
@@ -207,12 +138,12 @@ public class Utilisateur implements Serializable {
         this.role = role;
     }
 
-    public Equipe getIdEquip() {
-        return idEquip;
+    public Boolean getActivite() {
+        return activite;
     }
 
-    public void setIdEquip(Equipe idEquip) {
-        this.idEquip = idEquip;
+    public void setActivite(Boolean activite) {
+        this.activite = activite;
     }
 
     public Poste getIdPoste() {
@@ -223,7 +154,6 @@ public class Utilisateur implements Serializable {
         this.idPoste = idPoste;
     }
 
-    // Other methods
     @Override
     public int hashCode() {
         int hash = 0;
@@ -245,6 +175,7 @@ public class Utilisateur implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.domain.Utilisateur[ id=" + id + " ]";
+        return "com.csys.template.config.jpa.audit.log.demain.Utilisateur[ id=" + id + " ]";
     }
+    
 }

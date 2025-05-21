@@ -1,58 +1,58 @@
 package com.csys.template.dto;
 
 import com.csys.template.domain.Client;
-import com.csys.template.domain.Equipe;
 import com.csys.template.domain.Module;
-import com.csys.template.domain.Utilisateur;
-import com.csys.template.domain.enum_identifier.Priorite;
-import com.csys.template.domain.enum_identifier.Status;
-
 import java.lang.Integer;
 import java.lang.String;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class TicketDTO {
- 
+  @NotNull
   private Integer id;
 
-  private Integer numTicket;
+  private Integer idTicketParent;
 
-  private Status status;
+  @Size(
+      min = 0,
+      max = 200
+  )
+  private String titre;
 
+  @Size(
+      min = 0,
+      max = 2147483647
+  )
+  private String description;
 
-  private Priorite priorite;
-
-  @Temporal(TemporalType.DATE)
-  private Date dateEffectationEquip;
+  @Size(
+      min = 0,
+      max = 50
+  )
+  private String userCreation;
 
   @Temporal(TemporalType.DATE)
   private Date dateCreation;
 
- 
-  private String creationUser;
+  @Size(
+      min = 0,
+      max = 20
+  )
+  private String statue;
 
-
-  private Utilisateur collaborateur;
-
-  private String echeance;
-
-  private String designation;
-
-  public String getDesignation() {
-    return designation;
-  }
-
-  public void setDesignation(String designation) {
-    this.designation = designation;
-  }
+  private Set<AvancementDTO> avancementCollection;
 
   private Client idClient;
 
-  private Equipe idEquip;
-
   private Module idModule;
+
+  private Set<TicketfichierDTO> ticketfichierCollection;
 
   public Integer getId() {
     return id;
@@ -62,36 +62,36 @@ public class TicketDTO {
     this.id = id;
   }
 
-  public Integer getNumTicket() {
-    return numTicket;
+  public Integer getIdTicketParent() {
+    return idTicketParent;
   }
 
-  public void setNumTicket(Integer numTicket) {
-    this.numTicket = numTicket;
+  public void setIdTicketParent(Integer idTicketParent) {
+    this.idTicketParent = idTicketParent;
   }
 
-  public Status getStatus() {
-    return status;
+  public String getTitre() {
+    return titre;
   }
 
-  public void setStatus(Status status) {
-    this.status = status;
+  public void setTitre(String titre) {
+    this.titre = titre;
   }
 
-  public Priorite getPriorite() {
-    return priorite;
+  public String getDescription() {
+    return description;
   }
 
-  public void setPriorite(Priorite priorite) {
-    this.priorite = priorite;
+  public void setDescription(String description) {
+    this.description = description;
   }
 
-  public Date getDateEffectationEquip() {
-    return dateEffectationEquip;
+  public String getUserCreation() {
+    return userCreation;
   }
 
-  public void setDateEffectationEquip(Date dateEffectationEquip) {
-    this.dateEffectationEquip = dateEffectationEquip;
+  public void setUserCreation(String userCreation) {
+    this.userCreation = userCreation;
   }
 
   public Date getDateCreation() {
@@ -102,28 +102,20 @@ public class TicketDTO {
     this.dateCreation = dateCreation;
   }
 
-  public String getCreationUser() {
-    return creationUser;
+  public String getStatue() {
+    return statue;
   }
 
-  public void setCreationUser(String creationUser) {
-    this.creationUser = creationUser;
+  public void setStatue(String statue) {
+    this.statue = statue;
   }
 
-  public Utilisateur getCollaborateur() {
-    return collaborateur;
+  public Set<AvancementDTO> getAvancementCollection() {
+    return avancementCollection;
   }
 
-  public void setCollaborateur(Utilisateur collaborateur) {
-    this.collaborateur = collaborateur;
-  }
-
-  public String getEcheance() {
-    return echeance;
-  }
-
-  public void setEcheance(String echeance) {
-    this.echeance = echeance;
+  public void setAvancementCollection(Set<AvancementDTO> avancementCollection) {
+    this.avancementCollection = avancementCollection;
   }
 
   public Client getIdClient() {
@@ -134,20 +126,20 @@ public class TicketDTO {
     this.idClient = idClient;
   }
 
-  public Equipe getIdEquip() {
-    return idEquip;
-  }
-
-  public void setIdEquip(Equipe idEquip) {
-    this.idEquip = idEquip;
-  }
-
   public Module getIdModule() {
     return idModule;
   }
 
   public void setIdModule(Module idModule) {
     this.idModule = idModule;
+  }
+
+  public Set<TicketfichierDTO> getTicketfichierCollection() {
+    return ticketfichierCollection;
+  }
+
+  public void setTicketfichierCollection(Set<TicketfichierDTO> ticketfichierCollection) {
+    this.ticketfichierCollection = ticketfichierCollection;
   }
 }
 

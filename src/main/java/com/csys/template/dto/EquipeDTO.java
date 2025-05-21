@@ -2,41 +2,25 @@ package com.csys.template.dto;
 
 import java.lang.Integer;
 import java.lang.String;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.Collection;
+import java.util.Set;
+
 import javax.validation.constraints.NotNull;
-
-import com.csys.template.domain.Utilisateur;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
+import javax.validation.constraints.Size;
 
 public class EquipeDTO {
   @NotNull
   private Integer id;
 
+  @Size(
+      min = 0,
+      max = 100
+  )
+  private String designation;
 
-  private String nomEquipe;
+  private Set<EquipePosteDTO> equipePosteCollection;
 
-  @Temporal(TemporalType.DATE)
-  private Date creationDate;
-
-  private String creationUser;
-  
-  private List<TicketDTO> ticketList;
-  private List<UtilisateurDTO> utilisateurList;
-
-  private Utilisateur chef;
-
-  public Utilisateur getChef() {
-    return chef;
-  }
-
-  public void setChef(Utilisateur chef) {
-    this.chef = chef;
-  }
+  private Set<ModuleDTO> moduleCollection;
 
   public Integer getId() {
     return id;
@@ -46,44 +30,28 @@ public class EquipeDTO {
     this.id = id;
   }
 
-  public String getNomEquipe() {
-    return nomEquipe;
+  public String getDesignation() {
+    return designation;
   }
 
-  public void setNomEquipe(String nomEquipe) {
-    this.nomEquipe = nomEquipe;
+  public void setDesignation(String designation) {
+    this.designation = designation;
   }
 
-  public Date getCreationDate() {
-    return creationDate;
+  public Set<EquipePosteDTO> getEquipePosteCollection() {
+    return equipePosteCollection;
   }
 
-  public void setCreationDate(Date creationDate) {
-    this.creationDate = creationDate;
+  public void setEquipePosteCollection(Set<EquipePosteDTO> equipePosteCollection) {
+    this.equipePosteCollection = equipePosteCollection;
   }
 
-  public String getCreationUser() {
-    return creationUser;
+  public Set<ModuleDTO> getModuleCollection() {
+    return moduleCollection;
   }
 
-  public void setCreationUser(String creationUser) {
-    this.creationUser = creationUser;
-  }
-
-  public List getTicketList() {
-    return ticketList;
-  }
-
-  public void setTicketList(List ticketList) {
-    this.ticketList = ticketList;
-  }
-
-  public List getUtilisateurList() {
-    return utilisateurList;
-  }
-
-  public void setUtilisateurList(List utilisateurList) {
-    this.utilisateurList = utilisateurList;
+  public void setModuleCollection(Set<ModuleDTO> moduleCollection) {
+    this.moduleCollection = moduleCollection;
   }
 }
 

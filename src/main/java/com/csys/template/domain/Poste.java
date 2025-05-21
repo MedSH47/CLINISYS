@@ -1,40 +1,39 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.*;
+import java.util.Collection;
+import java.util.Set;
 
-import com.csys.template.config.jpa.audit.log.listener.EntityLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "Poste")
-@EntityListeners(EntityLogger.class)
 public class Poste implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     @Column(name = "id")
     private Integer id;
-    
+    @Size(max = 100)
     @Column(name = "designation")
     private String designation;
-    @Column(name = "code")
-    private Integer code;
-    
-    
     @OneToMany(mappedBy = "idPoste", fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<Utilisateur> utilisateurList;
+    private Set<EquipePoste> equipePosteCollection;
+    @OneToMany(mappedBy = "idPoste", fetch = FetchType.EAGER)
+    private Set<Utilisateur> utilisateurCollection;
 
-    
     public Poste() {
     }
 
@@ -58,20 +57,22 @@ public class Poste implements Serializable {
         this.designation = designation;
     }
 
-    public Integer getCode() {
-        return code;
+    @XmlTransient
+    public Set<EquipePoste> getEquipePosteCollection() {
+        return equipePosteCollection;
     }
 
-    public void setCode(Integer code) {
-        this.code = code;
+    public void setEquipePosteCollection(Set<EquipePoste> equipePosteCollection) {
+        this.equipePosteCollection = equipePosteCollection;
     }
 
-    public List<Utilisateur> getUtilisateurList() {
-        return utilisateurList;
+    @XmlTransient
+    public Set<Utilisateur> getUtilisateurCollection() {
+        return utilisateurCollection;
     }
 
-    public void setUtilisateurList(List<Utilisateur> utilisateurList) {
-        this.utilisateurList = utilisateurList;
+    public void setUtilisateurCollection(Set<Utilisateur> utilisateurCollection) {
+        this.utilisateurCollection = utilisateurCollection;
     }
 
     @Override
@@ -83,7 +84,7 @@ public class Poste implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Poste)) {
             return false;
         }
@@ -96,7 +97,7 @@ public class Poste implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.domain.Poste[ id=" + id + " ]";
+        return "com.csys.template.config.jpa.audit.log.demain.Poste[ id=" + id + " ]";
     }
     
 }
