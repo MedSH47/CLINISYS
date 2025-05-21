@@ -55,7 +55,8 @@ public class Utilisateur implements Serializable {
     @Column(name = "activite")
     private Boolean activite;
     @JoinColumn(name = "id_poste", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     
     private Poste idPoste;
 
