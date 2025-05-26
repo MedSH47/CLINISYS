@@ -1,5 +1,5 @@
 package com.csys.template.web.rest.ressource;
-import com.csys.template.util.RestPreconditions;
+
 import com.csys.template.dto.ModuleDTO;
 import com.csys.template.service.ModuleService;
 import java.lang.Integer;
@@ -9,6 +9,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import javax.validation.Valid;
+import com.csys.template.util.RestPreconditions;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

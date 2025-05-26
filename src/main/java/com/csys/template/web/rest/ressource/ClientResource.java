@@ -1,10 +1,10 @@
 package com.csys.template.web.rest.ressource;
-import com.csys.template.util.RestPreconditions;
+
 import com.csys.template.dto.ClientDTO;
 import com.csys.template.service.ClientService;
-
-
 import java.lang.Integer;
+import com.csys.template.util.RestPreconditions;
+
 import java.lang.String;
 import java.lang.Void;
 import java.net.URI;

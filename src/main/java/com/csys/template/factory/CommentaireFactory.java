@@ -11,8 +11,8 @@ public class CommentaireFactory {
     CommentaireDTO commentaireDTO=new CommentaireDTO();
     commentaireDTO.setId(commentaire.getId());
     commentaireDTO.setCommentaire(commentaire.getCommentaire());
+    commentaireDTO.setDateCommentaire(commentaire.getDateCommentaire());
     commentaireDTO.setIdTicket(commentaire.getIdTicket());
-    commentaireDTO.setIdAvancement(commentaire.getIdAvancement());
     return commentaireDTO;
   }
 
@@ -20,8 +20,8 @@ public class CommentaireFactory {
     Commentaire commentaire=new Commentaire();
     commentaire.setId(commentaireDTO.getId());
     commentaire.setCommentaire(commentaireDTO.getCommentaire());
+    commentaire.setDateCommentaire(commentaireDTO.getDateCommentaire());
     commentaire.setIdTicket(commentaireDTO.getIdTicket());
-    commentaire.setIdAvancement(commentaireDTO.getIdAvancement());
     return commentaire;
   }
 

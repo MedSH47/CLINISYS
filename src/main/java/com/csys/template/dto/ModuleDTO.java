@@ -3,13 +3,23 @@ package com.csys.template.dto;
 import com.csys.template.domain.Equipe;
 import java.lang.Integer;
 import java.lang.String;
-import java.util.Collection;
-import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.Set;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 public class ModuleDTO {
-  @NotNull
   private Integer id;
+
+  @Temporal(TemporalType.DATE)
+  private Date dateCreation;
+
+  @Size(
+      min = 0,
+      max = 50
+  )
+  private String userCreation;
 
   @Size(
       min = 0,
@@ -17,9 +27,9 @@ public class ModuleDTO {
   )
   private String designation;
 
-  private Collection<TicketDTO> ticketCollection;
+  private Set ticketSet;
 
-  private Equipe idEquipe;
+  private EquipeDTO idEquipe;
 
   public Integer getId() {
     return id;
@@ -27,6 +37,22 @@ public class ModuleDTO {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  public Date getDateCreation() {
+    return dateCreation;
+  }
+
+  public void setDateCreation(Date dateCreation) {
+    this.dateCreation = dateCreation;
+  }
+
+  public String getUserCreation() {
+    return userCreation;
+  }
+
+  public void setUserCreation(String userCreation) {
+    this.userCreation = userCreation;
   }
 
   public String getDesignation() {
@@ -37,19 +63,19 @@ public class ModuleDTO {
     this.designation = designation;
   }
 
-  public Collection<TicketDTO> getTicketCollection() {
-    return ticketCollection;
+  public Set getTicketSet() {
+    return ticketSet;
   }
 
-  public void setTicketCollection(Collection<TicketDTO> ticketCollection) {
-    this.ticketCollection = ticketCollection;
+  public void setTicketSet(Set ticketSet) {
+    this.ticketSet = ticketSet;
   }
 
-  public Equipe getIdEquipe() {
+  public EquipeDTO getIdEquipe() {
     return idEquipe;
   }
 
-  public void setIdEquipe(Equipe idEquipe) {
+  public void setIdEquipe(EquipeDTO idEquipe) {
     this.idEquipe = idEquipe;
   }
 }

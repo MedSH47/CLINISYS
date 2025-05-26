@@ -22,6 +22,8 @@
     <class>com.csys.template.config.jpa.audit.log.demain.Sysdiagrams</class>
     <class>com.csys.template.config.jpa.audit.log.demain.Client</class>
     <class>com.csys.template.config.jpa.audit.log.demain.EquipePoste</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.DocumentJointes</class>
+    <class>com.csys.template.config.jpa.audit.log.demain.EquipePosteutilisateur</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://10.12.12.10:1420;databaseName=gcliniquenew"/>
       <property name="javax.persistence.jdbc.user" value="sa"/>

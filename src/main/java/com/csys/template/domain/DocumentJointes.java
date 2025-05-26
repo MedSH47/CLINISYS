@@ -6,6 +6,7 @@ package com.csys.template.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,52 +15,58 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author harra
  */
 @Entity
-@Table(name = "Avancement", catalog = "Gestion_Tickets", schema = "dbo")
+@Table(name = "document_jointes", catalog = "Gestion_Tickets", schema = "dbo")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Avancement.findAll", query = "SELECT a FROM Avancement a")})
-public class Avancement implements Serializable {
+    @NamedQuery(name = "DocumentJointes.findAll", query = "SELECT d FROM DocumentJointes d")})
+public class DocumentJointes implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "date_echeance")
+    @Size(max = 10)
+    @Column(name = "extension")
+    private String extension;
+    @Lob
+    @Column(name = "document")
+    private byte[] document;
+    @Column(name = "date_document")
     @Temporal(TemporalType.DATE)
-    private Date dateEcheance;
-    @Column(name = "date_debut")
-    @Temporal(TemporalType.DATE)
-    private Date dateDebut;
-    @Column(name = "date_fin")
-    @Temporal(TemporalType.DATE)
-    private Date dateFin;
-    @Column(name = "duree_travail")
-    @Temporal(TemporalType.TIME)
-    private Date dureeTravail;
+    private Date dateDocument;
+    @Size(max = 2147483647)
+    @Column(name = "nom_document")
+    private String nomDocument;
     @JoinColumn(name = "id_ticket", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Ticket idTicket;
+    @OneToMany(mappedBy = "idFichier", fetch = FetchType.LAZY)
+    private Set<Ticketfichier> ticketfichierSet;
 
-    public Avancement() {
+    public DocumentJointes() {
     }
 
-    public Avancement(Integer id) {
+    public DocumentJointes(Integer id) {
         this.id = id;
     }
 
@@ -71,36 +78,36 @@ public class Avancement implements Serializable {
         this.id = id;
     }
 
-    public Date getDateEcheance() {
-        return dateEcheance;
+    public String getExtension() {
+        return extension;
     }
 
-    public void setDateEcheance(Date dateEcheance) {
-        this.dateEcheance = dateEcheance;
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
-    public Date getDateDebut() {
-        return dateDebut;
+    public byte[] getDocument() {
+        return document;
     }
 
-    public void setDateDebut(Date dateDebut) {
-        this.dateDebut = dateDebut;
+    public void setDocument(byte[] document) {
+        this.document = document;
     }
 
-    public Date getDateFin() {
-        return dateFin;
+    public Date getDateDocument() {
+        return dateDocument;
     }
 
-    public void setDateFin(Date dateFin) {
-        this.dateFin = dateFin;
+    public void setDateDocument(Date dateDocument) {
+        this.dateDocument = dateDocument;
     }
 
-    public Date getDureeTravail() {
-        return dureeTravail;
+    public String getNomDocument() {
+        return nomDocument;
     }
 
-    public void setDureeTravail(Date dureeTravail) {
-        this.dureeTravail = dureeTravail;
+    public void setNomDocument(String nomDocument) {
+        this.nomDocument = nomDocument;
     }
 
     public Ticket getIdTicket() {
@@ -109,6 +116,15 @@ public class Avancement implements Serializable {
 
     public void setIdTicket(Ticket idTicket) {
         this.idTicket = idTicket;
+    }
+
+    @XmlTransient
+    public Set<Ticketfichier> getTicketfichierSet() {
+        return ticketfichierSet;
+    }
+
+    public void setTicketfichierSet(Set<Ticketfichier> ticketfichierSet) {
+        this.ticketfichierSet = ticketfichierSet;
     }
 
     @Override
@@ -121,10 +137,10 @@ public class Avancement implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Avancement)) {
+        if (!(object instanceof DocumentJointes)) {
             return false;
         }
-        Avancement other = (Avancement) object;
+        DocumentJointes other = (DocumentJointes) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -133,7 +149,7 @@ public class Avancement implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.config.jpa.audit.log.demain.Avancement[ id=" + id + " ]";
+        return "com.csys.template.config.jpa.audit.log.demain.DocumentJointes[ id=" + id + " ]";
     }
     
 }

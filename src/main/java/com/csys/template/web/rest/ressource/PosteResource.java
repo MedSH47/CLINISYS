@@ -1,5 +1,4 @@
 package com.csys.template.web.rest.ressource;
-import com.csys.template.util.RestPreconditions;
 
 import com.csys.template.dto.PosteDTO;
 import com.csys.template.service.PosteService;
@@ -8,6 +7,8 @@ import java.lang.String;
 import java.lang.Void;
 import java.net.URI;
 import java.net.URISyntaxException;
+import com.csys.template.util.RestPreconditions;
+
 import java.util.Collection;
 import javax.validation.Valid;
 import org.slf4j.Logger;

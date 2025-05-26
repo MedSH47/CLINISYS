@@ -3,14 +3,23 @@ package com.csys.template.dto;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
-
-import javax.validation.constraints.NotNull;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 public class PosteDTO {
-  @NotNull
   private Integer id;
+
+  @Temporal(TemporalType.DATE)
+  private Date dateCreation;
+
+  @Size(
+      min = 0,
+      max = 50
+  )
+  private String userCreation;
 
   @Size(
       min = 0,
@@ -18,9 +27,7 @@ public class PosteDTO {
   )
   private String designation;
 
-  private Set<EquipePosteDTO> equipePosteCollection;
-
-  private Set<UtilisateurDTO> utilisateurCollection;
+  private Collection equipePosteutilisateurSet;
 
   public Integer getId() {
     return id;
@@ -28,6 +35,22 @@ public class PosteDTO {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  public Date getDateCreation() {
+    return dateCreation;
+  }
+
+  public void setDateCreation(Date dateCreation) {
+    this.dateCreation = dateCreation;
+  }
+
+  public String getUserCreation() {
+    return userCreation;
+  }
+
+  public void setUserCreation(String userCreation) {
+    this.userCreation = userCreation;
   }
 
   public String getDesignation() {
@@ -38,20 +61,12 @@ public class PosteDTO {
     this.designation = designation;
   }
 
-  public Set<EquipePosteDTO> getEquipePosteCollection() {
-    return equipePosteCollection;
+  public Collection getEquipePosteutilisateurSet() {
+    return equipePosteutilisateurSet;
   }
 
-  public void setEquipePosteCollection(Set<EquipePosteDTO> equipePosteCollection) {
-    this.equipePosteCollection = equipePosteCollection;
-  }
-
-  public Set<UtilisateurDTO> getUtilisateurCollection() {
-    return utilisateurCollection;
-  }
-
-  public void setUtilisateurCollection(Set<UtilisateurDTO> utilisateurCollection) {
-    this.utilisateurCollection = utilisateurCollection;
+  public void setEquipePosteutilisateurSet(Collection equipePosteutilisateurSet) {
+    this.equipePosteutilisateurSet = equipePosteutilisateurSet;
   }
 }
 

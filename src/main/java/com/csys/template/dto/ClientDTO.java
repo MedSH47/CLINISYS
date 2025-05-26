@@ -3,12 +3,13 @@ package com.csys.template.dto;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
-import java.util.Collection;
-import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.Set;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 public class ClientDTO {
-  @NotNull
   private Integer id;
 
   @Size(
@@ -35,9 +36,18 @@ public class ClientDTO {
   )
   private String region;
 
+  @Temporal(TemporalType.DATE)
+  private Date dateCreation;
+
+  @Size(
+      min = 0,
+      max = 50
+  )
+  private String userCreation;
+
   private Boolean actif;
 
-  private Collection<TicketDTO> ticketCollection;
+  private Set ticketSet;
 
   public Integer getId() {
     return id;
@@ -79,6 +89,22 @@ public class ClientDTO {
     this.region = region;
   }
 
+  public Date getDateCreation() {
+    return dateCreation;
+  }
+
+  public void setDateCreation(Date dateCreation) {
+    this.dateCreation = dateCreation;
+  }
+
+  public String getUserCreation() {
+    return userCreation;
+  }
+
+  public void setUserCreation(String userCreation) {
+    this.userCreation = userCreation;
+  }
+
   public Boolean getActif() {
     return actif;
   }
@@ -87,12 +113,12 @@ public class ClientDTO {
     this.actif = actif;
   }
 
-  public Collection<TicketDTO> getTicketCollection() {
-    return ticketCollection;
+  public Set getTicketSet() {
+    return ticketSet;
   }
 
-  public void setTicketCollection(Collection<TicketDTO> ticketCollection) {
-    this.ticketCollection = ticketCollection;
+  public void setTicketSet(Set ticketSet) {
+    this.ticketSet = ticketSet;
   }
 }
 

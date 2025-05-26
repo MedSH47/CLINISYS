@@ -1,13 +1,14 @@
 package com.csys.template.dto;
 
-import com.csys.template.domain.Avancement;
+import com.csys.template.domain.Ticket;
 import java.lang.Integer;
 import java.lang.String;
-import javax.validation.constraints.NotNull;
+import java.util.Date;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 public class CommentaireDTO {
-  @NotNull
   private Integer id;
 
   @Size(
@@ -16,9 +17,10 @@ public class CommentaireDTO {
   )
   private String commentaire;
 
-  private Integer idTicket;
+  @Temporal(TemporalType.DATE)
+  private Date dateCommentaire;
 
-  private Avancement idAvancement;
+  private Ticket idTicket;
 
   public Integer getId() {
     return id;
@@ -36,20 +38,20 @@ public class CommentaireDTO {
     this.commentaire = commentaire;
   }
 
-  public Integer getIdTicket() {
+  public Date getDateCommentaire() {
+    return dateCommentaire;
+  }
+
+  public void setDateCommentaire(Date dateCommentaire) {
+    this.dateCommentaire = dateCommentaire;
+  }
+
+  public Ticket getIdTicket() {
     return idTicket;
   }
 
-  public void setIdTicket(Integer idTicket) {
+  public void setIdTicket(Ticket idTicket) {
     this.idTicket = idTicket;
-  }
-
-  public Avancement getIdAvancement() {
-    return idAvancement;
-  }
-
-  public void setIdAvancement(Avancement idAvancement) {
-    this.idAvancement = idAvancement;
   }
 }
 

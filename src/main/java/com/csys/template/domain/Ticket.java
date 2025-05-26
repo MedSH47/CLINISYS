@@ -5,37 +5,55 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author harra
+ */
 @Entity
-@Table(name = "Ticket")
+@Table(name = "Ticket", catalog = "Gestion_Tickets", schema = "dbo")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Ticket.findAll", query = "SELECT t FROM Ticket t")})
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "id_ticket_parent")
-    private Integer idTicketParent;
+    @ManyToOne
+    @JoinColumn(name = "id_ticket_parent")
+    private Ticket parentTicket;
+
+    // Enfants de ce ticket (inverse side)
+    @OneToMany(mappedBy = "parentTicket", cascade = CascadeType.ALL)
+    private Set<Ticket> childTickets = new HashSet<>();
+
     @Size(max = 200)
     @Column(name = "titre")
     private String titre;
@@ -49,18 +67,28 @@ public class Ticket implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date dateCreation;
     @Size(max = 20)
+    @Column(name = "priorite")
+    private String priorite;
+    @Size(max = 20)
     @Column(name = "statue")
     private String statue;
-    @OneToMany(mappedBy = "idTicket", fetch = FetchType.EAGER)
-    private Set<Avancement> avancementCollection;
+    @OneToMany(mappedBy = "idTicket", fetch = FetchType.LAZY)
+    private Set<Avancement> avancementSet;
     @JoinColumn(name = "id_client", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Client idClient;
     @JoinColumn(name = "id_module", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Module idModule;
-    @OneToMany(mappedBy = "idTicket", fetch = FetchType.EAGER)
-    private Set<Ticketfichier> ticketfichierCollection;
+    @JoinColumn(name = "id_utilisateur", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Utilisateur idUtilisateur;
+    @OneToMany(mappedBy = "idTicket", fetch = FetchType.LAZY)
+    private Set<DocumentJointes> documentJointesSet;
+    @OneToMany(mappedBy = "idTicket", fetch = FetchType.LAZY)
+    private Set<Commentaire> commentaireSet;
+    @OneToMany(mappedBy = "idTicket", fetch = FetchType.LAZY)
+    private Set<Ticketfichier> ticketfichierSet;
 
     public Ticket() {
     }
@@ -77,12 +105,20 @@ public class Ticket implements Serializable {
         this.id = id;
     }
 
-    public Integer getIdTicketParent() {
-        return idTicketParent;
+   public Ticket getParentTicket() {
+        return parentTicket;
     }
 
-    public void setIdTicketParent(Integer idTicketParent) {
-        this.idTicketParent = idTicketParent;
+    public void setParentTicket(Ticket parentTicket) {
+        this.parentTicket = parentTicket;
+    }
+
+    public Set<Ticket> getChildTickets() {
+        return childTickets;
+    }
+
+    public void setChildTickets(Set<Ticket> childTickets) {
+        this.childTickets = childTickets;
     }
 
     public String getTitre() {
@@ -117,6 +153,14 @@ public class Ticket implements Serializable {
         this.dateCreation = dateCreation;
     }
 
+    public String getPriorite() {
+        return priorite;
+    }
+
+    public void setPriorite(String priorite) {
+        this.priorite = priorite;
+    }
+
     public String getStatue() {
         return statue;
     }
@@ -126,12 +170,12 @@ public class Ticket implements Serializable {
     }
 
     @XmlTransient
-    public Set<Avancement> getAvancementCollection() {
-        return avancementCollection;
+    public Set<Avancement> getAvancementSet() {
+        return avancementSet;
     }
 
-    public void setAvancementCollection(Set<Avancement> avancementCollection) {
-        this.avancementCollection = avancementCollection;
+    public void setAvancementSet(Set<Avancement> avancementSet) {
+        this.avancementSet = avancementSet;
     }
 
     public Client getIdClient() {
@@ -150,13 +194,39 @@ public class Ticket implements Serializable {
         this.idModule = idModule;
     }
 
-    @XmlTransient
-    public Set<Ticketfichier> getTicketfichierCollection() {
-        return ticketfichierCollection;
+    public Utilisateur getIdUtilisateur() {
+        return idUtilisateur;
     }
 
-    public void setTicketfichierCollection(Set<Ticketfichier> ticketfichierCollection) {
-        this.ticketfichierCollection = ticketfichierCollection;
+    public void setIdUtilisateur(Utilisateur idUtilisateur) {
+        this.idUtilisateur = idUtilisateur;
+    }
+
+    @XmlTransient
+    public Set<DocumentJointes> getDocumentJointesSet() {
+        return documentJointesSet;
+    }
+
+    public void setDocumentJointesSet(Set<DocumentJointes> documentJointesSet) {
+        this.documentJointesSet = documentJointesSet;
+    }
+
+    @XmlTransient
+    public Set<Commentaire> getCommentaireSet() {
+        return commentaireSet;
+    }
+
+    public void setCommentaireSet(Set<Commentaire> commentaireSet) {
+        this.commentaireSet = commentaireSet;
+    }
+
+    @XmlTransient
+    public Set<Ticketfichier> getTicketfichierSet() {
+        return ticketfichierSet;
+    }
+
+    public void setTicketfichierSet(Set<Ticketfichier> ticketfichierSet) {
+        this.ticketfichierSet = ticketfichierSet;
     }
 
     @Override
@@ -183,5 +253,5 @@ public class Ticket implements Serializable {
     public String toString() {
         return "com.csys.template.config.jpa.audit.log.demain.Ticket[ id=" + id + " ]";
     }
-
+    
 }

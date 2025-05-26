@@ -1,10 +1,12 @@
 package com.csys.template.web.rest.ressource;
-import com.csys.template.util.RestPreconditions;
+
 import com.csys.template.dto.CommentaireDTO;
 import com.csys.template.service.CommentaireService;
 import java.lang.Integer;
 import java.lang.String;
 import java.lang.Void;
+import com.csys.template.util.RestPreconditions;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;

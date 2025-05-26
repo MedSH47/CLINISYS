@@ -1,109 +1,73 @@
 package com.csys.template.factory;
 
-import com.csys.template.domain.EquipePoste;
 import com.csys.template.domain.Poste;
-import com.csys.template.domain.Utilisateur;
-import com.csys.template.dto.EquipePosteDTO;
 import com.csys.template.dto.PosteDTO;
-import com.csys.template.dto.UtilisateurDTO;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class PosteFactory {
-  public static PosteDTO posteToPosteDTO(Poste poste) {
-    PosteDTO posteDTO=new PosteDTO();
+  public static PosteDTO posteToPosteDTO(Poste poste, boolean fetchDetails) {
+    PosteDTO posteDTO = new PosteDTO();
+    if (poste == null) {
+        return null;
+    }
     posteDTO.setId(poste.getId());
+    posteDTO.setDateCreation(poste.getDateCreation());
+    posteDTO.setUserCreation(poste.getUserCreation());
     posteDTO.setDesignation(poste.getDesignation());
-    Set<EquipePosteDTO> equipePosteCollectionDtos = new HashSet<>();
-    poste.getEquipePosteCollection().forEach(x -> {
-      EquipePosteDTO equipeposteDto = new EquipePosteDTO();
-      equipeposteDto = EquipePosteFactory.equipeposteToEquipePosteDTO(x);
-      equipePosteCollectionDtos.add(equipeposteDto);
-    } );
-    if(posteDTO.getEquipePosteCollection() !=null) {
-      posteDTO.getEquipePosteCollection().clear();
-      posteDTO.getEquipePosteCollection().addAll(equipePosteCollectionDtos);
-    }
-    else {
-      posteDTO.setEquipePosteCollection(equipePosteCollectionDtos);
-    }
-    Set<UtilisateurDTO> utilisateurCollectionDtos = new HashSet<>();
-    poste.getUtilisateurCollection().forEach(x -> {
-      UtilisateurDTO utilisateurDto = new UtilisateurDTO();
-      utilisateurDto = UtilisateurFactory.utilisateurToUtilisateurDTO(x);
-      utilisateurCollectionDtos.add(utilisateurDto);
-    } );
-    if(posteDTO.getUtilisateurCollection() !=null) {
-      posteDTO.getUtilisateurCollection().clear();
-      posteDTO.getUtilisateurCollection().addAll(utilisateurCollectionDtos);
-    }
-    else {
-      posteDTO.setUtilisateurCollection(utilisateurCollectionDtos);
+
+    if (fetchDetails) {
+        if (poste.getEquipePosteutilisateurSet() != null) {
+            posteDTO.setEquipePosteutilisateurSet(
+                EquipePosteutilisateurFactory.equipeposteutilisateurToEquipePosteutilisateurDTOs(
+                    poste.getEquipePosteutilisateurSet(), true // true: include User and Equipe details in EPU
+                )
+            );
+        } else {
+            posteDTO.setEquipePosteutilisateurSet(new ArrayList<>());
+        }
+    } else {
+      // If not fetching details, set an empty list or null
+      posteDTO.setEquipePosteutilisateurSet(new ArrayList<>());
     }
     return posteDTO;
+  }
+  
+  // Overload for backward compatibility or default non-detailed conversion
+  public static PosteDTO posteToPosteDTO(Poste poste) {
+    return posteToPosteDTO(poste, false); // Default to not fetching details
   }
 
   public static Poste posteDTOToPoste(PosteDTO posteDTO) {
-    Poste poste=new Poste();
+    Poste poste = new Poste();
+    if (posteDTO == null) {
+        return null;
+    }
     poste.setId(posteDTO.getId());
+    poste.setDateCreation(posteDTO.getDateCreation());
+    poste.setUserCreation(posteDTO.getUserCreation());
     poste.setDesignation(posteDTO.getDesignation());
-    Set<EquipePoste> equipePosteCollections = new HashSet<>();
-    posteDTO.getEquipePosteCollection().forEach(x -> {
-      EquipePoste equipeposte = new EquipePoste();
-      equipeposte = EquipePosteFactory.equipeposteDTOToEquipePoste(x);
-      equipePosteCollections.add(equipeposte);
-    } );
-    if(poste.getEquipePosteCollection() !=null) {
-      poste.getEquipePosteCollection().clear();
-      poste.getEquipePosteCollection().addAll(equipePosteCollections);
-    }
-    else {
-      poste.setEquipePosteCollection(equipePosteCollections);
-    }
-    Set<Utilisateur> utilisateurCollections = new HashSet<>();
-    posteDTO.getUtilisateurCollection().forEach(x -> {
-      Utilisateur utilisateur = new Utilisateur();
-      utilisateur = UtilisateurFactory.utilisateurDTOToUtilisateur(x);
-      utilisateurCollections.add(utilisateur);
-    } );
-    if(poste.getUtilisateurCollection() !=null) {
-      poste.getUtilisateurCollection().clear();
-      poste.getUtilisateurCollection().addAll(utilisateurCollections);
-    }
-    else {
-      poste.setUtilisateurCollection(utilisateurCollections);
-    }
+    // If EquipePosteutilisateurSet needs to be mapped back to entities:
+    // This would require EquipePosteutilisateurFactory.equipeposteutilisateurDTOToEquipePosteutilisateurs
+    // and careful handling of nested entities.
+    // poste.setEquipePosteutilisateurSet( ... ); 
     return poste;
   }
 
+  public static Collection<PosteDTO> posteToPosteDTOs(Collection<Poste> postes, boolean fetchDetails) {
+    if (postes == null) {
+        return new ArrayList<>();
+    }
+    List<PosteDTO> postesDTO = new ArrayList<>();
+    postes.forEach(x -> {
+      postesDTO.add(posteToPosteDTO(x, fetchDetails));
+    });
+    return postesDTO;
+  }
+
+  // Overload for backward compatibility or default behavior
   public static Collection<PosteDTO> posteToPosteDTOs(Collection<Poste> postes) {
-    List<PosteDTO> postesDTO=new ArrayList<>();
-    postes.forEach(x -> {
-      postesDTO.add(posteToPosteDTO(x));
-    } );
-    return postesDTO;
-  }
-
-
-
-  
-
-  public static PosteDTO lazyposteToPosteDTO(Poste poste) {
-    PosteDTO posteDTO=new PosteDTO();
-    posteDTO.setId(poste.getId());
-    posteDTO.setDesignation(poste.getDesignation());
-    return posteDTO;
-  }
-
-  public static Collection<PosteDTO> lazyposteToPosteDTOs(Collection<Poste> postes) {
-    List<PosteDTO> postesDTO=new ArrayList<>();
-    postes.forEach(x -> {
-      postesDTO.add(lazyposteToPosteDTO(x));
-    } );
-    return postesDTO;
+    return posteToPosteDTOs(postes, false); // Default to not fetching details
   }
 }
-

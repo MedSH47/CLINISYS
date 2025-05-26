@@ -1,8 +1,15 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.csys.template.domain;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Set;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,17 +18,29 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.csys.template.domain.enum_identifier.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
+/**
+ *
+ * @author harra
+ */
 @Entity
-@Table(name = "Utilisateur")
+@Table(name = "Utilisateur", catalog = "Gestion_Tickets", schema = "dbo")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Utilisateur.findAll", query = "SELECT u FROM Utilisateur u")})
 public class Utilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,7 +57,7 @@ public class Utilisateur implements Serializable {
     @Column(name = "num_telephone")
     private BigInteger numTelephone;
     @Size(max = 100)
-    @Column(name = "email",unique = true)
+    @Column(name = "email")
     private String email;
     @Size(max = 50)
     @Column(name = "user_creation")
@@ -46,19 +65,24 @@ public class Utilisateur implements Serializable {
     @Column(name = "date_creation")
     @Temporal(TemporalType.DATE)
     private Date dateCreation;
+    @Size(max = 2147483647)
     @Column(name = "mot_de_passe")
     private String motDePasse;
+    @Lob
+    @Column(name = "photo")
+    private byte[] photo;
     
-    @Enumerated(EnumType.STRING)
     @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     private Role role;
     @Column(name = "activite")
     private Boolean activite;
-    @JoinColumn(name = "id_poste", referencedColumnName = "id")
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
-    
-    private Poste idPoste;
+    @OneToMany(mappedBy = "idUtilisateur", fetch = FetchType.LAZY)
+    private Set<Ticket> ticketSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "utilisateur", fetch = FetchType.LAZY)
+    private Set<EquipePosteutilisateur> equipePosteutilisateurSet;
+    @OneToMany(mappedBy = "chefEquipe", fetch = FetchType.LAZY)
+    private Set<Equipe> equipeSet;
 
     public Utilisateur() {
     }
@@ -131,6 +155,15 @@ public class Utilisateur implements Serializable {
         this.motDePasse = motDePasse;
     }
 
+  
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
     public Role getRole() {
         return role;
     }
@@ -147,12 +180,31 @@ public class Utilisateur implements Serializable {
         this.activite = activite;
     }
 
-    public Poste getIdPoste() {
-        return idPoste;
+    @XmlTransient
+    public Set<Ticket> getTicketSet() {
+        return ticketSet;
     }
 
-    public void setIdPoste(Poste idPoste) {
-        this.idPoste = idPoste;
+    public void setTicketSet(Set<Ticket> ticketSet) {
+        this.ticketSet = ticketSet;
+    }
+
+    @XmlTransient
+    public Set<EquipePosteutilisateur> getEquipePosteutilisateurSet() {
+        return equipePosteutilisateurSet;
+    }
+
+    public void setEquipePosteutilisateurSet(Set<EquipePosteutilisateur> equipePosteutilisateurSet) {
+        this.equipePosteutilisateurSet = equipePosteutilisateurSet;
+    }
+
+    @XmlTransient
+    public Set<Equipe> getEquipeSet() {
+        return equipeSet;
+    }
+
+    public void setEquipeSet(Set<Equipe> equipeSet) {
+        this.equipeSet = equipeSet;
     }
 
     @Override
@@ -164,6 +216,7 @@ public class Utilisateur implements Serializable {
 
     @Override
     public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Utilisateur)) {
             return false;
         }

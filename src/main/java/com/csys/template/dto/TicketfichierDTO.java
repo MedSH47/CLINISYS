@@ -1,15 +1,13 @@
 package com.csys.template.dto;
 
-import com.csys.template.domain.Fichiersjointes;
+import com.csys.template.domain.DocumentJointes;
 import com.csys.template.domain.Ticket;
 import java.lang.Integer;
-import javax.validation.constraints.NotNull;
 
 public class TicketfichierDTO {
-  @NotNull
   private Integer id;
 
-  private Fichiersjointes idFichier;
+  private DocumentJointes idFichier;
 
   private Ticket idTicket;
 
@@ -21,11 +19,11 @@ public class TicketfichierDTO {
     this.id = id;
   }
 
-  public Fichiersjointes getIdFichier() {
+  public DocumentJointes getIdFichier() {
     return idFichier;
   }
 
-  public void setIdFichier(Fichiersjointes idFichier) {
+  public void setIdFichier(DocumentJointes idFichier) {
     this.idFichier = idFichier;
   }
 

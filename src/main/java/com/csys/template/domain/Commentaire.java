@@ -5,16 +5,21 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -24,23 +29,27 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author harra
  */
 @Entity
-@Table(name = "Commentaire")
+@Table(name = "Commentaire", catalog = "Gestion_Tickets", schema = "dbo")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Commentaire.findAll", query = "SELECT c FROM Commentaire c")})
 public class Commentaire implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Size(max = 2147483647)
     @Column(name = "commentaire")
     private String commentaire;
-    @Column(name = "id_ticket")
-    private Integer idTicket;
-    @JoinColumn(name = "id_avancement", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Avancement idAvancement;
+    @Column(name = "date_commentaire")
+    @Temporal(TemporalType.DATE)
+    private Date dateCommentaire;
+    @JoinColumn(name = "id_ticket", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Ticket idTicket;
 
     public Commentaire() {
     }
@@ -65,20 +74,20 @@ public class Commentaire implements Serializable {
         this.commentaire = commentaire;
     }
 
-    public Integer getIdTicket() {
+    public Date getDateCommentaire() {
+        return dateCommentaire;
+    }
+
+    public void setDateCommentaire(Date dateCommentaire) {
+        this.dateCommentaire = dateCommentaire;
+    }
+
+    public Ticket getIdTicket() {
         return idTicket;
     }
 
-    public void setIdTicket(Integer idTicket) {
+    public void setIdTicket(Ticket idTicket) {
         this.idTicket = idTicket;
-    }
-
-    public Avancement getIdAvancement() {
-        return idAvancement;
-    }
-
-    public void setIdAvancement(Avancement idAvancement) {
-        this.idAvancement = idAvancement;
     }
 
     @Override

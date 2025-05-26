@@ -1,13 +1,12 @@
 package com.csys.template.dto;
 
-import com.csys.template.domain.Poste;
-import com.csys.template.domain.enum_identifier.Role;
-
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,8 +14,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+
+import com.csys.template.domain.enum_identifier.Role;
+import com.fasterxml.jackson.annotation.JsonInclude;
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UtilisateurDTO {
-  
   private Integer id;
 
   @Size(
@@ -48,15 +50,28 @@ public class UtilisateurDTO {
   @Temporal(TemporalType.DATE)
   private Date dateCreation;
 
-
+  @Size(
+      min = 0,
+      max = 2147483647
+  )
   private String motDePasse;
 
+  
+
+
+  private byte[] photo;
+
+ 
   @Enumerated(EnumType.STRING)
   private Role role;
 
   private Boolean activite;
 
-  private Poste idPoste;
+  private Set ticketSet;
+
+  private Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet;
+
+  private Set equipeSet;
 
   public Integer getId() {
     return id;
@@ -122,6 +137,16 @@ public class UtilisateurDTO {
     this.motDePasse = motDePasse;
   }
 
+
+
+  public byte[] getPhoto() {
+    return photo;
+  }
+
+  public void setPhoto(byte[] photo) {
+    this.photo = photo;
+  }
+
   public Role getRole() {
     return role;
   }
@@ -138,12 +163,28 @@ public class UtilisateurDTO {
     this.activite = activite;
   }
 
-  public Poste getIdPoste() {
-    return idPoste;
+  public Set getTicketSet() {
+    return ticketSet;
   }
 
-  public void setIdPoste(Poste idPoste) {
-    this.idPoste = idPoste;
+  public void setTicketSet(Set ticketSet) {
+    this.ticketSet = ticketSet;
+  }
+
+  public Collection<EquipePosteutilisateurDTO> getEquipePosteutilisateurSet() {
+    return equipePosteutilisateurSet;
+  }
+
+  public void setEquipePosteutilisateurSet(Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet) {
+    this.equipePosteutilisateurSet = equipePosteutilisateurSet;
+  }
+
+  public Set getEquipeSet() {
+    return equipeSet;
+  }
+
+  public void setEquipeSet(Set equipeSet) {
+    this.equipeSet = equipeSet;
   }
 }
 

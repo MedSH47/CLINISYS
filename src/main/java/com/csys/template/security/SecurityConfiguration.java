@@ -57,7 +57,9 @@ public class SecurityConfiguration {
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
             )
             .authorizeHttpRequests(auth -> auth
-                .antMatchers(HttpMethod.POST, "/api/authenticate").permitAll()
+                .antMatchers(HttpMethod.POST, "**").permitAll()
+                .antMatchers(HttpMethod.GET, "**").permitAll()
+                .antMatchers(HttpMethod.PUT,"**").permitAll()
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             )

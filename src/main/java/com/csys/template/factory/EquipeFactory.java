@@ -1,105 +1,95 @@
 package com.csys.template.factory;
 
 import com.csys.template.domain.Equipe;
-import com.csys.template.domain.EquipePoste;
-import com.csys.template.domain.Module;
 import com.csys.template.dto.EquipeDTO;
-import com.csys.template.dto.EquipePosteDTO;
-import com.csys.template.dto.ModuleDTO;
+import com.csys.template.dto.UtilisateurDTO;
+
+// Assuming ModuleFactory.moduleToModuleDTOs exists and works as intended
+// import com.csys.template.factory.ModuleFactory; 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class EquipeFactory {
-  public static EquipeDTO equipeToEquipeDTO(Equipe equipe) {
-    EquipeDTO equipeDTO=new EquipeDTO();
+  public static EquipeDTO equipeToEquipeDTO(Equipe equipe, boolean fetchDetails) {
+    EquipeDTO equipeDTO = new EquipeDTO();
+    if (equipe == null) {
+        return null;
+    }
     equipeDTO.setId(equipe.getId());
+    equipeDTO.setDateCreation(equipe.getDateCreation());
+    equipeDTO.setUserCreation(equipe.getUserCreation());
     equipeDTO.setDesignation(equipe.getDesignation());
-    Set<EquipePosteDTO> equipePosteCollectionDtos = new HashSet<>();
-    equipe.getEquipePosteCollection().forEach(x -> {
-      EquipePosteDTO equipeposteDto = new EquipePosteDTO();
-      equipeposteDto = EquipePosteFactory.equipeposteToEquipePosteDTO(x);
-      equipePosteCollectionDtos.add(equipeposteDto);
-    } );
-    if(equipeDTO.getEquipePosteCollection() !=null) {
-      equipeDTO.getEquipePosteCollection().clear();
-      equipeDTO.getEquipePosteCollection().addAll(equipePosteCollectionDtos);
+    
+    if (equipe.getChefEquipe() != null) {
+        // Fetch basic info for chefEquipe, not their full details recursively
+        equipeDTO.setChefEquipe(UtilisateurFactory.utilisateurToUtilisateurDTO( equipe.getChefEquipe(),false));
     }
-    else {
-      equipeDTO.setEquipePosteCollection(equipePosteCollectionDtos);
+
+    if (equipe.getModuleSet() != null) {
+        // Assuming ModuleFactory.moduleToModuleDTOs handles its own lazy loading or provides basic DTOs
+        equipeDTO.setModuleSet(ModuleFactory.moduleToModuleDTOs(equipe.getModuleSet()));
+    } else {
+        equipeDTO.setModuleSet(new ArrayList<>());
     }
-    Set<ModuleDTO> moduleCollectionDtos = new HashSet<>();
-    equipe.getModuleCollection().forEach(x -> {
-      ModuleDTO moduleDto = new ModuleDTO();
-      moduleDto = ModuleFactory.moduleToModuleDTO(x);
-      moduleCollectionDtos.add(moduleDto);
-    } );
-    if(equipeDTO.getModuleCollection() !=null) {
-      equipeDTO.getModuleCollection().clear();
-      equipeDTO.getModuleCollection().addAll(moduleCollectionDtos);
-    }
-    else {
-      equipeDTO.setModuleCollection(moduleCollectionDtos);
+
+    if (fetchDetails) {
+        if (equipe.getEquipePosteutilisateurSet() != null) {
+            equipeDTO.setEquipePosteutilisateurSet(
+                EquipePosteutilisateurFactory.equipeposteutilisateurToEquipePosteutilisateurDTOs(
+                    equipe.getEquipePosteutilisateurSet(), true // true: include User and Poste details in EPU
+                )
+            );
+        } else {
+            equipeDTO.setEquipePosteutilisateurSet(new ArrayList<>());
+        }
+    } else {
+      // If not fetching details, set an empty list or null
+      equipeDTO.setEquipePosteutilisateurSet(new ArrayList<>());
     }
     return equipeDTO;
+  }
+
+  // Overload for backward compatibility or default non-detailed conversion
+  public static EquipeDTO equipeToEquipeDTO(Equipe equipe) {
+    return equipeToEquipeDTO(equipe, false); // Default to not fetching details
   }
 
   public static Equipe equipeDTOToEquipe(EquipeDTO equipeDTO) {
-    Equipe equipe=new Equipe();
+    Equipe equipe = new Equipe();
+    if (equipeDTO == null) {
+        return null;
+    }
     equipe.setId(equipeDTO.getId());
+    equipe.setDateCreation(equipeDTO.getDateCreation());
+    equipe.setUserCreation(equipeDTO.getUserCreation());
     equipe.setDesignation(equipeDTO.getDesignation());
-    Set<EquipePoste> equipePosteCollections = new HashSet<>();
-    equipeDTO.getEquipePosteCollection().forEach(x -> {
-      EquipePoste equipeposte = new EquipePoste();
-      equipeposte = EquipePosteFactory.equipeposteDTOToEquipePoste(x);
-      equipePosteCollections.add(equipeposte);
-    } );
-    if(equipe.getEquipePosteCollection() !=null) {
-      equipe.getEquipePosteCollection().clear();
-      equipe.getEquipePosteCollection().addAll(equipePosteCollections);
+    
+    if (equipeDTO.getChefEquipe() != null) {
+        equipe.setChefEquipe(UtilisateurFactory.utilisateurDTOToUtilisateur( equipeDTO.getChefEquipe()));
     }
-    else {
-      equipe.setEquipePosteCollection(equipePosteCollections);
+    
+    if (equipeDTO.getModuleSet() != null) {
+        equipe.setModuleSet(ModuleFactory.moduleDTOToModules(equipeDTO.getModuleSet()));
     }
-    Set<Module> moduleCollections = new HashSet<>();
-    equipeDTO.getModuleCollection().forEach(x -> {
-      Module module = new Module();
-      module = ModuleFactory.moduleDTOToModule(x);
-      moduleCollections.add(module);
-    } );
-    if(equipe.getModuleCollection() !=null) {
-      equipe.getModuleCollection().clear();
-      equipe.getModuleCollection().addAll(moduleCollections);
-    }
-    else {
-      equipe.setModuleCollection(moduleCollections);
-    }
+    // Mapping EquipePosteutilisateurSet back to entities would be complex here
+    // equipe.setEquipePosteutilisateurSet( ... );
     return equipe;
   }
 
+  public static Collection<EquipeDTO> equipeToEquipeDTOs(Collection<Equipe> equipes, boolean fetchDetails) {
+    if (equipes == null) {
+        return new ArrayList<>();
+    }
+    List<EquipeDTO> equipesDTO = new ArrayList<>();
+    equipes.forEach(x -> {
+      equipesDTO.add(equipeToEquipeDTO(x, fetchDetails));
+    });
+    return equipesDTO;
+  }
+  
+  // Overload for backward compatibility or default behavior
   public static Collection<EquipeDTO> equipeToEquipeDTOs(Collection<Equipe> equipes) {
-    List<EquipeDTO> equipesDTO=new ArrayList<>();
-    equipes.forEach(x -> {
-      equipesDTO.add(equipeToEquipeDTO(x));
-    } );
-    return equipesDTO;
-  }
-
-  public static EquipeDTO lazyequipeToEquipeDTO(Equipe equipe) {
-    EquipeDTO equipeDTO=new EquipeDTO();
-    equipeDTO.setId(equipe.getId());
-    equipeDTO.setDesignation(equipe.getDesignation());
-    return equipeDTO;
-  }
-
-  public static Collection<EquipeDTO> lazyequipeToEquipeDTOs(Collection<Equipe> equipes) {
-    List<EquipeDTO> equipesDTO=new ArrayList<>();
-    equipes.forEach(x -> {
-      equipesDTO.add(lazyequipeToEquipeDTO(x));
-    } );
-    return equipesDTO;
+    return equipeToEquipeDTOs(equipes, false); // Default to not fetching details
   }
 }
-

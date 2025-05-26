@@ -1,5 +1,4 @@
 package com.csys.template.web.rest.ressource;
-import com.csys.template.util.RestPreconditions;
 
 import com.csys.template.dto.EquipeDTO;
 import com.csys.template.service.EquipeService;
@@ -7,6 +6,8 @@ import java.lang.Integer;
 import java.lang.String;
 import java.lang.Void;
 import java.net.URI;
+import com.csys.template.util.RestPreconditions;
+
 import java.net.URISyntaxException;
 import java.util.Collection;
 import javax.validation.Valid;

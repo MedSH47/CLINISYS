@@ -2,19 +2,17 @@ package com.csys.template.dto;
 
 import com.csys.template.domain.Client;
 import com.csys.template.domain.Module;
+import com.csys.template.domain.Ticket;
+import com.csys.template.domain.Utilisateur;
 import java.lang.Integer;
 import java.lang.String;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
-
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class TicketDTO {
-  @NotNull
   private Integer id;
 
   private Integer idTicketParent;
@@ -35,7 +33,10 @@ public class TicketDTO {
       min = 0,
       max = 50
   )
+  private Ticket parentTicket;
   private String userCreation;
+
+  private Set<Ticket> childTickets;
 
   @Temporal(TemporalType.DATE)
   private Date dateCreation;
@@ -44,15 +45,27 @@ public class TicketDTO {
       min = 0,
       max = 20
   )
+  private String priorite;
+
+  @Size(
+      min = 0,
+      max = 20
+  )
   private String statue;
 
-  private Set<AvancementDTO> avancementCollection;
+  private Set avancementSet;
 
   private Client idClient;
 
-  private Module idModule;
+  private ModuleDTO idModule;
 
-  private Set<TicketfichierDTO> ticketfichierCollection;
+  private UtilisateurDTO idUtilisateur;
+
+  private Set documentJointesSet;
+
+  private Set commentaireSet;
+
+  private Set ticketfichierSet;
 
   public Integer getId() {
     return id;
@@ -62,13 +75,21 @@ public class TicketDTO {
     this.id = id;
   }
 
-  public Integer getIdTicketParent() {
-    return idTicketParent;
-  }
+  public Ticket getParentTicket() {
+        return parentTicket;
+    }
 
-  public void setIdTicketParent(Integer idTicketParent) {
-    this.idTicketParent = idTicketParent;
-  }
+    public void setParentTicket(Ticket parentTicket) {
+        this.parentTicket = parentTicket;
+    }
+
+    public Set<Ticket> getChildTickets() {
+        return childTickets;
+    }
+
+    public void setChildTickets(Set<Ticket> childTickets) {
+        this.childTickets = childTickets;
+    }
 
   public String getTitre() {
     return titre;
@@ -102,6 +123,14 @@ public class TicketDTO {
     this.dateCreation = dateCreation;
   }
 
+  public String getPriorite() {
+    return priorite;
+  }
+
+  public void setPriorite(String priorite) {
+    this.priorite = priorite;
+  }
+
   public String getStatue() {
     return statue;
   }
@@ -110,12 +139,12 @@ public class TicketDTO {
     this.statue = statue;
   }
 
-  public Set<AvancementDTO> getAvancementCollection() {
-    return avancementCollection;
+  public Set getAvancementSet() {
+    return avancementSet;
   }
 
-  public void setAvancementCollection(Set<AvancementDTO> avancementCollection) {
-    this.avancementCollection = avancementCollection;
+  public void setAvancementSet(Set avancementSet) {
+    this.avancementSet = avancementSet;
   }
 
   public Client getIdClient() {
@@ -126,20 +155,44 @@ public class TicketDTO {
     this.idClient = idClient;
   }
 
-  public Module getIdModule() {
+  public ModuleDTO getIdModule() {
     return idModule;
   }
 
-  public void setIdModule(Module idModule) {
+  public void setIdModule(ModuleDTO idModule) {
     this.idModule = idModule;
   }
 
-  public Set<TicketfichierDTO> getTicketfichierCollection() {
-    return ticketfichierCollection;
+  public UtilisateurDTO getIdUtilisateur() {
+    return idUtilisateur;
   }
 
-  public void setTicketfichierCollection(Set<TicketfichierDTO> ticketfichierCollection) {
-    this.ticketfichierCollection = ticketfichierCollection;
+  public void setIdUtilisateur(UtilisateurDTO idUtilisateur) {
+    this.idUtilisateur = idUtilisateur;
+  }
+
+  public Set getDocumentJointesSet() {
+    return documentJointesSet;
+  }
+
+  public void setDocumentJointesSet(Set documentJointesSet) {
+    this.documentJointesSet = documentJointesSet;
+  }
+
+  public Set getCommentaireSet() {
+    return commentaireSet;
+  }
+
+  public void setCommentaireSet(Set commentaireSet) {
+    this.commentaireSet = commentaireSet;
+  }
+
+  public Set getTicketfichierSet() {
+    return ticketfichierSet;
+  }
+
+  public void setTicketfichierSet(Set ticketfichierSet) {
+    this.ticketfichierSet = ticketfichierSet;
   }
 }
 
