@@ -72,6 +72,16 @@ public class UtilisateurDTO {
 
   private Set equipeSet;
 
+  private String login;
+
+  public String getLogin() {
+    return login;
+  }
+
+  public void setLogin(String login) {
+    this.login = login;
+  }
+
   public Integer getId() {
     return id;
   }

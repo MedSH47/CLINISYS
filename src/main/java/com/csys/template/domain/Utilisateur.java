@@ -60,6 +60,10 @@ public class Utilisateur implements Serializable {
     @Size(max = 100)
     @Column(name = "email")
     private String email;
+    @Column(name = "login" ,unique = true)
+    private String login;
+   
+
     @Size(max = 50)
     @Column(name = "user_creation")
     private String userCreation;
@@ -98,6 +102,13 @@ public class Utilisateur implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+     public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getNom() {

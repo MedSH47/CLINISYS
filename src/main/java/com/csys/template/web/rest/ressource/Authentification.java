@@ -40,18 +40,18 @@ public class Authentification {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody Utilisateur authenticationRequest) {
         try {
             // Validate user existence
-            utilisateurService.findByemail(authenticationRequest.getEmail());
+            utilisateurService.findByLogin(authenticationRequest.getLogin());
 
             // Authenticate credentials
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getEmail(),
+                    authenticationRequest.getLogin(),
                     authenticationRequest.getMotDePasse()
                 )
             );
 
             // Load user details and generate token
-            final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+            final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authenticationRequest.getLogin());
             final String jwt = jwtUtil.generateToken(userDetails);
 
             // Return token as JSON

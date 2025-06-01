@@ -15,6 +15,7 @@ public class UtilisateurFactory {
         UtilisateurDTO utilisateurDTO = new UtilisateurDTO();
 
         // Basic fields always mapped
+        utilisateurDTO.setLogin(utilisateur.getLogin());
         utilisateurDTO.setId(utilisateur.getId());
         utilisateurDTO.setNom(utilisateur.getNom());
         utilisateurDTO.setPrenom(utilisateur.getPrenom());
@@ -54,7 +55,7 @@ public class UtilisateurFactory {
             return null;
         }
         Utilisateur utilisateur = new Utilisateur();
-
+        utilisateur.setLogin(utilisateurDTO.getLogin());
         utilisateur.setId(utilisateurDTO.getId());
         utilisateur.setNom(utilisateurDTO.getNom());
         utilisateur.setPrenom(utilisateurDTO.getPrenom());

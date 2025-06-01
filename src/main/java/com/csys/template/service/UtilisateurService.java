@@ -149,4 +149,13 @@ public class UtilisateurService {
     }
     return UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur,true);
   }
+
+   public UtilisateurDTO findByLogin(String login){
+    Utilisateur utilisateur= utilisateurRepository.findByLogin(login);
+    if (utilisateur == null) {
+        log.warn("No Utilisateur found with email: {}", login);
+    }
+    return UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur,true);
+  }
+
 }

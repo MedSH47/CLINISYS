@@ -19,14 +19,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UtilisateurRepository utilisateurRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Utilisateur utilisateur = utilisateurRepository.findByemail(email);
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        Utilisateur utilisateur = utilisateurRepository.findByLogin(login);
 
-        
         return User.builder()
-                .username(utilisateur.getEmail())
+                .username(utilisateur.getLogin())
                 .password(utilisateur.getMotDePasse())
-                .roles(utilisateur.getRole().name()) // Converts enum to ROLE_ format
+                .roles(utilisateur.getRole().name())
                 .build();
     }
     
