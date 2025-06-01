@@ -16,8 +16,7 @@ import javax.validation.constraints.Size;
 
 
 import com.csys.template.domain.enum_identifier.Role;
-import com.fasterxml.jackson.annotation.JsonInclude;
-@JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class UtilisateurDTO {
   private Integer id;
 
@@ -67,7 +66,7 @@ public class UtilisateurDTO {
 
   private Boolean activite;
 
-  private Set ticketSet;
+  private Collection<TicketDTO> ticketSet;
 
   private Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet;
 
@@ -163,11 +162,11 @@ public class UtilisateurDTO {
     this.activite = activite;
   }
 
-  public Set getTicketSet() {
+  public Collection<TicketDTO> getTicketSet() {
     return ticketSet;
   }
 
-  public void setTicketSet(Set ticketSet) {
+  public void setTicketSet(Collection<TicketDTO> ticketSet) {
     this.ticketSet = ticketSet;
   }
 

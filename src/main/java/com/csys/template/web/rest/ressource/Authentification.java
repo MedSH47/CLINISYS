@@ -1,7 +1,6 @@
 package com.csys.template.web.rest.ressource;
 
 import java.util.Collections;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,51 +17,52 @@ import com.csys.template.service.CustomUserDetailsService;
 import com.csys.template.service.JwtUtil;
 import com.csys.template.service.UtilisateurService;
 
-
-
 @RestController
 @RequestMapping("/api")
-public class Authentification{
+public class Authentification {
 
-    
-private final UtilisateurService utilisateurService;
-private final AuthenticationManager authenticationManager;
-private final CustomUserDetailsService customUserDetailsService;
-private final JwtUtil jwtUtil;
+    private final UtilisateurService utilisateurService;
+    private final AuthenticationManager authenticationManager;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtUtil jwtUtil;
 
-
-public Authentification(UtilisateurService utilisateurService, AuthenticationManager authenticationManager,
-CustomUserDetailsService customUserDetailsService,JwtUtil jwtUtil) {
+    public Authentification(UtilisateurService utilisateurService,
+                            AuthenticationManager authenticationManager,
+                            CustomUserDetailsService customUserDetailsService,
+                            JwtUtil jwtUtil) {
         this.utilisateurService = utilisateurService;
         this.authenticationManager = authenticationManager;
-        this.customUserDetailsService=customUserDetailsService;
-        this.jwtUtil=jwtUtil;
-        
+        this.customUserDetailsService = customUserDetailsService;
+        this.jwtUtil = jwtUtil;
     }
 
+    @PostMapping("/authenticate")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody Utilisateur authenticationRequest) {
+        try {
+            // Validate user existence
+            utilisateurService.findByemail(authenticationRequest.getEmail());
 
-@PostMapping("/authenticate")
-public ResponseEntity<?> createAuthenticationToken(@RequestBody Utilisateur authenticationRequest) {
-    try {
-        Utilisateur user = utilisateurService.findByemail(authenticationRequest.getEmail());
+            // Authenticate credentials
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    authenticationRequest.getEmail(),
+                    authenticationRequest.getMotDePasse()
+                )
+            );
 
-        authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                authenticationRequest.getEmail(),
-                authenticationRequest.getMotDePasse()
-            )
-        );
-        final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
-        final String jwt = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(jwt);
-    } catch (BadCredentialsException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Collections.singletonMap("message", "Identifiants incorrects"));
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Collections.singletonMap("message", "Erreur interne"));
+            // Load user details and generate token
+            final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+            final String jwt = jwtUtil.generateToken(userDetails);
+
+            // Return token as JSON
+            return ResponseEntity.ok(Collections.singletonMap("token", jwt));
+
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "Identifiants incorrects"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("message", "user not found"));
+        }
     }
-}
-
-  
 }

@@ -7,5 +7,4 @@ public enum Status {
     Terminer,
     Valide_par_chef_equipe,
     Valide_par_Admin;
-
 }

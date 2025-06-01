@@ -6,6 +6,7 @@ package com.csys.template.domain;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.Basic;
@@ -78,7 +79,7 @@ public class Utilisateur implements Serializable {
     @Column(name = "activite")
     private Boolean activite;
     @OneToMany(mappedBy = "idUtilisateur", fetch = FetchType.LAZY)
-    private Set<Ticket> ticketSet;
+    private Collection<Ticket> ticketSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "utilisateur", fetch = FetchType.LAZY)
     private Set<EquipePosteutilisateur> equipePosteutilisateurSet;
     @OneToMany(mappedBy = "chefEquipe", fetch = FetchType.LAZY)
@@ -181,11 +182,11 @@ public class Utilisateur implements Serializable {
     }
 
     @XmlTransient
-    public Set<Ticket> getTicketSet() {
+    public Collection<Ticket> getTicketSet() {
         return ticketSet;
     }
 
-    public void setTicketSet(Set<Ticket> ticketSet) {
+    public void setTicketSet(Collection<Ticket> ticketSet) {
         this.ticketSet = ticketSet;
     }
 

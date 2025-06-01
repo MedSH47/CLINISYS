@@ -5,6 +5,9 @@ import com.csys.template.dto.UtilisateurDTO;
 import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.UtilisateurRepository;
 import com.google.common.base.Preconditions; // Keep this if you use it elsewhere, or remove
+
+import liquibase.pro.packaged.em;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -139,7 +142,11 @@ public class UtilisateurService {
     utilisateurRepository.deleteById(id);
     log.info("Utilisateur deleted successfully with ID: {}", id);
   }
-    public Utilisateur findByemail(String email){
-    return utilisateurRepository.findByemail(email);
+    public UtilisateurDTO findByemail(String email){
+    Utilisateur utilisateur= utilisateurRepository.findByemail(email);
+    if (utilisateur == null) {
+        log.warn("No Utilisateur found with email: {}", email);
+    }
+    return UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur,true);
   }
 }

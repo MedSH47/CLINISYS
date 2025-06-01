@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 /**
  * REST controller for managing Utilisateur.
@@ -47,15 +49,7 @@ public class UtilisateurResource {
     this.utilisateurService=utilisateurService;
   }
 
-  /**
-   * POST  /utilisateurs : Create a new utilisateur.
-   *
-   * @param utilisateurDTO
-   * @param bindingResult
-   * @return the ResponseEntity with status 201 (Created) and with body the new utilisateur, or with status 400 (Bad Request) if the utilisateur has already an ID
-   * @throws URISyntaxException if the Location URI syntax is incorrect
-   * @throws org.springframework.web.bind.MethodArgumentNotValidException
-   */
+
    @PostMapping(
     value = "/utilisateurs",
     consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE }
@@ -156,5 +150,10 @@ public class UtilisateurResource {
     utilisateurService.delete(id);
     return ResponseEntity.ok().build();
   }
+  @GetMapping("/utilisateurs/findbyemail/{email}")
+  public UtilisateurDTO getMethodName(@PathVariable String email) {
+      return utilisateurService.findByemail(email);
+  }
+  
 }
 
