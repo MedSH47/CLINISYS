@@ -34,9 +34,9 @@ public class ClientService {
    */
   public ClientDTO save(ClientDTO clientDTO) {
     log.debug("Request to save Client: {}",clientDTO);
-    Client client = ClientFactory.clientDTOToClient(clientDTO);
+    Client client = ClientFactory.toEntity(clientDTO);
     client = clientRepository.save(client);
-    ClientDTO resultDTO = ClientFactory.clientToClientDTO(client);
+    ClientDTO resultDTO = ClientFactory.toDTO(client);
     return resultDTO;
   }
 
@@ -50,9 +50,9 @@ public class ClientService {
     log.debug("Request to update Client: {}",clientDTO);
     Client inBase= clientRepository.findById(clientDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "client.NotFound");
-    Client client = ClientFactory.clientDTOToClient(clientDTO);
+    Client client = ClientFactory.toEntity(clientDTO);
     client = clientRepository.save(client);
-    ClientDTO resultDTO = ClientFactory.clientToClientDTO(client);
+    ClientDTO resultDTO = ClientFactory.toDTO(client);
     return resultDTO;
   }
 
@@ -68,7 +68,7 @@ public class ClientService {
   public ClientDTO findOne(Integer id) {
     log.debug("Request to get Client: {}",id);
     Client client= clientRepository.findById(id).orElse(null);
-    ClientDTO dto = ClientFactory.clientToClientDTO(client);
+    ClientDTO dto = ClientFactory.toDTO(client);
     return dto;
   }
 
@@ -98,7 +98,7 @@ public class ClientService {
   public Collection<ClientDTO> findAll() {
     log.debug("Request to get All Clients");
     Collection<Client> result= clientRepository.findAll();
-    return ClientFactory.clientToClientDTOs(result);
+    return ClientFactory.toDTOs(result);
   }
 
   /**

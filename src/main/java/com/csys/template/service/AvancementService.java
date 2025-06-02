@@ -34,9 +34,9 @@ public class AvancementService {
    */
   public AvancementDTO save(AvancementDTO avancementDTO) {
     log.debug("Request to save Avancement: {}",avancementDTO);
-    Avancement avancement = AvancementFactory.avancementDTOToAvancement(avancementDTO);
+    Avancement avancement = AvancementFactory.toEntity(avancementDTO);
     avancement = avancementRepository.save(avancement);
-    AvancementDTO resultDTO = AvancementFactory.avancementToAvancementDTO(avancement);
+    AvancementDTO resultDTO = AvancementFactory.toDTO(avancement);
     return resultDTO;
   }
 
@@ -50,9 +50,9 @@ public class AvancementService {
     log.debug("Request to update Avancement: {}",avancementDTO);
     Avancement inBase= avancementRepository.findById(avancementDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "avancement.NotFound");
-    Avancement avancement = AvancementFactory.avancementDTOToAvancement(avancementDTO);
+    Avancement avancement = AvancementFactory.toEntity(avancementDTO);
     avancement = avancementRepository.save(avancement);
-    AvancementDTO resultDTO = AvancementFactory.avancementToAvancementDTO(avancement);
+    AvancementDTO resultDTO = AvancementFactory.toDTO(avancement);
     return resultDTO;
   }
 
@@ -68,7 +68,7 @@ public class AvancementService {
   public AvancementDTO findOne(Integer id) {
     log.debug("Request to get Avancement: {}",id);
     Avancement avancement= avancementRepository.findById(id).orElse(null);
-    AvancementDTO dto = AvancementFactory.avancementToAvancementDTO(avancement);
+    AvancementDTO dto = AvancementFactory.toDTO(avancement);
     return dto;
   }
 
@@ -98,7 +98,7 @@ public class AvancementService {
   public Collection<AvancementDTO> findAll() {
     log.debug("Request to get All Avancements");
     Collection<Avancement> result= avancementRepository.findAll();
-    return AvancementFactory.avancementToAvancementDTOs(result);
+    return AvancementFactory.toDTOs(result);
   }
 
   /**

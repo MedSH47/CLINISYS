@@ -1,6 +1,8 @@
 package com.csys.template.dto;
 
 import com.csys.template.domain.Utilisateur;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Collection;
@@ -31,7 +33,7 @@ public class EquipeDTO {
   private Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet;
 
   private UtilisateurDTO chefEquipe;
-
+ 
   private Collection<ModuleDTO> moduleSet;
 
   public Integer getId() {

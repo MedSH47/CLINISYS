@@ -34,9 +34,9 @@ public class EquipeService {
    */
   public EquipeDTO save(EquipeDTO equipeDTO) {
     log.debug("Request to save Equipe: {}",equipeDTO);
-    Equipe equipe = EquipeFactory.equipeDTOToEquipe(equipeDTO);
+    Equipe equipe = EquipeFactory.toEntity(equipeDTO);
     equipe = equipeRepository.save(equipe);
-    EquipeDTO resultDTO = EquipeFactory.equipeToEquipeDTO(equipe);
+    EquipeDTO resultDTO = EquipeFactory.toDTO(equipe);
     return resultDTO;
   }
 
@@ -50,9 +50,9 @@ public class EquipeService {
     log.debug("Request to update Equipe: {}",equipeDTO);
     Equipe inBase= equipeRepository.findById(equipeDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "equipe.NotFound");
-    Equipe equipe = EquipeFactory.equipeDTOToEquipe(equipeDTO);
+    Equipe equipe = EquipeFactory.toEntity(equipeDTO);
     equipe = equipeRepository.save(equipe);
-    EquipeDTO resultDTO = EquipeFactory.equipeToEquipeDTO(equipe);
+    EquipeDTO resultDTO = EquipeFactory.toDTO(equipe);
     return resultDTO;
   }
 
@@ -68,7 +68,7 @@ public class EquipeService {
   public EquipeDTO findOne(Integer id) {
     log.debug("Request to get Equipe: {}",id);
     Equipe equipe= equipeRepository.findById(id).orElse(null);
-    EquipeDTO dto = EquipeFactory.equipeToEquipeDTO(equipe);
+    EquipeDTO dto = EquipeFactory.toDTO(equipe);
     return dto;
   }
 
@@ -98,7 +98,7 @@ public class EquipeService {
   public Collection<EquipeDTO> findAll() {
     log.debug("Request to get All Equipes");
     Collection<Equipe> result= equipeRepository.findAll();
-    return EquipeFactory.equipeToEquipeDTOs(result);
+    return EquipeFactory.toDTOs(result);
   }
 
   /**

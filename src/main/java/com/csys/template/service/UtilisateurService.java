@@ -36,10 +36,10 @@ public class UtilisateurService {
         // Consider if password is truly optional on creation or throw error
         log.warn("Attempting to save user with empty or null password.");
     }
-    Utilisateur utilisateur = UtilisateurFactory.utilisateurDTOToUtilisateur(utilisateurDTO);
+    Utilisateur utilisateur = UtilisateurFactory.toEntity(utilisateurDTO);
     utilisateur = utilisateurRepository.save(utilisateur);
     log.info("Service: Utilisateur saved successfully with ID: {}", utilisateur.getId());
-    return UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur,true);
+    return UtilisateurFactory.toDTO(utilisateur);
   }
 
   public UtilisateurDTO update(UtilisateurDTO utilisateurDTO) {
@@ -103,7 +103,7 @@ public class UtilisateurService {
 
     Utilisateur updatedUtilisateur = utilisateurRepository.save(utilisateur);
     log.info("Service: Utilisateur updated successfully with ID: {}", updatedUtilisateur.getId());
-    return UtilisateurFactory.utilisateurToUtilisateurDTO(updatedUtilisateur,true);
+    return UtilisateurFactory.toDTO(updatedUtilisateur);
   }
 
   // ... other existing methods (findOne, findAll, delete, etc.) ...
@@ -118,7 +118,7 @@ public class UtilisateurService {
         log.warn("No Utilisateur found with ID: {}", id);
         // Depending on requirements, you might throw an exception or return null/empty DTO
     }
-    return UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur,true);
+    return UtilisateurFactory.toDTO(utilisateur);
   }
 
   @Transactional(
@@ -134,7 +134,7 @@ public class UtilisateurService {
   )
   public Collection<UtilisateurDTO> findAll() {
     log.debug("Request to get All Utilisateurs");
-    return UtilisateurFactory.utilisateurToUtilisateurDTOs(utilisateurRepository.findAll());
+    return UtilisateurFactory.toDTOs(utilisateurRepository.findAll());
   }
 
   public void delete(Integer id) {
@@ -147,7 +147,7 @@ public class UtilisateurService {
     if (utilisateur == null) {
         log.warn("No Utilisateur found with email: {}", email);
     }
-    return UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur,true);
+    return UtilisateurFactory.toDTO(utilisateur);
   }
 
    public UtilisateurDTO findByLogin(String login){
@@ -155,7 +155,7 @@ public class UtilisateurService {
     if (utilisateur == null) {
         log.warn("No Utilisateur found with email: {}", login);
     }
-    return UtilisateurFactory.utilisateurToUtilisateurDTO(utilisateur,true);
+    return UtilisateurFactory.toDTO(utilisateur);
   }
 
 }

@@ -2,89 +2,81 @@ package com.csys.template.factory;
 
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.dto.UtilisateurDTO;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UtilisateurFactory {
 
-    public static UtilisateurDTO utilisateurToUtilisateurDTO(Utilisateur utilisateur, boolean lazy) {
-        if (utilisateur == null) {
-            return null;
+    public static UtilisateurDTO toDTO(Utilisateur utilisateur) {
+        if (utilisateur == null) return null;
+        UtilisateurDTO dto = new UtilisateurDTO();
+        dto.setId(utilisateur.getId());
+        dto.setNom(utilisateur.getNom());
+        dto.setPrenom(utilisateur.getPrenom());
+        dto.setLogin(utilisateur.getLogin());
+        dto.setEmail(utilisateur.getEmail());
+        dto.setNumTelephone(utilisateur.getNumTelephone());
+        dto.setMotDePasse(utilisateur.getMotDePasse());
+        dto.setPhoto(utilisateur.getPhoto());
+        dto.setRole(utilisateur.getRole());
+        dto.setActivite(utilisateur.getActivite());
+        dto.setDateCreation(utilisateur.getDateCreation());
+        dto.setUserCreation(utilisateur.getUserCreation());
+        if (utilisateur.getTicketSet() != null) {
+            dto.setTicketSet(TicketFactory.toDTOsLight(utilisateur.getTicketSet()));
         }
-        UtilisateurDTO utilisateurDTO = new UtilisateurDTO();
-
-        // Basic fields always mapped
-        utilisateurDTO.setLogin(utilisateur.getLogin());
-        utilisateurDTO.setId(utilisateur.getId());
-        utilisateurDTO.setNom(utilisateur.getNom());
-        utilisateurDTO.setPrenom(utilisateur.getPrenom());
-        utilisateurDTO.setNumTelephone(utilisateur.getNumTelephone());
-        utilisateurDTO.setEmail(utilisateur.getEmail());
-        utilisateurDTO.setUserCreation(utilisateur.getUserCreation());
-        utilisateurDTO.setDateCreation(utilisateur.getDateCreation());
-        utilisateurDTO.setRole(utilisateur.getRole());
-        utilisateurDTO.setActivite(utilisateur.getActivite());
-
-        if (lazy) {
-            utilisateurDTO.setMotDePasse(utilisateur.getMotDePasse());
-            utilisateurDTO.setPhoto(utilisateur.getPhoto());
-
-            if (utilisateur.getEquipePosteutilisateurSet() != null) {
-                utilisateurDTO.setEquipePosteutilisateurSet(
-                    EquipePosteutilisateurFactory.equipeposteutilisateurToEquipePosteutilisateurDTOs(
-                        utilisateur.getEquipePosteutilisateurSet(), false
-                    )
-                );
-            } else {
-                utilisateurDTO.setEquipePosteutilisateurSet(new ArrayList<>());
-            }
+        if (utilisateur.getEquipePosteutilisateurSet() != null) {
+            dto.setEquipeSet(utilisateur.getEquipePosteutilisateurSet().stream()
+                    .map(epu -> EquipeFactory.toDTOLight(epu.getEquipe()))
+                    .distinct().collect(Collectors.toSet()));
         }
-
-        // Convert tickets with lazy = false to avoid recursion
-        utilisateurDTO.setTicketSet(TicketFactory.ticketToTicketDTOs(utilisateur.getTicketSet(), false));
-
-        // Set EquipeSet as is (if you want DTO conversion, add similar lazy flag)
-        utilisateurDTO.setEquipeSet(utilisateur.getEquipeSet());
-
-        return utilisateurDTO;
+        return dto;
     }
 
-    public static Utilisateur utilisateurDTOToUtilisateur(UtilisateurDTO utilisateurDTO) {
-        if (utilisateurDTO == null) {
-            return null;
-        }
-        Utilisateur utilisateur = new Utilisateur();
-        utilisateur.setLogin(utilisateurDTO.getLogin());
-        utilisateur.setId(utilisateurDTO.getId());
-        utilisateur.setNom(utilisateurDTO.getNom());
-        utilisateur.setPrenom(utilisateurDTO.getPrenom());
-        utilisateur.setNumTelephone(utilisateurDTO.getNumTelephone());
-        utilisateur.setEmail(utilisateurDTO.getEmail());
-        utilisateur.setUserCreation(utilisateurDTO.getUserCreation());
-        utilisateur.setDateCreation(utilisateurDTO.getDateCreation());
-        utilisateur.setMotDePasse(utilisateurDTO.getMotDePasse());
-        utilisateur.setPhoto(utilisateurDTO.getPhoto());
-        utilisateur.setRole(utilisateurDTO.getRole());
-        utilisateur.setActivite(utilisateurDTO.getActivite());
-
-        utilisateur.setTicketSet(TicketFactory.ticketDTOsToTickets(utilisateurDTO.getTicketSet()));
-
-        // TODO: Add mapping for equipePosteutilisateurSet and equipeSet if needed
-
-        return utilisateur;
+    public static UtilisateurDTO toDTOLight(Utilisateur utilisateur) {
+        if (utilisateur == null) return null;
+        UtilisateurDTO dto = new UtilisateurDTO();
+        dto.setId(utilisateur.getId());
+        dto.setNom(utilisateur.getNom());
+        dto.setPrenom(utilisateur.getPrenom());
+        dto.setLogin(utilisateur.getLogin());
+        dto.setEmail(utilisateur.getEmail());
+        dto.setRole(utilisateur.getRole());
+        return dto;
     }
 
-    public static Collection<UtilisateurDTO> utilisateurToUtilisateurDTOs(Collection<Utilisateur> utilisateurs, boolean lazy) {
-        List<UtilisateurDTO> utilisateursDTO = new ArrayList<>();
-        if (utilisateurs != null) {
-            utilisateurs.forEach(x -> utilisateursDTO.add(utilisateurToUtilisateurDTO(x, lazy)));
-        }
-        return utilisateursDTO;
+    public static Utilisateur toEntity(UtilisateurDTO dto) {
+        if (dto == null) return null;
+        Utilisateur entity = new Utilisateur();
+        entity.setId(dto.getId());
+        entity.setNom(dto.getNom());
+        entity.setPrenom(dto.getPrenom());
+        entity.setLogin(dto.getLogin());
+        entity.setEmail(dto.getEmail());
+        entity.setNumTelephone(dto.getNumTelephone());
+        entity.setMotDePasse(dto.getMotDePasse());
+        entity.setPhoto(dto.getPhoto());
+        entity.setRole(dto.getRole());
+        entity.setActivite(dto.getActivite());
+        entity.setDateCreation(dto.getDateCreation());
+        entity.setUserCreation(dto.getUserCreation());
+        return entity;
     }
 
-    // Overload for default lazy = false
-    public static Collection<UtilisateurDTO> utilisateurToUtilisateurDTOs(Collection<Utilisateur> utilisateurs) {
-        return utilisateurToUtilisateurDTOs(utilisateurs, false);
+    public static List<UtilisateurDTO> toDTOs(Collection<Utilisateur> utilisateurs) {
+        if (utilisateurs == null) return Collections.emptyList();
+        return utilisateurs.stream().map(UtilisateurFactory::toDTO).collect(Collectors.toList());
+    }
+    
+    public static List<UtilisateurDTO> toDTOsLight(Collection<Utilisateur> utilisateurs) {
+        if (utilisateurs == null) return Collections.emptyList();
+        return utilisateurs.stream().map(UtilisateurFactory::toDTOLight).collect(Collectors.toList());
+    }
+
+    public static List<Utilisateur> toEntities(Collection<UtilisateurDTO> dtos) {
+        if (dtos == null) return Collections.emptyList();
+        return dtos.stream().map(UtilisateurFactory::toEntity).collect(Collectors.toList());
     }
 }

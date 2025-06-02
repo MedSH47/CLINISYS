@@ -1,48 +1,56 @@
-// Snippet for assumed ModuleFactory structure
 package com.csys.template.factory;
 
 import com.csys.template.domain.Module;
 import com.csys.template.dto.ModuleDTO;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class ModuleFactory {
-    public static ModuleDTO moduleToModuleDTO(Module module) {
+
+    public static ModuleDTO toDTO(Module module) {
         if (module == null) return null;
-        ModuleDTO moduleDTO = new ModuleDTO();
-        moduleDTO.setId(module.getId());
-        moduleDTO.setDesignation(module.getDesignation());
-        // map other fields...
-        return moduleDTO;
+        ModuleDTO dto = new ModuleDTO();
+        dto.setId(module.getId());
+        dto.setDesignation(module.getDesignation());
+        dto.setDateCreation(module.getDateCreation());
+        dto.setUserCreation(module.getUserCreation());
+        dto.setIdEquipe(EquipeFactory.toDTOLight(module.getIdEquipe()));
+        return dto;
+    }
+    
+    public static ModuleDTO toDTOLight(Module module) {
+        if (module == null) return null;
+        ModuleDTO dto = new ModuleDTO();
+        dto.setId(module.getId());
+        dto.setDesignation(module.getDesignation());
+        return dto;
     }
 
-    public static Module moduleDTOToModule(ModuleDTO moduleDTO) {
-        if (moduleDTO == null) return null;
-        Module module = new Module();
-        module.setId(moduleDTO.getId());
-        module.setDesignation(moduleDTO.getDesignation());
-        // map other fields...
-        return module;
+    public static Module toEntity(ModuleDTO dto) {
+        if (dto == null) return null;
+        Module entity = new Module();
+        entity.setId(dto.getId());
+        entity.setDesignation(dto.getDesignation());
+        entity.setDateCreation(dto.getDateCreation());
+        entity.setUserCreation(dto.getUserCreation());
+        entity.setIdEquipe(EquipeFactory.toEntity(dto.getIdEquipe()));
+        return entity;
     }
-    
-    public static Collection<ModuleDTO> moduleToModuleDTOs(Collection<Module> modules) {
-        if (modules == null) {
-            return new ArrayList<>();
-        }
-        return modules.stream()
-                      .map(ModuleFactory::moduleToModuleDTO)
-                      .collect(Collectors.toList());
+
+    public static List<ModuleDTO> toDTOs(Collection<Module> modules) {
+        if (modules == null) return Collections.emptyList();
+        return modules.stream().map(ModuleFactory::toDTO).collect(Collectors.toList());
     }
-    
-    public static Collection<Module> moduleDTOToModules(Collection<ModuleDTO> moduleDTOs) {
-        if (moduleDTOs == null) {
-            return new ArrayList<>();
-        }
-        return moduleDTOs.stream()
-                         .map(ModuleFactory::moduleDTOToModule)
-                         .collect(Collectors.toList());
+
+    public static List<ModuleDTO> toDTOsLight(Collection<Module> modules) {
+        if (modules == null) return Collections.emptyList();
+        return modules.stream().map(ModuleFactory::toDTOLight).collect(Collectors.toList());
+    }
+
+    public static List<Module> toEntities(Collection<ModuleDTO> dtos) {
+        if (dtos == null) return Collections.emptyList();
+        return dtos.stream().map(ModuleFactory::toEntity).collect(Collectors.toList());
     }
 }

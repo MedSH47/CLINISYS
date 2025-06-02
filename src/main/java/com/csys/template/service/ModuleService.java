@@ -34,9 +34,9 @@ public class ModuleService {
    */
   public ModuleDTO save(ModuleDTO moduleDTO) {
     log.debug("Request to save Module: {}",moduleDTO);
-    Module module = ModuleFactory.moduleDTOToModule(moduleDTO);
+    Module module = ModuleFactory.toEntity(moduleDTO);
     module = moduleRepository.save(module);
-    ModuleDTO resultDTO = ModuleFactory.moduleToModuleDTO(module);
+    ModuleDTO resultDTO = ModuleFactory.toDTO(module);
     return resultDTO;
   }
 
@@ -50,9 +50,9 @@ public class ModuleService {
     log.debug("Request to update Module: {}",moduleDTO);
     Module inBase= moduleRepository.findById(moduleDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "module.NotFound");
-    Module module = ModuleFactory.moduleDTOToModule(moduleDTO);
+    Module module = ModuleFactory.toEntity(moduleDTO);
     module = moduleRepository.save(module);
-    ModuleDTO resultDTO = ModuleFactory.moduleToModuleDTO(module);
+    ModuleDTO resultDTO = ModuleFactory.toDTO(module);
     return resultDTO;
   }
 
@@ -68,7 +68,7 @@ public class ModuleService {
   public ModuleDTO findOne(Integer id) {
     log.debug("Request to get Module: {}",id);
     Module module= moduleRepository.findById(id).orElse(null);
-    ModuleDTO dto = ModuleFactory.moduleToModuleDTO(module);
+    ModuleDTO dto = ModuleFactory.toDTO(module);
     return dto;
   }
 
@@ -98,7 +98,7 @@ public class ModuleService {
   public Collection<ModuleDTO> findAll() {
     log.debug("Request to get All Modules");
     Collection<Module> result= moduleRepository.findAll();
-    return ModuleFactory.moduleToModuleDTOs(result);
+    return ModuleFactory.toDTOs(result);
   }
 
   /**

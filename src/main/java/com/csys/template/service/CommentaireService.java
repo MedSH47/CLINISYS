@@ -34,9 +34,9 @@ public class CommentaireService {
    */
   public CommentaireDTO save(CommentaireDTO commentaireDTO) {
     log.debug("Request to save Commentaire: {}",commentaireDTO);
-    Commentaire commentaire = CommentaireFactory.commentaireDTOToCommentaire(commentaireDTO);
+    Commentaire commentaire = CommentaireFactory.toEntity(commentaireDTO);
     commentaire = commentaireRepository.save(commentaire);
-    CommentaireDTO resultDTO = CommentaireFactory.commentaireToCommentaireDTO(commentaire);
+    CommentaireDTO resultDTO = CommentaireFactory.toDTO(commentaire);
     return resultDTO;
   }
 
@@ -50,9 +50,9 @@ public class CommentaireService {
     log.debug("Request to update Commentaire: {}",commentaireDTO);
     Commentaire inBase= commentaireRepository.findById(commentaireDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "commentaire.NotFound");
-    Commentaire commentaire = CommentaireFactory.commentaireDTOToCommentaire(commentaireDTO);
+    Commentaire commentaire = CommentaireFactory.toEntity(commentaireDTO);
     commentaire = commentaireRepository.save(commentaire);
-    CommentaireDTO resultDTO = CommentaireFactory.commentaireToCommentaireDTO(commentaire);
+    CommentaireDTO resultDTO = CommentaireFactory.toDTO(commentaire);
     return resultDTO;
   }
 
@@ -68,7 +68,7 @@ public class CommentaireService {
   public CommentaireDTO findOne(Integer id) {
     log.debug("Request to get Commentaire: {}",id);
     Commentaire commentaire= commentaireRepository.findById(id).orElse(null);
-    CommentaireDTO dto = CommentaireFactory.commentaireToCommentaireDTO(commentaire);
+    CommentaireDTO dto = CommentaireFactory.toDTO(commentaire);
     return dto;
   }
 
@@ -98,7 +98,7 @@ public class CommentaireService {
   public Collection<CommentaireDTO> findAll() {
     log.debug("Request to get All Commentaires");
     Collection<Commentaire> result= commentaireRepository.findAll();
-    return CommentaireFactory.commentaireToCommentaireDTOs(result);
+    return CommentaireFactory.toDTOs(result);
   }
 
   /**

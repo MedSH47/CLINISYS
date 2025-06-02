@@ -55,8 +55,10 @@ public class Equipe implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "designation")
     private String designation;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "equipe", fetch = FetchType.LAZY)
     private Set<EquipePosteutilisateur> equipePosteutilisateurSet;
+
     @JoinColumn(name = "chef_equipe", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Utilisateur chefEquipe;

@@ -2,72 +2,51 @@ package com.csys.template.factory;
 
 import com.csys.template.domain.Poste;
 import com.csys.template.dto.PosteDTO;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PosteFactory {
-  public static PosteDTO posteToPosteDTO(Poste poste, boolean fetchDetails) {
-    PosteDTO posteDTO = new PosteDTO();
-    if (poste == null) {
-        return null;
-    }
-    posteDTO.setId(poste.getId());
-    posteDTO.setDateCreation(poste.getDateCreation());
-    posteDTO.setUserCreation(poste.getUserCreation());
-    posteDTO.setDesignation(poste.getDesignation());
 
-    if (fetchDetails) {
+    public static PosteDTO toDTO(Poste poste) {
+        if (poste == null) return null;
+        PosteDTO dto = new PosteDTO();
+        dto.setId(poste.getId());
+        dto.setDesignation(poste.getDesignation());
+        dto.setDateCreation(poste.getDateCreation());
+        dto.setUserCreation(poste.getUserCreation());
         if (poste.getEquipePosteutilisateurSet() != null) {
-            posteDTO.setEquipePosteutilisateurSet(
-                EquipePosteutilisateurFactory.equipeposteutilisateurToEquipePosteutilisateurDTOs(
-                    poste.getEquipePosteutilisateurSet(), false // true: include User and Equipe details in EPU
-                )
-            );
-        } else {
-            posteDTO.setEquipePosteutilisateurSet(new ArrayList<>());
+            dto.setEquipePosteutilisateurSet(EquipePosteutilisateurFactory.toDTOs(poste.getEquipePosteutilisateurSet()));
         }
-    } else {
-      // If not fetching details, set an empty list or null
-      posteDTO.setEquipePosteutilisateurSet(new ArrayList<>());
+        return dto;
     }
-    return posteDTO;
-  }
-  
-  // Overload for backward compatibility or default non-detailed conversion
-  public static PosteDTO posteToPosteDTO(Poste poste) {
-    return posteToPosteDTO(poste, false); // Default to not fetching details
-  }
 
-  public static Poste posteDTOToPoste(PosteDTO posteDTO) {
-    Poste poste = new Poste();
-    if (posteDTO == null) {
-        return null;
+    public static PosteDTO toDTOLight(Poste poste) {
+        if (poste == null) return null;
+        PosteDTO dto = new PosteDTO();
+        dto.setId(poste.getId());
+        dto.setDesignation(poste.getDesignation());
+        return dto;
     }
-    poste.setId(posteDTO.getId());
-    poste.setDateCreation(posteDTO.getDateCreation());
-    poste.setUserCreation(posteDTO.getUserCreation());
-    poste.setDesignation(posteDTO.getDesignation());
-    // If EquipePosteutilisateurSet needs to be mapped back to entities:
-    // This would require EquipePosteutilisateurFactory.equipeposteutilisateurDTOToEquipePosteutilisateurs
-    // and careful handling of nested entities.
-    // poste.setEquipePosteutilisateurSet( ... ); 
-    return poste;
-  }
 
-  public static Collection<PosteDTO> posteToPosteDTOs(Collection<Poste> postes, boolean fetchDetails) {
-    if (postes == null) {
-        return new ArrayList<>();
+    public static Poste toEntity(PosteDTO dto) {
+        if (dto == null) return null;
+        Poste entity = new Poste();
+        entity.setId(dto.getId());
+        entity.setDesignation(dto.getDesignation());
+        entity.setDateCreation(dto.getDateCreation());
+        entity.setUserCreation(dto.getUserCreation());
+        return entity;
     }
-    List<PosteDTO> postesDTO = new ArrayList<>();
-    postes.forEach(x -> {
-      postesDTO.add(posteToPosteDTO(x, fetchDetails));
-    });
-    return postesDTO;
-  }
+    
+    public static List<PosteDTO> toDTOs(Collection<Poste> postes) {
+        if (postes == null) return Collections.emptyList();
+        return postes.stream().map(PosteFactory::toDTO).collect(Collectors.toList());
+    }
 
-  // Overload for backward compatibility or default behavior
-  public static Collection<PosteDTO> posteToPosteDTOs(Collection<Poste> postes) {
-    return posteToPosteDTOs(postes, false); // Default to not fetching details
-  }
+    public static List<Poste> toEntities(Collection<PosteDTO> dtos) {
+        if (dtos == null) return Collections.emptyList();
+        return dtos.stream().map(PosteFactory::toEntity).collect(Collectors.toList());
+    }
 }

@@ -34,9 +34,9 @@ public class DocumentJointesService {
    */
   public DocumentJointesDTO save(DocumentJointesDTO documentjointesDTO) {
     log.debug("Request to save DocumentJointes: {}",documentjointesDTO);
-    DocumentJointes documentjointes = DocumentJointesFactory.documentjointesDTOToDocumentJointes(documentjointesDTO);
+    DocumentJointes documentjointes = DocumentJointesFactory.toEntity(documentjointesDTO);
     documentjointes = documentjointesRepository.save(documentjointes);
-    DocumentJointesDTO resultDTO = DocumentJointesFactory.documentjointesToDocumentJointesDTO(documentjointes);
+    DocumentJointesDTO resultDTO = DocumentJointesFactory.toDTO(documentjointes);
     return resultDTO;
   }
 
@@ -50,9 +50,9 @@ public class DocumentJointesService {
     log.debug("Request to update DocumentJointes: {}",documentjointesDTO);
     DocumentJointes inBase= documentjointesRepository.findById(documentjointesDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "documentjointes.NotFound");
-    DocumentJointes documentjointes = DocumentJointesFactory.documentjointesDTOToDocumentJointes(documentjointesDTO);
+    DocumentJointes documentjointes = DocumentJointesFactory.toEntity(documentjointesDTO);
     documentjointes = documentjointesRepository.save(documentjointes);
-    DocumentJointesDTO resultDTO = DocumentJointesFactory.documentjointesToDocumentJointesDTO(documentjointes);
+    DocumentJointesDTO resultDTO = DocumentJointesFactory.toDTO(documentjointes);
     return resultDTO;
   }
 
@@ -68,7 +68,7 @@ public class DocumentJointesService {
   public DocumentJointesDTO findOne(Integer id) {
     log.debug("Request to get DocumentJointes: {}",id);
     DocumentJointes documentjointes= documentjointesRepository.findById(id).orElse(null);
-    DocumentJointesDTO dto = DocumentJointesFactory.documentjointesToDocumentJointesDTO(documentjointes);
+    DocumentJointesDTO dto = DocumentJointesFactory.toDTO(documentjointes);
     return dto;
   }
 
@@ -98,7 +98,7 @@ public class DocumentJointesService {
   public Collection<DocumentJointesDTO> findAll() {
     log.debug("Request to get All DocumentJointess");
     Collection<DocumentJointes> result= documentjointesRepository.findAll();
-    return DocumentJointesFactory.documentjointesToDocumentJointesDTOs(result);
+    return DocumentJointesFactory.toDTOs(result);
   }
 
   /**

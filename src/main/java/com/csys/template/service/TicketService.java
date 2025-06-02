@@ -34,9 +34,9 @@ public class TicketService {
    */
   public TicketDTO save(TicketDTO ticketDTO) {
     log.debug("Request to save Ticket: {}",ticketDTO);
-    Ticket ticket = TicketFactory.ticketDTOToTicket(ticketDTO);
+    Ticket ticket = TicketFactory.toEntity(ticketDTO);
     ticket = ticketRepository.save(ticket);
-    TicketDTO resultDTO = TicketFactory.ticketToTicketDTO(ticket);
+    TicketDTO resultDTO = TicketFactory.toDTO(ticket);
     return resultDTO;
   }
 
@@ -50,9 +50,9 @@ public class TicketService {
     log.debug("Request to update Ticket: {}",ticketDTO);
     Ticket inBase= ticketRepository.findById(ticketDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "ticket.NotFound");
-    Ticket ticket = TicketFactory.ticketDTOToTicket(ticketDTO);
+    Ticket ticket = TicketFactory.toEntity(ticketDTO);
     ticket = ticketRepository.save(ticket);
-    TicketDTO resultDTO = TicketFactory.ticketToTicketDTO(ticket);
+    TicketDTO resultDTO = TicketFactory.toDTO(ticket);
     return resultDTO;
   }
 
@@ -68,7 +68,7 @@ public class TicketService {
   public TicketDTO findOne(Integer id) {
     log.debug("Request to get Ticket: {}",id);
     Ticket ticket= ticketRepository.findById(id).orElse(null);
-    TicketDTO dto = TicketFactory.ticketToTicketDTO(ticket);
+    TicketDTO dto = TicketFactory.toDTO(ticket);
     return dto;
   }
 
@@ -98,7 +98,7 @@ public class TicketService {
   public Collection<TicketDTO> findAll() {
     log.debug("Request to get All Tickets");
     Collection<Ticket> result= ticketRepository.findAll();
-    return TicketFactory.ticketToTicketDTOs(result);
+    return TicketFactory.toDTOs(result);
   }
 
   /**

@@ -34,9 +34,9 @@ public class PosteService {
    */
   public PosteDTO save(PosteDTO posteDTO) {
     log.debug("Request to save Poste: {}",posteDTO);
-    Poste poste = PosteFactory.posteDTOToPoste(posteDTO);
+    Poste poste = PosteFactory.toEntity(posteDTO);
     poste = posteRepository.save(poste);
-    PosteDTO resultDTO = PosteFactory.posteToPosteDTO(poste);
+    PosteDTO resultDTO = PosteFactory.toDTO(poste);
     return resultDTO;
   }
 
@@ -50,9 +50,9 @@ public class PosteService {
     log.debug("Request to update Poste: {}",posteDTO);
     Poste inBase= posteRepository.findById(posteDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "poste.NotFound");
-    Poste poste = PosteFactory.posteDTOToPoste(posteDTO);
+    Poste poste = PosteFactory.toEntity(posteDTO);
     poste = posteRepository.save(poste);
-    PosteDTO resultDTO = PosteFactory.posteToPosteDTO(poste);
+    PosteDTO resultDTO = PosteFactory.toDTO(poste);
     return resultDTO;
   }
 
@@ -68,7 +68,7 @@ public class PosteService {
   public PosteDTO findOne(Integer id) {
     log.debug("Request to get Poste: {}",id);
     Poste poste= posteRepository.findById(id).orElse(null);
-    PosteDTO dto = PosteFactory.posteToPosteDTO(poste);
+    PosteDTO dto = PosteFactory.toDTO(poste);
     return dto;
   }
 
@@ -98,7 +98,7 @@ public class PosteService {
   public Collection<PosteDTO> findAll() {
     log.debug("Request to get All Postes");
     Collection<Poste> result= posteRepository.findAll();
-    return PosteFactory.posteToPosteDTOs(result,true);
+    return PosteFactory.toDTOs(result);
   }
 
   /**

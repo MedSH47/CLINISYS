@@ -34,9 +34,9 @@ public class TicketfichierService {
    */
   public TicketfichierDTO save(TicketfichierDTO ticketfichierDTO) {
     log.debug("Request to save Ticketfichier: {}",ticketfichierDTO);
-    Ticketfichier ticketfichier = TicketfichierFactory.ticketfichierDTOToTicketfichier(ticketfichierDTO);
+    Ticketfichier ticketfichier = TicketfichierFactory.toEntity(ticketfichierDTO);
     ticketfichier = ticketfichierRepository.save(ticketfichier);
-    TicketfichierDTO resultDTO = TicketfichierFactory.ticketfichierToTicketfichierDTO(ticketfichier);
+    TicketfichierDTO resultDTO = TicketfichierFactory.toDTO(ticketfichier);
     return resultDTO;
   }
 
@@ -50,9 +50,9 @@ public class TicketfichierService {
     log.debug("Request to update Ticketfichier: {}",ticketfichierDTO);
     Ticketfichier inBase= ticketfichierRepository.findById(ticketfichierDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "ticketfichier.NotFound");
-    Ticketfichier ticketfichier = TicketfichierFactory.ticketfichierDTOToTicketfichier(ticketfichierDTO);
+    Ticketfichier ticketfichier = TicketfichierFactory.toEntity(ticketfichierDTO);
     ticketfichier = ticketfichierRepository.save(ticketfichier);
-    TicketfichierDTO resultDTO = TicketfichierFactory.ticketfichierToTicketfichierDTO(ticketfichier);
+    TicketfichierDTO resultDTO = TicketfichierFactory.toDTO(ticketfichier);
     return resultDTO;
   }
 
@@ -68,7 +68,7 @@ public class TicketfichierService {
   public TicketfichierDTO findOne(Integer id) {
     log.debug("Request to get Ticketfichier: {}",id);
     Ticketfichier ticketfichier= ticketfichierRepository.findById(id).orElse(null);
-    TicketfichierDTO dto = TicketfichierFactory.ticketfichierToTicketfichierDTO(ticketfichier);
+    TicketfichierDTO dto = TicketfichierFactory.toDTO(ticketfichier);
     return dto;
   }
 
@@ -98,7 +98,7 @@ public class TicketfichierService {
   public Collection<TicketfichierDTO> findAll() {
     log.debug("Request to get All Ticketfichiers");
     Collection<Ticketfichier> result= ticketfichierRepository.findAll();
-    return TicketfichierFactory.ticketfichierToTicketfichierDTOs(result);
+    return TicketfichierFactory.toDTOs(result);
   }
 
   /**

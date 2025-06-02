@@ -15,10 +15,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- *
- * @author harra
- */
 @Entity
 @Table(name = "Equipe_Poste_utilisateur", catalog = "Gestion_Tickets", schema = "dbo")
 @XmlRootElement

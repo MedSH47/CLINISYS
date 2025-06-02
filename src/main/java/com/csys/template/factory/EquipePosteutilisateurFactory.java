@@ -1,99 +1,45 @@
 package com.csys.template.factory;
 
-import com.csys.template.domain.Equipe;
 import com.csys.template.domain.EquipePosteutilisateur;
-import com.csys.template.domain.Poste;
-import com.csys.template.domain.Utilisateur;
+import com.csys.template.domain.EquipePosteutilisateurPK;
 import com.csys.template.dto.EquipePosteutilisateurDTO;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EquipePosteutilisateurFactory {
 
-  public static EquipePosteutilisateurDTO equipeposteutilisateurToEquipePosteutilisateurDTO(
-      EquipePosteutilisateur equipeposteutilisateur, boolean includeReferencedDetails) {
-    EquipePosteutilisateurDTO equipeposteutilisateurDTO = new EquipePosteutilisateurDTO();
-    if (equipeposteutilisateur == null) {
-        return null;
+    public static EquipePosteutilisateurDTO toDTO(EquipePosteutilisateur entity) {
+        if (entity == null) return null;
+        EquipePosteutilisateurDTO dto = new EquipePosteutilisateurDTO();
+        dto.setEquipePosteutilisateurPK(entity.getEquipePosteutilisateurPK());
+        dto.setEquipe(EquipeFactory.toDTOLight(entity.getEquipe()));
+        dto.setPoste(PosteFactory.toDTOLight(entity.getPoste()));
+        dto.setUtilisateur(UtilisateurFactory.toDTOLight(entity.getUtilisateur()));
+        return dto;
     }
-    equipeposteutilisateurDTO.setEquipePosteutilisateurPK(equipeposteutilisateur.getEquipePosteutilisateurPK());
 
-    if (includeReferencedDetails) {
-      // Fetch Equipe basic details (e.g., ID, designation) but not its full EPU set again
-      if (equipeposteutilisateur.getEquipe() != null) {
-        equipeposteutilisateurDTO.setEquipe(EquipeFactory.equipeToEquipeDTO(equipeposteutilisateur.getEquipe(), false));
-      }
-      // Fetch Poste basic details (e.g., ID, designation) but not its full EPU set again
-      if (equipeposteutilisateur.getPoste() != null) {
-        equipeposteutilisateurDTO.setPoste(PosteFactory.posteToPosteDTO(equipeposteutilisateur.getPoste(), false));
-      }
-      // Fetch Utilisateur basic details (e.g., ID, name) but not their full EPU set again
-      if (equipeposteutilisateur.getUtilisateur() != null) {
-        equipeposteutilisateurDTO.setUtilisateur(UtilisateurFactory.utilisateurToUtilisateurDTO(equipeposteutilisateur.getUtilisateur(), false));
-      }
+    public static EquipePosteutilisateur toEntity(EquipePosteutilisateurDTO dto) {
+        if (dto == null) return null;
+        EquipePosteutilisateur entity = new EquipePosteutilisateur();
+        if (dto.getIdEquipe() != null && dto.getIdPoste() != null && dto.getIdUtilisateur() != null) {
+            entity.setEquipePosteutilisateurPK(new EquipePosteutilisateurPK(
+                dto.getIdPoste(), dto.getIdUtilisateur(), dto.getIdEquipe()));
+        }
+        entity.setEquipe(EquipeFactory.toEntity(dto.getEquipe()));
+        entity.setPoste(PosteFactory.toEntity(dto.getPoste()));
+        entity.setUtilisateur(UtilisateurFactory.toEntity(dto.getUtilisateur()));
+        return entity;
     }
-    return equipeposteutilisateurDTO;
-  }
 
-  public static EquipePosteutilisateur equipeposteutilisateurDTOToEquipePosteutilisateur(
-      EquipePosteutilisateurDTO equipeposteutilisateurDTO,
-      Equipe equipe, // These are passed in if known, or fetched if PK contains IDs
-      Poste poste,
-      Utilisateur utilisateur) {
-    EquipePosteutilisateur equipeposteutilisateur = new EquipePosteutilisateur();
-    if (equipeposteutilisateurDTO == null) {
-        return null;
+    public static List<EquipePosteutilisateurDTO> toDTOs(Collection<EquipePosteutilisateur> entities) {
+        if (entities == null) return Collections.emptyList();
+        return entities.stream().map(EquipePosteutilisateurFactory::toDTO).collect(Collectors.toList());
     }
-    equipeposteutilisateur.setEquipePosteutilisateurPK(equipeposteutilisateurDTO.getEquipePosteutilisateurPK());
-    
-    // If equipe, poste, utilisateur are not provided, they might need to be fetched based on PK
-    // or constructed if the DTO contains enough info.
-    equipeposteutilisateur.setEquipe(equipe != null ? equipe : (equipeposteutilisateurDTO.getEquipe() != null ? EquipeFactory.equipeDTOToEquipe(equipeposteutilisateurDTO.getEquipe()) : null));
-    equipeposteutilisateur.setPoste(poste != null ? poste : (equipeposteutilisateurDTO.getPoste() != null ? PosteFactory.posteDTOToPoste(equipeposteutilisateurDTO.getPoste()) : null));
-    equipeposteutilisateur.setUtilisateur(utilisateur != null ? utilisateur : (equipeposteutilisateurDTO.getUtilisateur() != null ? UtilisateurFactory.utilisateurDTOToUtilisateur(equipeposteutilisateurDTO.getUtilisateur()) : null));
-    
-    return equipeposteutilisateur;
-  }
-  
-  // Simpler version if Equipe, Poste, Utilisateur entities are expected to be resolved by the caller
-   public static EquipePosteutilisateur equipeposteutilisateurDTOToEquipePosteutilisateur(
-      EquipePosteutilisateurDTO equipeposteutilisateurDTO) {
-    EquipePosteutilisateur equipeposteutilisateur = new EquipePosteutilisateur();
-    if (equipeposteutilisateurDTO == null) {
-        return null;
-    }
-    equipeposteutilisateur.setEquipePosteutilisateurPK(equipeposteutilisateurDTO.getEquipePosteutilisateurPK());
-    
-    // Expects that the service layer will handle setting the actual entity references
-    if (equipeposteutilisateurDTO.getEquipe() != null) {
-         Equipe equipe = new Equipe();
-         equipe.setId(equipeposteutilisateurDTO.getEquipe().getId()); // Minimal reference
-         equipeposteutilisateur.setEquipe(equipe);
-    }
-     if (equipeposteutilisateurDTO.getPoste() != null) {
-         Poste poste = new Poste();
-         poste.setId(equipeposteutilisateurDTO.getPoste().getId()); // Minimal reference
-         equipeposteutilisateur.setPoste(poste);
-    }
-    if (equipeposteutilisateurDTO.getUtilisateur() != null) {
-         Utilisateur utilisateur = new Utilisateur();
-         utilisateur.setId(equipeposteutilisateurDTO.getUtilisateur().getId()); // Minimal reference
-         equipeposteutilisateur.setUtilisateur(utilisateur);
-    }
-    return equipeposteutilisateur;
-  }
 
-
-  public static Collection<EquipePosteutilisateurDTO> equipeposteutilisateurToEquipePosteutilisateurDTOs(
-      Collection<EquipePosteutilisateur> equipeposteutilisateurs, boolean includeReferencedDetails) {
-    if (equipeposteutilisateurs == null) {
-        return new ArrayList<>();
+    public static List<EquipePosteutilisateur> toEntities(Collection<EquipePosteutilisateurDTO> dtos) {
+        if (dtos == null) return Collections.emptyList();
+        return dtos.stream().map(EquipePosteutilisateurFactory::toEntity).collect(Collectors.toList());
     }
-    List<EquipePosteutilisateurDTO> equipeposteutilisateursDTO = new ArrayList<>();
-    equipeposteutilisateurs.forEach(x -> {
-      equipeposteutilisateursDTO.add(equipeposteutilisateurToEquipePosteutilisateurDTO(x, includeReferencedDetails));
-    });
-    return equipeposteutilisateursDTO;
-  }
 }
