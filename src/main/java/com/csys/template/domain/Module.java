@@ -5,6 +5,7 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.Basic;
@@ -26,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
 
 /**
  *
@@ -54,7 +56,7 @@ public class Module implements Serializable {
     @Column(name = "designation")
     private String designation;
     @OneToMany(mappedBy = "idModule", fetch = FetchType.LAZY)
-    private Set<Ticket> ticketSet;
+    private Collection<Ticket> ticketSet;
     @JoinColumn(name = "id_equipe", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Equipe idEquipe;
@@ -99,11 +101,11 @@ public class Module implements Serializable {
     }
 
     @XmlTransient
-    public Set<Ticket> getTicketSet() {
+    public Collection<Ticket> getTicketSet() {
         return ticketSet;
     }
 
-    public void setTicketSet(Set<Ticket> ticketSet) {
+    public void setTicketSet(Collection<Ticket> ticketSet) {
         this.ticketSet = ticketSet;
     }
 

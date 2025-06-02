@@ -72,8 +72,6 @@ public class Ticket implements Serializable {
     @Size(max = 20)
     @Column(name = "statue")
     private String statue;
-    @OneToMany(mappedBy = "idTicket", fetch = FetchType.LAZY)
-    private Set<Avancement> avancementSet;
     @JoinColumn(name = "id_client", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Client idClient;
@@ -87,8 +85,7 @@ public class Ticket implements Serializable {
     private Set<DocumentJointes> documentJointesSet;
     @OneToMany(mappedBy = "idTicket", fetch = FetchType.LAZY)
     private Set<Commentaire> commentaireSet;
-    @OneToMany(mappedBy = "idTicket", fetch = FetchType.LAZY)
-    private Set<Ticketfichier> ticketfichierSet;
+    
 
     public Ticket() {
     }
@@ -169,15 +166,7 @@ public class Ticket implements Serializable {
         this.statue = statue;
     }
 
-    @XmlTransient
-    public Set<Avancement> getAvancementSet() {
-        return avancementSet;
-    }
-
-    public void setAvancementSet(Set<Avancement> avancementSet) {
-        this.avancementSet = avancementSet;
-    }
-
+  
     public Client getIdClient() {
         return idClient;
     }
@@ -220,15 +209,7 @@ public class Ticket implements Serializable {
         this.commentaireSet = commentaireSet;
     }
 
-    @XmlTransient
-    public Set<Ticketfichier> getTicketfichierSet() {
-        return ticketfichierSet;
-    }
-
-    public void setTicketfichierSet(Set<Ticketfichier> ticketfichierSet) {
-        this.ticketfichierSet = ticketfichierSet;
-    }
-
+ 
     @Override
     public int hashCode() {
         int hash = 0;

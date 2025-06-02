@@ -60,8 +60,7 @@ public class DocumentJointes implements Serializable {
     @JoinColumn(name = "id_ticket", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Ticket idTicket;
-    @OneToMany(mappedBy = "idFichier", fetch = FetchType.LAZY)
-    private Set<Ticketfichier> ticketfichierSet;
+    
 
     public DocumentJointes() {
     }
@@ -118,14 +117,7 @@ public class DocumentJointes implements Serializable {
         this.idTicket = idTicket;
     }
 
-    @XmlTransient
-    public Set<Ticketfichier> getTicketfichierSet() {
-        return ticketfichierSet;
-    }
-
-    public void setTicketfichierSet(Set<Ticketfichier> ticketfichierSet) {
-        this.ticketfichierSet = ticketfichierSet;
-    }
+   
 
     @Override
     public int hashCode() {

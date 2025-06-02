@@ -17,6 +17,7 @@ public class ModuleFactory {
         dto.setDateCreation(module.getDateCreation());
         dto.setUserCreation(module.getUserCreation());
         dto.setIdEquipe(EquipeFactory.toDTOLight(module.getIdEquipe()));
+        dto.setTicketSet(TicketFactory.toDTOs( module.getTicketSet(),true));
         return dto;
     }
     

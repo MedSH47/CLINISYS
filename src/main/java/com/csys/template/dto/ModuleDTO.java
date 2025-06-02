@@ -3,12 +3,14 @@ package com.csys.template.dto;
 import com.csys.template.domain.Equipe;
 import java.lang.Integer;
 import java.lang.String;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ModuleDTO {
   private Integer id;
 
@@ -27,7 +29,7 @@ public class ModuleDTO {
   )
   private String designation;
 
-  private Set ticketSet;
+  private Collection<TicketDTO> ticketSet;
 
   private EquipeDTO idEquipe;
 
@@ -63,11 +65,11 @@ public class ModuleDTO {
     this.designation = designation;
   }
 
-  public Set getTicketSet() {
+  public Collection<TicketDTO> getTicketSet() {
     return ticketSet;
   }
 
-  public void setTicketSet(Set ticketSet) {
+  public void setTicketSet(Collection<TicketDTO> ticketSet) {
     this.ticketSet = ticketSet;
   }
 

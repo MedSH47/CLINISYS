@@ -12,6 +12,7 @@ public class TicketFactory {
     public static TicketDTO toDTO(Ticket ticket) {
         if (ticket == null) return null;
         TicketDTO dto = new TicketDTO();
+        if (dto.getParentTicket()!=null) return toDTOLight(ticket);
         dto.setId(ticket.getId());
         dto.setTitre(ticket.getTitre());
         dto.setDescription(ticket.getDescription());
@@ -83,6 +84,11 @@ public class TicketFactory {
 
     public static List<TicketDTO> toDTOs(Collection<Ticket> tickets) {
         if (tickets == null) return Collections.emptyList();
+        return tickets.stream().map(TicketFactory::toDTO).collect(Collectors.toList());
+    }
+    public static List<TicketDTO> toDTOs(Collection<Ticket> tickets,boolean lazy) {
+        if (tickets == null) return Collections.emptyList();
+        if (lazy) return tickets.stream().map(TicketFactory::toDTOLight).collect(Collectors.toList());
         return tickets.stream().map(TicketFactory::toDTO).collect(Collectors.toList());
     }
 

@@ -4,6 +4,8 @@ import com.csys.template.domain.Client;
 import com.csys.template.domain.Module;
 import com.csys.template.domain.Ticket;
 import com.csys.template.domain.Utilisateur;
+
+
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Date;
@@ -11,6 +13,8 @@ import java.util.Set;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonInclude;
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 
 public class TicketDTO {
   private Integer id;
@@ -53,8 +57,6 @@ public class TicketDTO {
   )
   private String statue;
 
-  private Set avancementSet;
-
   private Client idClient;
 
   private ModuleDTO idModule;
@@ -65,7 +67,6 @@ public class TicketDTO {
 
   private Set commentaireSet;
 
-  private Set ticketfichierSet;
 
   public Integer getId() {
     return id;
@@ -139,13 +140,6 @@ public class TicketDTO {
     this.statue = statue;
   }
 
-  public Set getAvancementSet() {
-    return avancementSet;
-  }
-
-  public void setAvancementSet(Set avancementSet) {
-    this.avancementSet = avancementSet;
-  }
 
   public Client getIdClient() {
     return idClient;
@@ -187,12 +181,6 @@ public class TicketDTO {
     this.commentaireSet = commentaireSet;
   }
 
-  public Set getTicketfichierSet() {
-    return ticketfichierSet;
-  }
 
-  public void setTicketfichierSet(Set ticketfichierSet) {
-    this.ticketfichierSet = ticketfichierSet;
-  }
 }
 

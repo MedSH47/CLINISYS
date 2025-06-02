@@ -2,6 +2,7 @@ package com.csys.template.dto;
 
 import com.csys.template.domain.EquipePosteutilisateurPK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class EquipePosteutilisateurDTO {
   @JsonIgnore
   private EquipePosteutilisateurPK equipePosteutilisateurPK;
