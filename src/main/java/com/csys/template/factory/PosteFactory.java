@@ -21,7 +21,7 @@ public class PosteFactory {
         if (poste.getEquipePosteutilisateurSet() != null) {
             posteDTO.setEquipePosteutilisateurSet(
                 EquipePosteutilisateurFactory.equipeposteutilisateurToEquipePosteutilisateurDTOs(
-                    poste.getEquipePosteutilisateurSet(), true // true: include User and Equipe details in EPU
+                    poste.getEquipePosteutilisateurSet(), false // true: include User and Equipe details in EPU
                 )
             );
         } else {

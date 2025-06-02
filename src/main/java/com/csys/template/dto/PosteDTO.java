@@ -27,7 +27,7 @@ public class PosteDTO {
   )
   private String designation;
 
-  private Collection equipePosteutilisateurSet;
+  private Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet;
 
   public Integer getId() {
     return id;
@@ -61,11 +61,11 @@ public class PosteDTO {
     this.designation = designation;
   }
 
-  public Collection getEquipePosteutilisateurSet() {
+  public Collection<EquipePosteutilisateurDTO> getEquipePosteutilisateurSet() {
     return equipePosteutilisateurSet;
   }
 
-  public void setEquipePosteutilisateurSet(Collection equipePosteutilisateurSet) {
+  public void setEquipePosteutilisateurSet(Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet) {
     this.equipePosteutilisateurSet = equipePosteutilisateurSet;
   }
 }
