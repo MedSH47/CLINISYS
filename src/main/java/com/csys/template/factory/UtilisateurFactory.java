@@ -1,6 +1,7 @@
 package com.csys.template.factory;
 
 import com.csys.template.domain.Utilisateur;
+import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.dto.UtilisateurDTO;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,6 +12,7 @@ public class UtilisateurFactory {
 
     public static UtilisateurDTO toDTO(Utilisateur utilisateur) {
         if (utilisateur == null) return null;
+        if(utilisateur.getRole().equals(Role.Chef_Equipe)) return toDTOLight(utilisateur);
         UtilisateurDTO dto = new UtilisateurDTO();
         dto.setId(utilisateur.getId());
         dto.setNom(utilisateur.getNom());

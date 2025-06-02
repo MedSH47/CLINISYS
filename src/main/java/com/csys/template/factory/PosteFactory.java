@@ -42,7 +42,7 @@ public class PosteFactory {
     
     public static List<PosteDTO> toDTOs(Collection<Poste> postes) {
         if (postes == null) return Collections.emptyList();
-        return postes.stream().map(PosteFactory::toDTOLight).collect(Collectors.toList());
+        return postes.stream().map(PosteFactory::toDTO).collect(Collectors.toList());
     }
 
     public static List<Poste> toEntities(Collection<PosteDTO> dtos) {

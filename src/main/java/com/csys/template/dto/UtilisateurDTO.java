@@ -16,7 +16,8 @@ import javax.validation.constraints.Size;
 
 
 import com.csys.template.domain.enum_identifier.Role;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UtilisateurDTO {
   private Integer id;
 
