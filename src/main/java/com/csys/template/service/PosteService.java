@@ -98,7 +98,7 @@ public class PosteService {
   public Collection<PosteDTO> findAll() {
     log.debug("Request to get All Postes");
     Collection<Poste> result= posteRepository.findAll();
-    return PosteFactory.posteToPosteDTOs(result);
+    return PosteFactory.posteToPosteDTOs(result,true);
   }
 
   /**
