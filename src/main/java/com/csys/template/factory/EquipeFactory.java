@@ -42,7 +42,11 @@ public class EquipeFactory {
         entity.setDesignation(dto.getDesignation());
         entity.setDateCreation(dto.getDateCreation());
         entity.setUserCreation(dto.getUserCreation());
+         if (dto.getChefEquipe() != null) {
         entity.setChefEquipe(UtilisateurFactory.toEntity(dto.getChefEquipe()));
+    } else {
+        entity.setChefEquipe(null); // ❗ Required to remove the chefEquipe link
+    }
         return entity;
     }
 

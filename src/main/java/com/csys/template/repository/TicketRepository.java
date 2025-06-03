@@ -1,7 +1,10 @@
 package com.csys.template.repository;
 
 import com.csys.template.domain.Ticket;
+
 import java.lang.Integer;
+import java.util.Collection;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +13,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Integer> {
+
+    Collection<Ticket> findByidUtilisateur(Integer id);
 }
 

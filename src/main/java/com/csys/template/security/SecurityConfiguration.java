@@ -59,6 +59,7 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(auth -> auth
                 .antMatchers(HttpMethod.POST, "**").permitAll()
                 .antMatchers(HttpMethod.GET, "**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "**").permitAll()
                 .antMatchers(HttpMethod.PUT,"**").permitAll()
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()

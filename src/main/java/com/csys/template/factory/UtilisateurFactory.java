@@ -2,10 +2,12 @@ package com.csys.template.factory;
 
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.domain.enum_identifier.Role;
+import com.csys.template.dto.EquipePosteDTO;
 import com.csys.template.dto.UtilisateurDTO;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UtilisateurFactory {
@@ -30,12 +32,20 @@ public class UtilisateurFactory {
             dto.setTicketSet(TicketFactory.toDTOsLight(utilisateur.getTicketSet()));
         }
         if (utilisateur.getEquipePosteutilisateurSet() != null) {
-            dto.setEquipeSet(utilisateur.getEquipePosteutilisateurSet().stream()
-                    .map(epu -> EquipeFactory.toDTOLight(epu.getEquipe()))
-                    .distinct().collect(Collectors.toSet()));
+            Collection<EquipePosteDTO> equipePosteSet = utilisateur.getEquipePosteutilisateurSet().stream()
+                .map(epu -> {
+                    EquipePosteDTO epuDTO = new EquipePosteDTO();
+                    epuDTO.setEquipe(EquipeFactory.toDTOLight(epu.getEquipe()));
+                    epuDTO.setPoste(PosteFactory.toDTOLight(epu.getPoste()));
+                    epuDTO.setId(epu.getEquipePosteutilisateurPK().getIdEquipe()*10+epu.getEquipePosteutilisateurPK().getIdPoste()*100+epu.getEquipePosteutilisateurPK().getIdUtilisateur()*1000);
+                    return epuDTO;
+                })
+                .collect(Collectors.toSet());
+
+            dto.setEquipePosteSet(equipePosteSet);}
+            return dto;
         }
-        return dto;
-    }
+
 
     public static UtilisateurDTO toDTOLight(Utilisateur utilisateur) {
         if (utilisateur == null) return null;

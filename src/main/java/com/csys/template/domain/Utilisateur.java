@@ -56,7 +56,7 @@ public class Utilisateur implements Serializable {
     @Column(name = "prenom")
     private String prenom;
     @Column(name = "num_telephone")
-    private BigInteger numTelephone;
+    private String numTelephone;
     @Size(max = 100)
     @Column(name = "email")
     private String email;
@@ -127,11 +127,11 @@ public class Utilisateur implements Serializable {
         this.prenom = prenom;
     }
 
-    public BigInteger getNumTelephone() {
+    public String getNumTelephone() {
         return numTelephone;
     }
 
-    public void setNumTelephone(BigInteger numTelephone) {
+    public void setNumTelephone(String numTelephone) {
         this.numTelephone = numTelephone;
     }
 

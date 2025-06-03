@@ -1,15 +1,22 @@
 package com.csys.template.service;
 
+import com.csys.template.domain.Equipe;
+import com.csys.template.domain.Ticket;
 import com.csys.template.domain.Utilisateur;
+import com.csys.template.dto.EquipeDTO;
 import com.csys.template.dto.UtilisateurDTO;
 import com.csys.template.factory.UtilisateurFactory;
+import com.csys.template.repository.EquipeRepository;
+import com.csys.template.repository.TicketRepository;
 import com.csys.template.repository.UtilisateurRepository;
 import com.google.common.base.Preconditions; // Keep this if you use it elsewhere, or remove
 
+import liquibase.pro.packaged.e;
 import liquibase.pro.packaged.em;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +26,21 @@ import java.util.Collection; // Keep if used by other methods
 @Service
 @Transactional
 public class UtilisateurService {
+ 
   private final Logger log = LoggerFactory.getLogger(UtilisateurService.class);
   private final PasswordEncoder passwordEncoder;
   private final UtilisateurRepository utilisateurRepository;
+  private final EquipeRepository equipeRepository;
+  private final TicketRepository ticketRepository;
 
-  public UtilisateurService(PasswordEncoder passwordEncoder, UtilisateurRepository utilisateurRepository) {
+ 
+
+  public UtilisateurService(PasswordEncoder passwordEncoder, UtilisateurRepository utilisateurRepository,
+      EquipeRepository equipeRepository, TicketRepository ticketRepository) {
     this.passwordEncoder = passwordEncoder;
     this.utilisateurRepository = utilisateurRepository;
+    this.equipeRepository = equipeRepository;
+    this.ticketRepository = ticketRepository;
   }
 
   public UtilisateurDTO save(UtilisateurDTO utilisateurDTO) {
@@ -137,11 +152,26 @@ public class UtilisateurService {
     return UtilisateurFactory.toDTOs(utilisateurRepository.findAll());
   }
 
-  public void delete(Integer id) {
-    log.debug("Request to delete Utilisateur: {}",id);
+
+
+public void delete(Integer id) {
+    log.debug("Request to delete Utilisateur: {}", id);
+
+    
+    // Step 2: Update chefEquipe to null if this user was a team lead
+    Collection<Equipe> equipes = equipeRepository.findAll();
+    for (Equipe equipe : equipes) {
+        if (equipe.getChefEquipe() != null && equipe.getChefEquipe().getId().equals(id)) {
+            equipe.setChefEquipe(null);
+            equipeRepository.save(equipe);
+        }
+    }
+
+    // Step 3: Delete the user
     utilisateurRepository.deleteById(id);
     log.info("Utilisateur deleted successfully with ID: {}", id);
   }
+
     public UtilisateurDTO findByemail(String email){
     Utilisateur utilisateur= utilisateurRepository.findByemail(email);
     if (utilisateur == null) {

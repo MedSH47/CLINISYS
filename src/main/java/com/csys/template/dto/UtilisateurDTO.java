@@ -33,7 +33,7 @@ public class UtilisateurDTO {
   )
   private String prenom;
 
-  private BigInteger numTelephone;
+  private String numTelephone;
 
   @Size(
       min = 0,
@@ -71,9 +71,19 @@ public class UtilisateurDTO {
 
   private Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet;
 
-  private Set equipeSet;
-
+  
   private String login;
+
+  private Collection<EquipePosteDTO> equipePosteSet;
+
+  public Collection<EquipePosteDTO> getEquipePosteSet() {
+    return equipePosteSet;
+  }
+
+  public void setEquipePosteSet(Collection<EquipePosteDTO> equipePosteSet) {
+    this.equipePosteSet = equipePosteSet;
+  }
+
 
   public String getLogin() {
     return login;
@@ -107,11 +117,11 @@ public class UtilisateurDTO {
     this.prenom = prenom;
   }
 
-  public BigInteger getNumTelephone() {
+  public String getNumTelephone() {
     return numTelephone;
   }
 
-  public void setNumTelephone(BigInteger numTelephone) {
+  public void setNumTelephone(String numTelephone) {
     this.numTelephone = numTelephone;
   }
 
@@ -189,12 +199,5 @@ public class UtilisateurDTO {
     this.equipePosteutilisateurSet = equipePosteutilisateurSet;
   }
 
-  public Set getEquipeSet() {
-    return equipeSet;
-  }
-
-  public void setEquipeSet(Set equipeSet) {
-    this.equipeSet = equipeSet;
-  }
 }
 

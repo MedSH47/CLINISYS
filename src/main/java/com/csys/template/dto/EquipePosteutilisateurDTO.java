@@ -4,7 +4,6 @@ import com.csys.template.domain.EquipePosteutilisateurPK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class EquipePosteutilisateurDTO {
-  @JsonIgnore
   private EquipePosteutilisateurPK equipePosteutilisateurPK;
   private Integer idPoste;
   private Integer idUtilisateur;
