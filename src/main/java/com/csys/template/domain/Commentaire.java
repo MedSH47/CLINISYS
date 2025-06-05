@@ -47,9 +47,6 @@ public class Commentaire implements Serializable {
     @Column(name = "date_commentaire")
     @Temporal(TemporalType.DATE)
     private Date dateCommentaire;
-    @JoinColumn(name = "id_ticket", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Ticket idTicket;
 
     public Commentaire() {
     }
@@ -80,14 +77,6 @@ public class Commentaire implements Serializable {
 
     public void setDateCommentaire(Date dateCommentaire) {
         this.dateCommentaire = dateCommentaire;
-    }
-
-    public Ticket getIdTicket() {
-        return idTicket;
-    }
-
-    public void setIdTicket(Ticket idTicket) {
-        this.idTicket = idTicket;
     }
 
     @Override

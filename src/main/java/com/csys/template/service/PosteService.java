@@ -1,12 +1,16 @@
 package com.csys.template.service;
 
 import com.csys.template.domain.Poste;
+import com.csys.template.domain.QPoste;
 import com.csys.template.dto.PosteDTO;
 import com.csys.template.factory.PosteFactory;
 import com.csys.template.repository.PosteRepository;
+import com.csys.template.util.WhereClauseBuilder;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
-import java.util.Collection;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,7 +27,7 @@ public class PosteService {
   private final PosteRepository posteRepository;
 
   public PosteService(PosteRepository posteRepository) {
-    this.posteRepository=posteRepository;
+    this.posteRepository = posteRepository;
   }
 
   /**
@@ -32,9 +36,9 @@ public class PosteService {
    * @param posteDTO
    * @return the persisted entity
    */
-  public PosteDTO save(PosteDTO posteDTO) {
-    log.debug("Request to save Poste: {}",posteDTO);
-    Poste poste = PosteFactory.toEntity(posteDTO);
+  public PosteDTO save(PosteDTO posteDTO, String user) {
+    log.debug("Request to save Poste: {}", posteDTO);
+    Poste poste = PosteFactory.toEntity(posteDTO, null, user);
     poste = posteRepository.save(poste);
     PosteDTO resultDTO = PosteFactory.toDTO(poste);
     return resultDTO;
@@ -46,11 +50,11 @@ public class PosteService {
    * @param posteDTO
    * @return the updated entity
    */
-  public PosteDTO update(PosteDTO posteDTO) {
-    log.debug("Request to update Poste: {}",posteDTO);
-    Poste inBase= posteRepository.findById(posteDTO.getId()).orElse(null);
+  public PosteDTO update(PosteDTO posteDTO, String user) {
+    log.debug("Request to update Poste: {}", posteDTO);
+    Poste inBase = posteRepository.findById(posteDTO.getId()).orElse(null);
     Preconditions.checkArgument(inBase != null, "poste.NotFound");
-    Poste poste = PosteFactory.toEntity(posteDTO);
+    Poste poste = PosteFactory.toEntity(posteDTO, inBase, user);
     poste = posteRepository.save(poste);
     PosteDTO resultDTO = PosteFactory.toDTO(poste);
     return resultDTO;
@@ -62,12 +66,10 @@ public class PosteService {
    * @param id the id of the entity
    * @return the entity DTO
    */
-  @Transactional(
-      readOnly = true
-  )
+  @Transactional(readOnly = true)
   public PosteDTO findOne(Integer id) {
-    log.debug("Request to get Poste: {}",id);
-    Poste poste= posteRepository.findById(id).orElse(null);
+    log.debug("Request to get Poste: {}", id);
+    Poste poste = posteRepository.findById(id).orElse(null);
     PosteDTO dto = PosteFactory.toDTO(poste);
     return dto;
   }
@@ -78,12 +80,10 @@ public class PosteService {
    * @param id the id of the entity
    * @return the entity
    */
-  @Transactional(
-      readOnly = true
-  )
+  @Transactional(readOnly = true)
   public Poste findPoste(Integer id) {
-    log.debug("Request to get Poste: {}",id);
-    Poste poste= posteRepository.findById(id).orElse(null);
+    log.debug("Request to get Poste: {}", id);
+    Poste poste = posteRepository.findById(id).orElse(null);
     return poste;
   }
 
@@ -92,13 +92,16 @@ public class PosteService {
    *
    * @return the the list of entities
    */
-  @Transactional(
-      readOnly = true
-  )
-  public Collection<PosteDTO> findAll() {
+  @Transactional(readOnly = true)
+  public List<PosteDTO> findAll(Boolean[] actifs) {
     log.debug("Request to get All Postes");
-    Collection<Poste> result= posteRepository.findAll();
+
+    QPoste qPoste = QPoste.poste;
+    WhereClauseBuilder builder = new WhereClauseBuilder()
+        .optionalAnd(actifs, () -> qPoste.actif.in(actifs));
+    List<Poste> result = (List<Poste>) posteRepository.findAll(builder);
     return PosteFactory.toDTOs(result);
+
   }
 
   /**
@@ -107,8 +110,7 @@ public class PosteService {
    * @param id the id of the entity
    */
   public void delete(Integer id) {
-    log.debug("Request to delete Poste: {}",id);
+    log.debug("Request to delete Poste: {}", id);
     posteRepository.deleteById(id);
   }
 }
-

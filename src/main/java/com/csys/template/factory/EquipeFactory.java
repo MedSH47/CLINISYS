@@ -2,9 +2,13 @@ package com.csys.template.factory;
 
 import com.csys.template.domain.Equipe;
 import com.csys.template.dto.EquipeDTO;
+import com.csys.template.dto.EquipePosteutilisateurDTO;
+
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EquipeFactory {
@@ -16,13 +20,17 @@ public class EquipeFactory {
         dto.setDesignation(equipe.getDesignation());
         dto.setDateCreation(equipe.getDateCreation());
         dto.setUserCreation(equipe.getUserCreation());
+        dto.setModuleList(ModuleFactory.toDTOsLight(equipe.getModuleList()));
         dto.setChefEquipe(UtilisateurFactory.toDTOLight(equipe.getChefEquipe()));
-        if (equipe.getEquipePosteutilisateurSet() != null) {
-             dto.setEquipePosteutilisateurSet(EquipePosteutilisateurFactory.toDTOs(equipe.getEquipePosteutilisateurSet()));
-        }
-        if (equipe.getModuleSet() != null) {
-            dto.setModuleSet(ModuleFactory.toDTOsLight(equipe.getModuleSet()));
-        }
+        List<EquipePosteutilisateurDTO> equipePosteutilisateurDTOs =EquipePosteutilisateurFactory.toDTOs(equipe.getEquipePosteutilisateurList());
+        // Remove duplicates based on utilisateur ID
+        Set<Integer> seenIds = new HashSet<>();
+        dto.setUtilisateurs(
+            equipePosteutilisateurDTOs.stream()
+                .map(EquipePosteutilisateurDTO::getUtilisateur)
+                .filter(u -> seenIds.add(u.getId())) // only adds if ID is not already seen
+                .collect(Collectors.toList())
+        );
         return dto;
     }
 
@@ -31,7 +39,6 @@ public class EquipeFactory {
         EquipeDTO dto = new EquipeDTO();
         dto.setId(equipe.getId());
         dto.setDesignation(equipe.getDesignation());
-        dto.setChefEquipe(UtilisateurFactory.toDTOLight(equipe.getChefEquipe()));
         return dto;
     }
 
@@ -42,11 +49,7 @@ public class EquipeFactory {
         entity.setDesignation(dto.getDesignation());
         entity.setDateCreation(dto.getDateCreation());
         entity.setUserCreation(dto.getUserCreation());
-         if (dto.getChefEquipe() != null) {
-        entity.setChefEquipe(UtilisateurFactory.toEntity(dto.getChefEquipe()));
-    } else {
-        entity.setChefEquipe(null); // ❗ Required to remove the chefEquipe link
-    }
+         
         return entity;
     }
 

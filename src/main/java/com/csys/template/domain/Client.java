@@ -1,11 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.csys.template.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -24,15 +21,9 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author harra
- */
+
 @Entity
 @Table(name = "Client", catalog = "Gestion_Tickets", schema = "dbo")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Client.findAll", query = "SELECT c FROM Client c")})
 public class Client implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,7 +38,6 @@ public class Client implements Serializable {
     @Size(max = 200)
     @Column(name = "adress")
     private String adress;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 100)
     @Column(name = "email")
     private String email;
@@ -63,7 +53,15 @@ public class Client implements Serializable {
     @Column(name = "actif")
     private Boolean actif;
     @OneToMany(mappedBy = "idClient", fetch = FetchType.LAZY)
-    private Set<Ticket> ticketSet;
+    private List<Ticket> ticketList;
+
+    public List<Ticket> getTicketList() {
+        return ticketList;
+    }
+
+    public void setTicketList(List<Ticket> ticketList) {
+        this.ticketList = ticketList;
+    }
 
     public Client() {
     }
@@ -134,15 +132,6 @@ public class Client implements Serializable {
 
     public void setActif(Boolean actif) {
         this.actif = actif;
-    }
-
-    @XmlTransient
-    public Set<Ticket> getTicketSet() {
-        return ticketSet;
-    }
-
-    public void setTicketSet(Set<Ticket> ticketSet) {
-        this.ticketSet = ticketSet;
     }
 
     @Override

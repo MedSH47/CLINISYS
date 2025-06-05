@@ -7,6 +7,7 @@ import java.lang.Integer;
 import java.lang.String;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,11 +32,22 @@ public class EquipeDTO {
   )
   private String designation;
 
-  private Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet;
+  private List<EquipePosteutilisateurDTO> equipePosteutilisateurList;
 
   private UtilisateurDTO chefEquipe;
  
-  private Collection<ModuleDTO> moduleSet;
+  private List<ModuleDTO> moduleList;
+
+  private List<UtilisateurDTO> utilisateurs;
+  
+
+  public List<UtilisateurDTO> getUtilisateurs() {
+    return utilisateurs;
+  }
+
+  public void setUtilisateurs(List<UtilisateurDTO> utilisateurs) {
+    this.utilisateurs = utilisateurs;
+  }
 
   public Integer getId() {
     return id;
@@ -69,12 +81,12 @@ public class EquipeDTO {
     this.designation = designation;
   }
 
-  public Collection getEquipePosteutilisateurSet() {
-    return equipePosteutilisateurSet;
+  public List<EquipePosteutilisateurDTO> getEquipePosteutilisateurSet() {
+    return equipePosteutilisateurList;
   }
 
-  public void setEquipePosteutilisateurSet(Collection equipePosteutilisateurSet) {
-    this.equipePosteutilisateurSet = equipePosteutilisateurSet;
+  public void setEquipePosteutilisateurSet(List<EquipePosteutilisateurDTO> equipePosteutilisateurList) {
+    this.equipePosteutilisateurList = equipePosteutilisateurList;
   }
 
   public UtilisateurDTO getChefEquipe() {
@@ -85,12 +97,12 @@ public class EquipeDTO {
     this.chefEquipe = chefEquipe;
   }
 
-  public Collection<ModuleDTO> getModuleSet() {
-    return moduleSet;
+  public List<ModuleDTO> getModuleList() {
+    return moduleList;
   }
 
-  public void setModuleSet(Collection<ModuleDTO> moduleSet) {
-    this.moduleSet = moduleSet;
+  public void setModuleList(List<ModuleDTO> moduleList) {
+    this.moduleList = moduleList;
   }
 
   

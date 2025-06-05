@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.csys.template.domain;
 
 import java.io.Serializable;
@@ -18,26 +14,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author harra
- */
 @Entity
 @Table(name = "Ticket", catalog = "Gestion_Tickets", schema = "dbo")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Ticket.findAll", query = "SELECT t FROM Ticket t")})
+
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,20 +58,41 @@ public class Ticket implements Serializable {
     @Size(max = 20)
     @Column(name = "statue")
     private String statue;
-    @JoinColumn(name = "id_client", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Client idClient;
-    @JoinColumn(name = "id_module", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Module idModule;
+    @JoinColumn(name = "id_module")
+    private Module module;
     @JoinColumn(name = "id_utilisateur", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Utilisateur idUtilisateur;
-    @OneToMany(mappedBy = "idTicket", fetch = FetchType.LAZY)
-    private Set<DocumentJointes> documentJointesSet;
-    @OneToMany(mappedBy = "idTicket", fetch = FetchType.LAZY)
-    private Set<Commentaire> commentaireSet;
+    @JoinColumn(name = "id_client", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Client idClient;
+   
     
+
+    public Client getIdClient() {
+        return idClient;
+    }
+
+    public void setIdClient(Client idClient) {
+        this.idClient = idClient;
+    }
+
+    public Utilisateur getIdUtilisateur() {
+        return idUtilisateur;
+    }
+
+    public void setIdUtilisateur(Utilisateur idUtilisateur) {
+        this.idUtilisateur = idUtilisateur;
+    }
+
+    public Module getModule() {
+        return module;
+    }
+
+    public void setModule(Module module) {
+        this.module = module;
+    }
 
     public Ticket() {
     }
@@ -167,48 +174,6 @@ public class Ticket implements Serializable {
     }
 
   
-    public Client getIdClient() {
-        return idClient;
-    }
-
-    public void setIdClient(Client idClient) {
-        this.idClient = idClient;
-    }
-
-    public Module getIdModule() {
-        return idModule;
-    }
-
-    public void setIdModule(Module idModule) {
-        this.idModule = idModule;
-    }
-
-    public Utilisateur getIdUtilisateur() {
-        return idUtilisateur;
-    }
-
-    public void setIdUtilisateur(Utilisateur idUtilisateur) {
-        this.idUtilisateur = idUtilisateur;
-    }
-
-    @XmlTransient
-    public Set<DocumentJointes> getDocumentJointesSet() {
-        return documentJointesSet;
-    }
-
-    public void setDocumentJointesSet(Set<DocumentJointes> documentJointesSet) {
-        this.documentJointesSet = documentJointesSet;
-    }
-
-    @XmlTransient
-    public Set<Commentaire> getCommentaireSet() {
-        return commentaireSet;
-    }
-
-    public void setCommentaireSet(Set<Commentaire> commentaireSet) {
-        this.commentaireSet = commentaireSet;
-    }
-
  
     @Override
     public int hashCode() {

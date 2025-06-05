@@ -28,7 +28,7 @@ public class EquipePosteutilisateurFactory {
                 dto.getIdPoste(), dto.getIdUtilisateur(), dto.getIdEquipe()));
         }
         entity.setEquipe(EquipeFactory.toEntity(dto.getEquipe()));
-        entity.setPoste(PosteFactory.toEntity(dto.getPoste()));
+        entity.setPoste(PosteFactory.toEntity(dto.getPoste(),null,""));
         entity.setUtilisateur(UtilisateurFactory.toEntity(dto.getUtilisateur()));
         return entity;
     }

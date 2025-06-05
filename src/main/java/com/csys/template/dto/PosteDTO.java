@@ -2,33 +2,23 @@ package com.csys.template.dto;
 
 import java.lang.Integer;
 import java.lang.String;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Set;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.time.LocalDateTime;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PosteDTO {
   private Integer id;
 
-  @Temporal(TemporalType.DATE)
-  private Date dateCreation;
+  private LocalDateTime dateCreation;
 
-  @Size(
-      min = 0,
-      max = 50
-  )
+  @Size(min = 0, max = 50)
   private String userCreation;
 
-  @Size(
-      min = 0,
-      max = 100
-  )
+  @Size(min = 0, max = 100)
   private String designation;
 
-  private Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet;
+  private Boolean actif;
 
   public Integer getId() {
     return id;
@@ -38,11 +28,11 @@ public class PosteDTO {
     this.id = id;
   }
 
-  public Date getDateCreation() {
+  public LocalDateTime getDateCreation() {
     return dateCreation;
   }
 
-  public void setDateCreation(Date dateCreation) {
+  public void setDateCreation(LocalDateTime dateCreation) {
     this.dateCreation = dateCreation;
   }
 
@@ -53,6 +43,13 @@ public class PosteDTO {
   public void setUserCreation(String userCreation) {
     this.userCreation = userCreation;
   }
+   public Boolean isActif() {
+    return actif;
+  }
+
+  public void setActif(Boolean actif) {
+    this.actif = actif;
+  }
 
   public String getDesignation() {
     return designation;
@@ -62,12 +59,5 @@ public class PosteDTO {
     this.designation = designation;
   }
 
-  public Collection<EquipePosteutilisateurDTO> getEquipePosteutilisateurSet() {
-    return equipePosteutilisateurSet;
-  }
 
-  public void setEquipePosteutilisateurSet(Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet) {
-    this.equipePosteutilisateurSet = equipePosteutilisateurSet;
-  }
 }
-

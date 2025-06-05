@@ -7,7 +7,7 @@ import com.csys.template.dto.UtilisateurDTO;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+
 import java.util.stream.Collectors;
 
 public class UtilisateurFactory {
@@ -27,12 +27,15 @@ public class UtilisateurFactory {
         dto.setRole(utilisateur.getRole());
         dto.setActivite(utilisateur.getActivite());
         dto.setDateCreation(utilisateur.getDateCreation());
+        // Check if the ticketList is not null before mapping
+        // This prevents NullPointerException if ticketList is null
+        // If ticketList is null, we can set it to an empty list
+        dto.setTicketList(utilisateur.getTicketList() != null ? utilisateur.getTicketList().stream()
+            .map(TicketFactory::toDTOLight)
+            .collect(Collectors.toList()) : Collections.emptyList());
         dto.setUserCreation(utilisateur.getUserCreation());
-        if (utilisateur.getTicketSet() != null) {
-            dto.setTicketSet(TicketFactory.toDTOsLight(utilisateur.getTicketSet()));
-        }
-        if (utilisateur.getEquipePosteutilisateurSet() != null) {
-            Collection<EquipePosteDTO> equipePosteSet = utilisateur.getEquipePosteutilisateurSet().stream()
+         if (utilisateur.getEquipePosteutilisateurList() != null) {
+            Collection<EquipePosteDTO> equipePosteSet = utilisateur.getEquipePosteutilisateurList().stream()
                 .map(epu -> {
                     EquipePosteDTO epuDTO = new EquipePosteDTO();
                     epuDTO.setEquipe(EquipeFactory.toDTOLight(epu.getEquipe()));

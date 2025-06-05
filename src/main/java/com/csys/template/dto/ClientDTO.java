@@ -4,6 +4,7 @@ import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -48,7 +49,7 @@ public class ClientDTO {
 
   private Boolean actif;
 
-  private Set ticketSet;
+  private List<TicketDTO> ticketList;
 
   public Integer getId() {
     return id;
@@ -114,12 +115,12 @@ public class ClientDTO {
     this.actif = actif;
   }
 
-  public Set getTicketSet() {
-    return ticketSet;
+  public List<TicketDTO> getTicketList() {
+    return ticketList;
   }
 
-  public void setTicketSet(Set ticketSet) {
-    this.ticketSet = ticketSet;
+  public void setTicketList(List<TicketDTO> ticketList) {
+    this.ticketList = ticketList;
   }
 }
 

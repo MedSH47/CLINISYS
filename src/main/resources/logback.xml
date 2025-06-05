@@ -22,10 +22,7 @@
         </appender>
     -->
 
-    <logger name="com.csys.facturation" level="ON"/>
-    <logger name="java.util.stream" level="ON"/>
- 
-    <logger name="org.apache" level="WARN"/>
+ <logger name="org.apache" level="WARN"/>
     <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
     <logger name="org.bson" level="WARN"/>
     <logger name="org.hibernate.validator" level="WARN"/>

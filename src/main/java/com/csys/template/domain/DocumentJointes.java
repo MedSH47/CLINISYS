@@ -57,9 +57,6 @@ public class DocumentJointes implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "nom_document")
     private String nomDocument;
-    @JoinColumn(name = "id_ticket", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Ticket idTicket;
     
 
     public DocumentJointes() {
@@ -109,13 +106,6 @@ public class DocumentJointes implements Serializable {
         this.nomDocument = nomDocument;
     }
 
-    public Ticket getIdTicket() {
-        return idTicket;
-    }
-
-    public void setIdTicket(Ticket idTicket) {
-        this.idTicket = idTicket;
-    }
 
    
 

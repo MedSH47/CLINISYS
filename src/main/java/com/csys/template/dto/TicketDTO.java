@@ -57,15 +57,12 @@ public class TicketDTO {
   )
   private String statue;
 
-  private Client idClient;
+  private ClientDTO idClient;
 
   private ModuleDTO idModule;
 
   private UtilisateurDTO idUtilisateur;
 
-  private Set documentJointesSet;
-
-  private Set commentaireSet;
 
 
   public Integer getId() {
@@ -141,11 +138,11 @@ public class TicketDTO {
   }
 
 
-  public Client getIdClient() {
+  public ClientDTO getIdClient() {
     return idClient;
   }
 
-  public void setIdClient(Client idClient) {
+  public void setIdClient(ClientDTO idClient) {
     this.idClient = idClient;
   }
 
@@ -165,21 +162,7 @@ public class TicketDTO {
     this.idUtilisateur = idUtilisateur;
   }
 
-  public Set getDocumentJointesSet() {
-    return documentJointesSet;
-  }
 
-  public void setDocumentJointesSet(Set documentJointesSet) {
-    this.documentJointesSet = documentJointesSet;
-  }
-
-  public Set getCommentaireSet() {
-    return commentaireSet;
-  }
-
-  public void setCommentaireSet(Set commentaireSet) {
-    this.commentaireSet = commentaireSet;
-  }
 
 
 }

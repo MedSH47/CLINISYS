@@ -19,7 +19,6 @@ public class CommentaireFactory {
         dto.setId(commentaire.getId());
         dto.setCommentaire(commentaire.getCommentaire());
         dto.setDateCommentaire(commentaire.getDateCommentaire());
-        dto.setIdTicket(commentaire.getIdTicket());
 
         return dto;
     }
@@ -31,7 +30,6 @@ public class CommentaireFactory {
         entity.setId(dto.getId());
         entity.setCommentaire(dto.getCommentaire());
         entity.setDateCommentaire(dto.getDateCommentaire());
-        entity.setIdTicket(dto.getIdTicket());
 
         return entity;
     }

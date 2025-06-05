@@ -6,6 +6,7 @@ import java.lang.String;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EnumType;
@@ -17,6 +18,8 @@ import javax.validation.constraints.Size;
 
 import com.csys.template.domain.enum_identifier.Role;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import antlr.collections.impl.LList;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UtilisateurDTO {
   private Integer id;
@@ -67,8 +70,9 @@ public class UtilisateurDTO {
 
   private Boolean activite;
 
-  private Collection<TicketDTO> ticketSet;
+  private List<TicketDTO> ticketList;
 
+ 
   private Collection<EquipePosteutilisateurDTO> equipePosteutilisateurSet;
 
   
@@ -132,6 +136,14 @@ public class UtilisateurDTO {
   public void setEmail(String email) {
     this.email = email;
   }
+   public List<TicketDTO> getTicketList() {
+    return ticketList;
+  }
+
+  public void setTicketList(List<TicketDTO> ticketList) {
+    this.ticketList = ticketList;
+  }
+
 
   public String getUserCreation() {
     return userCreation;
@@ -183,13 +195,7 @@ public class UtilisateurDTO {
     this.activite = activite;
   }
 
-  public Collection<TicketDTO> getTicketSet() {
-    return ticketSet;
-  }
-
-  public void setTicketSet(Collection<TicketDTO> ticketSet) {
-    this.ticketSet = ticketSet;
-  }
+ 
 
   public Collection<EquipePosteutilisateurDTO> getEquipePosteutilisateurSet() {
     return equipePosteutilisateurSet;

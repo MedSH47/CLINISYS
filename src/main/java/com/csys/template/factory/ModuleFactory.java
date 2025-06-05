@@ -2,6 +2,8 @@ package com.csys.template.factory;
 
 import com.csys.template.domain.Module;
 import com.csys.template.dto.ModuleDTO;
+
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -16,8 +18,8 @@ public class ModuleFactory {
         dto.setDesignation(module.getDesignation());
         dto.setDateCreation(module.getDateCreation());
         dto.setUserCreation(module.getUserCreation());
-        dto.setIdEquipe(EquipeFactory.toDTOLight(module.getIdEquipe()));
-        dto.setTicketSet(TicketFactory.toDTOs( module.getTicketSet(),true));
+        dto.setEquipe(EquipeFactory.toDTO(module.getEquipe()));
+        dto.setTicketSet(TicketFactory.toDTOsLight(module.getTicketSet()));
         return dto;
     }
     
@@ -36,7 +38,6 @@ public class ModuleFactory {
         entity.setDesignation(dto.getDesignation());
         entity.setDateCreation(dto.getDateCreation());
         entity.setUserCreation(dto.getUserCreation());
-        entity.setIdEquipe(EquipeFactory.toEntity(dto.getIdEquipe()));
         return entity;
     }
 

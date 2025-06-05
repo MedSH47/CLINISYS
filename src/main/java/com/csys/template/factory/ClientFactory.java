@@ -20,11 +20,8 @@ public class ClientFactory {
         dto.setDateCreation(client.getDateCreation());
         dto.setUserCreation(client.getUserCreation());
         dto.setActif(client.getActif());
-        if (client.getTicketSet() != null) {
-            dto.setTicketSet(client.getTicketSet().stream()
-                    .map(TicketFactory::toDTOLight)
-                    .collect(Collectors.toSet()));
-        }
+        dto.setTicketList(TicketFactory.toDTOsLight(client.getTicketList()));
+       
         return dto;
     }
 

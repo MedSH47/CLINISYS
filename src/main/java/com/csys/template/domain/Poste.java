@@ -5,55 +5,40 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
+import java.time.LocalDateTime;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author harra
- */
+
 @Entity
 @Table(name = "Poste", catalog = "Gestion_Tickets", schema = "dbo")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Poste.findAll", query = "SELECT p FROM Poste p")})
+
 public class Poste implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     @Column(name = "date_creation")
-    @Temporal(TemporalType.DATE)
-    private Date dateCreation;
+    private LocalDateTime dateCreation;
+
     @Size(max = 50)
     @Column(name = "user_creation")
     private String userCreation;
     @Size(max = 100)
     @Column(name = "designation")
     private String designation;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "poste", fetch = FetchType.LAZY)
-    private Set<EquipePosteutilisateur> equipePosteutilisateurSet;
+
+    @Basic(optional = false)
+    @Column(name = "Actif")
+    private Boolean actif;
 
     public Poste() {
     }
@@ -70,11 +55,11 @@ public class Poste implements Serializable {
         this.id = id;
     }
 
-    public Date getDateCreation() {
+    public LocalDateTime getDateCreation() {
         return dateCreation;
     }
 
-    public void setDateCreation(Date dateCreation) {
+    public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
 
@@ -94,13 +79,12 @@ public class Poste implements Serializable {
         this.designation = designation;
     }
 
-    @XmlTransient
-    public Set<EquipePosteutilisateur> getEquipePosteutilisateurSet() {
-        return equipePosteutilisateurSet;
+    public Boolean isActif() {
+        return actif;
     }
 
-    public void setEquipePosteutilisateurSet(Set<EquipePosteutilisateur> equipePosteutilisateurSet) {
-        this.equipePosteutilisateurSet = equipePosteutilisateurSet;
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 
     @Override
@@ -127,5 +111,5 @@ public class Poste implements Serializable {
     public String toString() {
         return "com.csys.template.config.jpa.audit.log.demain.Poste[ id=" + id + " ]";
     }
-    
+
 }

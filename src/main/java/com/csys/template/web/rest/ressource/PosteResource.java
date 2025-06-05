@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -52,17 +53,13 @@ public class PosteResource {
    * @throws org.springframework.web.bind.MethodArgumentNotValidException
    */
   @PostMapping("/postes")
-  public ResponseEntity<PosteDTO> createPoste(@Valid @RequestBody PosteDTO posteDTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
-    log.debug("REST request to save Poste : {}", posteDTO);
-    if ( posteDTO.getId() != null) {
-      bindingResult.addError( new FieldError("PosteDTO","id","POST method does not accepte "+ENTITY_NAME+" with code"));
-      throw new MethodArgumentNotValidException(null, bindingResult);
-    }
+  public ResponseEntity<PosteDTO> createPoste(@Valid @RequestBody PosteDTO posteDTO,@RequestParam String user, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
+   
     if (bindingResult.hasErrors()) {
       throw new MethodArgumentNotValidException(null, bindingResult);
     }
-    PosteDTO result = posteService.save(posteDTO);
-    return ResponseEntity.created( new URI("/api/postes/"+ result.getId())).body(result);
+    PosteDTO result = posteService.save(posteDTO,user);
+    return ResponseEntity.created( new URI("/api/postes/")).body(result);
   }
 
   /**
@@ -76,10 +73,10 @@ public class PosteResource {
    * @throws org.springframework.web.bind.MethodArgumentNotValidException
    */
   @PutMapping("/postes/{id}")
-  public ResponseEntity<PosteDTO> updatePoste(@PathVariable Integer id, @Valid @RequestBody PosteDTO posteDTO) throws MethodArgumentNotValidException {
+  public ResponseEntity<PosteDTO> updatePoste(@PathVariable Integer id,@RequestParam String user, @Valid @RequestBody PosteDTO posteDTO) throws MethodArgumentNotValidException {
     log.debug("Request to update Poste: {}",id);
     posteDTO.setId(id);
-    PosteDTO result =posteService.update(posteDTO);
+    PosteDTO result =posteService.update(posteDTO,user);
     return ResponseEntity.ok().body(result);
   }
 
@@ -103,9 +100,9 @@ public class PosteResource {
    * @return the ResponseEntity with status 200 (OK) and the list of postes in body
    */
   @GetMapping("/postes")
-  public Collection<PosteDTO> getAllPostes() {
+  public Collection<PosteDTO> getAllPostes(@RequestParam(required = false) Boolean [] actifs) {
     log.debug("Request to get all  Postes : {}");
-    return posteService.findAll();
+    return posteService.findAll(actifs);
   }
 
   /**

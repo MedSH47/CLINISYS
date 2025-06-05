@@ -5,9 +5,8 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,26 +17,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author harra
- */
 @Entity
 @Table(name = "Equipe", catalog = "Gestion_Tickets", schema = "dbo")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Equipe.findAll", query = "SELECT e FROM Equipe e")})
 public class Equipe implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -55,15 +42,35 @@ public class Equipe implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "designation")
     private String designation;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "equipe", fetch = FetchType.LAZY)
-    private Set<EquipePosteutilisateur> equipePosteutilisateurSet;
 
-    @JoinColumn(name = "chef_equipe", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "chef_equipe")
     private Utilisateur chefEquipe;
-    @OneToMany(mappedBy = "idEquipe", fetch = FetchType.LAZY)
-    private Collection<Module> moduleSet;
+
+    @OneToMany(mappedBy = "equipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Module> moduleList;
+
+   
+    @OneToMany(mappedBy = "equipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<EquipePosteutilisateur> equipePosteutilisateurList;
+    
+    
+
+    public List<EquipePosteutilisateur> getEquipePosteutilisateurList() {
+        return equipePosteutilisateurList;
+    }
+
+    public void setEquipePosteutilisateurList(List<EquipePosteutilisateur> equipePosteutilisateurList) {
+        this.equipePosteutilisateurList = equipePosteutilisateurList;
+    }
+
+    public Utilisateur getChefEquipe() {
+        return chefEquipe;
+    }
+
+    public void setChefEquipe(Utilisateur chefEquipe) {
+        this.chefEquipe = chefEquipe;
+    }
 
     public Equipe() {
     }
@@ -71,6 +78,14 @@ public class Equipe implements Serializable {
     public Equipe(Integer id) {
         this.id = id;
     }
+     public List<Module> getModuleList() {
+        return moduleList;
+    }
+
+    public void setModuleList(List<Module> moduleList) {
+        this.moduleList = moduleList;
+    }
+
 
     public Integer getId() {
         return id;
@@ -104,31 +119,7 @@ public class Equipe implements Serializable {
         this.designation = designation;
     }
 
-    @XmlTransient
-    public Set<EquipePosteutilisateur> getEquipePosteutilisateurSet() {
-        return equipePosteutilisateurSet;
-    }
-
-    public void setEquipePosteutilisateurSet(Set<EquipePosteutilisateur> equipePosteutilisateurSet) {
-        this.equipePosteutilisateurSet = equipePosteutilisateurSet;
-    }
-
-    public Utilisateur getChefEquipe() {
-        return chefEquipe;
-    }
-
-    public void setChefEquipe(Utilisateur chefEquipe) {
-        this.chefEquipe = chefEquipe;
-    }
-
-    @XmlTransient
-    public Collection<Module> getModuleSet() {
-        return moduleSet;
-    }
-
-    public void setModuleSet(Collection<Module> moduleSet) {
-        this.moduleSet = moduleSet;
-    }
+   
 
     @Override
     public int hashCode() {

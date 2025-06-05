@@ -157,17 +157,6 @@ public class UtilisateurService {
 public void delete(Integer id) {
     log.debug("Request to delete Utilisateur: {}", id);
 
-    
-    // Step 2: Update chefEquipe to null if this user was a team lead
-    Collection<Equipe> equipes = equipeRepository.findAll();
-    for (Equipe equipe : equipes) {
-        if (equipe.getChefEquipe() != null && equipe.getChefEquipe().getId().equals(id)) {
-            equipe.setChefEquipe(null);
-            equipeRepository.save(equipe);
-        }
-    }
-
-    // Step 3: Delete the user
     utilisateurRepository.deleteById(id);
     log.info("Utilisateur deleted successfully with ID: {}", id);
   }
