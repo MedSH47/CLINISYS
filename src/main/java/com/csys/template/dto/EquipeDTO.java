@@ -1,14 +1,9 @@
 package com.csys.template.dto;
 
-import com.csys.template.domain.Utilisateur;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.lang.Integer;
 import java.lang.String;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;

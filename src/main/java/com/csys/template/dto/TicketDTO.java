@@ -1,11 +1,6 @@
 package com.csys.template.dto;
 
-import com.csys.template.domain.Client;
-import com.csys.template.domain.Module;
 import com.csys.template.domain.Ticket;
-import com.csys.template.domain.Utilisateur;
-
-
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Date;
@@ -18,9 +13,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class TicketDTO {
   private Integer id;
-
-  private Integer idTicketParent;
-
+  
   @Size(
       min = 0,
       max = 200

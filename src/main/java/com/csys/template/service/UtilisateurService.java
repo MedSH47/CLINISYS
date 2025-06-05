@@ -1,22 +1,13 @@
 package com.csys.template.service;
 
-import com.csys.template.domain.Equipe;
-import com.csys.template.domain.Ticket;
 import com.csys.template.domain.Utilisateur;
-import com.csys.template.dto.EquipeDTO;
 import com.csys.template.dto.UtilisateurDTO;
 import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.EquipeRepository;
 import com.csys.template.repository.TicketRepository;
 import com.csys.template.repository.UtilisateurRepository;
-import com.google.common.base.Preconditions; // Keep this if you use it elsewhere, or remove
-
-import liquibase.pro.packaged.e;
-import liquibase.pro.packaged.em;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +21,7 @@ public class UtilisateurService {
   private final Logger log = LoggerFactory.getLogger(UtilisateurService.class);
   private final PasswordEncoder passwordEncoder;
   private final UtilisateurRepository utilisateurRepository;
-  private final EquipeRepository equipeRepository;
-  private final TicketRepository ticketRepository;
+
 
  
 
@@ -39,8 +29,6 @@ public class UtilisateurService {
       EquipeRepository equipeRepository, TicketRepository ticketRepository) {
     this.passwordEncoder = passwordEncoder;
     this.utilisateurRepository = utilisateurRepository;
-    this.equipeRepository = equipeRepository;
-    this.ticketRepository = ticketRepository;
   }
 
   public UtilisateurDTO save(UtilisateurDTO utilisateurDTO) {

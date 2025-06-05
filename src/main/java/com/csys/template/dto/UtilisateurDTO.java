@@ -3,12 +3,9 @@ package com.csys.template.dto;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
@@ -19,7 +16,6 @@ import javax.validation.constraints.Size;
 import com.csys.template.domain.enum_identifier.Role;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import antlr.collections.impl.LList;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UtilisateurDTO {
   private Integer id;

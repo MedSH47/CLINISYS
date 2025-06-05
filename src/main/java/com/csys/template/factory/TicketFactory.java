@@ -1,6 +1,5 @@
 package com.csys.template.factory;
 
-import com.csys.template.domain.Client;
 import com.csys.template.domain.Ticket;
 import com.csys.template.dto.TicketDTO;
 
@@ -10,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.poi.ss.formula.functions.T;
 
 public class TicketFactory {
 

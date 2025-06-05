@@ -4,7 +4,6 @@ import com.csys.template.domain.Ticket;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Date;
-import java.util.Set;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
@@ -31,8 +30,6 @@ public class DocumentJointesDTO {
   private String nomDocument;
 
   private Ticket idTicket;
-
-  private Set ticketfichierSet;
 
   public Integer getId() {
     return id;
@@ -80,14 +77,6 @@ public class DocumentJointesDTO {
 
   public void setIdTicket(Ticket idTicket) {
     this.idTicket = idTicket;
-  }
-
-  public Set getTicketfichierSet() {
-    return ticketfichierSet;
-  }
-
-  public void setTicketfichierSet(Set ticketfichierSet) {
-    this.ticketfichierSet = ticketfichierSet;
   }
 }
 
