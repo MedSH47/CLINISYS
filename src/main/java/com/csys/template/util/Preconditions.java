@@ -19,14 +19,12 @@ public final class Preconditions {
         throw new AssertionError();
     }
 
-    // API
-    /**
-     * Check if some value was found, otherwise throw exception.
+  /**
+     * Checks that the expression is true, otherwise throws an
+     * {@link IllegalBusinessLogiqueException} with the given message.
      *
-     * @param expression has value true if found, otherwise false
-     * @param message
-     * @throws MyResourceNotFoundException if expression is false, means value
-     * not found.
+     * @param expression the expression to check
+     * @param message    the message to use if the check fails
      */
     public static void checkBusinessLogique(final boolean expression, String message) {
         if (!expression) {
@@ -44,15 +42,7 @@ public final class Preconditions {
        }
    }
 
-    /**
-     * Check if some value was found, otherwise throw exception.
-     *
-     * @param <T>
-     * @param resource
-     * @return
-     * @throws MyResourceNotFoundException if expression is false, means value
-     * not found.
-     */
+
     public static <T> T checkFound(final T resource) {
         if (resource == null) {
             throw new MyResourceNotFoundException();

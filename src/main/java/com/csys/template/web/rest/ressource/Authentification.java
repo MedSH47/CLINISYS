@@ -16,6 +16,11 @@ import com.csys.template.domain.Utilisateur;
 import com.csys.template.service.CustomUserDetailsService;
 import com.csys.template.service.JwtUtil;
 import com.csys.template.service.UtilisateurService;
+import com.csys.template.util.Helper;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api")
@@ -65,4 +70,10 @@ public class Authentification {
                     .body(Collections.singletonMap("message", "user not found"));
         }
     }
+    @GetMapping("/getuserauth")
+    public String getMethodName() {
+        String username= Helper.getUserAuthenticated();
+        return username;
+    }
+    
 }

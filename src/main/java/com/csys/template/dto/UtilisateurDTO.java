@@ -3,13 +3,11 @@ package com.csys.template.dto;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 
@@ -46,8 +44,7 @@ public class UtilisateurDTO {
   )
   private String userCreation;
 
-  @Temporal(TemporalType.DATE)
-  private Date dateCreation;
+  private LocalDateTime dateCreation;
 
   @Size(
       min = 0,
@@ -149,11 +146,11 @@ public class UtilisateurDTO {
     this.userCreation = userCreation;
   }
 
-  public Date getDateCreation() {
+  public LocalDateTime getDateCreation() {
     return dateCreation;
   }
 
-  public void setDateCreation(Date dateCreation) {
+  public void setDateCreation(LocalDateTime dateCreation) {
     this.dateCreation = dateCreation;
   }
 

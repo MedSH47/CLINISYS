@@ -1,11 +1,8 @@
 package com.csys.template.dto;
 
-import com.csys.template.domain.Ticket;
 import java.lang.Integer;
 import java.lang.String;
-import java.util.Date;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.time.LocalDateTime;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -18,10 +15,13 @@ public class CommentaireDTO {
   )
   private String commentaire;
 
-  @Temporal(TemporalType.DATE)
-  private Date dateCommentaire;
+  private UtilisateurDTO utilisateur;
 
-  private Ticket idTicket;
+
+
+  private LocalDateTime dateCommentaire;
+
+  private TicketDTO ticket;
 
   public Integer getId() {
     return id;
@@ -29,6 +29,14 @@ public class CommentaireDTO {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+  
+  public UtilisateurDTO getUtilisateur() {
+    return utilisateur;
+  }
+
+  public void setUtilisateur(UtilisateurDTO utilisateur) {
+    this.utilisateur = utilisateur;
   }
 
   public String getCommentaire() {
@@ -39,20 +47,20 @@ public class CommentaireDTO {
     this.commentaire = commentaire;
   }
 
-  public Date getDateCommentaire() {
+  public LocalDateTime getDateCommentaire() {
     return dateCommentaire;
   }
 
-  public void setDateCommentaire(Date dateCommentaire) {
+  public void setDateCommentaire(LocalDateTime dateCommentaire) {
     this.dateCommentaire = dateCommentaire;
   }
 
-  public Ticket getIdTicket() {
-    return idTicket;
+  public TicketDTO getTicket() {
+    return ticket;
   }
 
-  public void setIdTicket(Ticket idTicket) {
-    this.idTicket = idTicket;
+  public void setTicket(TicketDTO ticket) {
+    this.ticket = ticket;
   }
 }
 

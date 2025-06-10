@@ -2,18 +2,14 @@ package com.csys.template.dto;
 
 import java.lang.Integer;
 import java.lang.String;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class EquipeDTO {
   private Integer id;
-
-  @Temporal(TemporalType.DATE)
-  private Date dateCreation;
+  private LocalDateTime dateCreation;
 
   @Size(
       min = 0,
@@ -52,11 +48,11 @@ public class EquipeDTO {
     this.id = id;
   }
 
-  public Date getDateCreation() {
+  public LocalDateTime getDateCreation() {
     return dateCreation;
   }
 
-  public void setDateCreation(Date dateCreation) {
+  public void setDateCreation(LocalDateTime dateCreation) {
     this.dateCreation = dateCreation;
   }
 

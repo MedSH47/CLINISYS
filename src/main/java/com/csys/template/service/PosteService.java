@@ -5,6 +5,7 @@ import com.csys.template.domain.QPoste;
 import com.csys.template.dto.PosteDTO;
 import com.csys.template.factory.PosteFactory;
 import com.csys.template.repository.PosteRepository;
+import com.csys.template.util.Helper;
 import com.csys.template.util.WhereClauseBuilder;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
@@ -50,15 +51,24 @@ public class PosteService {
    * @param posteDTO
    * @return the updated entity
    */
-  public PosteDTO update(PosteDTO posteDTO, String user) {
+public PosteDTO update(PosteDTO posteDTO, String user) {
     log.debug("Request to update Poste: {}", posteDTO);
-    Poste inBase = posteRepository.findById(posteDTO.getId()).orElse(null);
-    Preconditions.checkArgument(inBase != null, "poste.NotFound");
-    Poste poste = PosteFactory.toEntity(posteDTO, inBase, user);
-    poste = posteRepository.save(poste);
-    PosteDTO resultDTO = PosteFactory.toDTO(poste);
-    return resultDTO;
-  }
+
+    // 1. Load existing entity
+    Poste existing = posteRepository.findById(posteDTO.getId())
+        .orElseThrow(() -> new IllegalArgumentException("poste.NotFound"));
+
+    // 2. Create a temp-entity with only the DTO’s fields
+    //    (Factory should map all fields present in DTO; unset DTO fields stay null)
+    Poste updatedFields = PosteFactory.toEntity(posteDTO, null, user);
+
+    // 3. Merge non-null values into the existing entity
+    Helper.mergeNonNullFields(updatedFields, existing);
+
+    // 4. Persist & return
+    Poste saved = posteRepository.save(existing);
+    return PosteFactory.toDTO(saved);
+}
 
   /**
    * Get one posteDTO by id.

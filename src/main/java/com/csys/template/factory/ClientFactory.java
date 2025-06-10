@@ -2,6 +2,9 @@ package com.csys.template.factory;
 
 import com.csys.template.domain.Client;
 import com.csys.template.dto.ClientDTO;
+import com.csys.template.util.Helper;
+
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -37,13 +40,15 @@ public class ClientFactory {
     public static Client toEntity(ClientDTO dto) {
         if (dto == null) return null;
         Client entity = new Client();
+        if(dto.getDateCreation() == null) {
+            entity.setDateCreation(LocalDateTime.now());
+        }
+        entity.setUserCreation(Helper.getUserAuthenticated());
         entity.setId(dto.getId());
         entity.setNomComplet(dto.getNomComplet());
         entity.setAdress(dto.getAdress());
         entity.setEmail(dto.getEmail());
         entity.setRegion(dto.getRegion());
-        entity.setDateCreation(dto.getDateCreation());
-        entity.setUserCreation(dto.getUserCreation());
         entity.setActif(dto.getActif());
         return entity;
     }

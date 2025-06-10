@@ -5,36 +5,26 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.Basic;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.csys.template.log.listener.EntityLogger;
 
-/**
- *
- * @author harra
- */
 @Entity
 @Table(name = "document_jointes", catalog = "Gestion_Tickets", schema = "dbo")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "DocumentJointes.findAll", query = "SELECT d FROM DocumentJointes d")})
+@EntityListeners(EntityLogger.class)
+
 public class DocumentJointes implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -45,8 +35,7 @@ public class DocumentJointes implements Serializable {
     @Column(name = "document")
     private byte[] document;
     @Column(name = "date_document")
-    @Temporal(TemporalType.DATE)
-    private Date dateDocument;
+    private LocalDateTime dateDocument;
     @Size(max = 2147483647)
     @Column(name = "nom_document")
     private String nomDocument;
@@ -83,11 +72,11 @@ public class DocumentJointes implements Serializable {
         this.document = document;
     }
 
-    public Date getDateDocument() {
+    public LocalDateTime getDateDocument() {
         return dateDocument;
     }
 
-    public void setDateDocument(Date dateDocument) {
+    public void setDateDocument(LocalDateTime dateDocument) {
         this.dateDocument = dateDocument;
     }
 

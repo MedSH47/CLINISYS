@@ -24,9 +24,11 @@ public class TicketFactory {
         dto.setPriorite(ticket.getPriorite());
         dto.setStatue(ticket.getStatue());
         dto.setIdUtilisateur(UtilisateurFactory.toDTOLight(ticket.getIdUtilisateur()));
+        dto.setCommentaireList(CommentaireFactory.toDTOsLight(ticket.getCommentaireList()));
         dto.setIdClient(ClientFactory.toDTOLight(ticket.getIdClient()));
+        dto.setIdModule(ModuleFactory.toDTOLight(ticket.getModule()));
         if (ticket.getParentTicket() != null) {
-             dto.setParentTicket(ticket.getParentTicket());
+             dto.setParentTicket(TicketFactory.toDTOLight(ticket.getParentTicket()));
         }
         return dto;
     }
@@ -45,13 +47,15 @@ public class TicketFactory {
         Ticket entity = new Ticket();
         entity.setId(dto.getId());
         entity.setTitre(dto.getTitre());
+        entity.setIdUtilisateur(UtilisateurFactory.toEntity(dto.getIdUtilisateur()));
         entity.setDescription(dto.getDescription());
         entity.setDateCreation(dto.getDateCreation());
         entity.setUserCreation(dto.getUserCreation());
         entity.setPriorite(dto.getPriorite());
+        entity.setModule(ModuleFactory.toEntity(dto.getIdModule()));
         entity.setStatue(dto.getStatue());
         if (dto.getParentTicket() != null) {
-            entity.setParentTicket(dto.getParentTicket());
+            entity.setParentTicket(TicketFactory.toEntity(dto.getParentTicket()));
         }
         return entity;
     }

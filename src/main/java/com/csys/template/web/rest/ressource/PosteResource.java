@@ -8,8 +8,7 @@ import java.lang.Void;
 import java.net.URI;
 import java.net.URISyntaxException;
 import com.csys.template.util.RestPreconditions;
-
-import java.util.Collection;
+import java.util.List;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +66,7 @@ public class PosteResource {
   }
 
   @GetMapping("/postes")
-  public Collection<PosteDTO> getAllPostes(@RequestParam(required = false) Boolean [] actifs) {
+  public List<PosteDTO> getAllPostes(@RequestParam(required = false) Boolean [] actifs) {
     log.debug("Request to get all  Postes : {}");
     return posteService.findAll(actifs);
   }

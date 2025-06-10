@@ -1,59 +1,87 @@
-package com.csys.template.config.jpa.audit.log.demain;
-
+package com.csys.template.log.demain;
 
 import java.time.LocalDateTime;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "log")
 public class Log {
 
+    public enum LogType {
+        AUDIT, NOTIFICATION
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(name = "entity_name")
     private String entityName;
-    
+
     @Column(name = "entity_id")
-    private String entityId; // Added
+    private String entityId; 
     
     @Column(name = "action")
     private String action;
-    
+
     @Column(name = "performed_by")
     private String performedBy;
-    
+
     @Column(name = "timestamp")
     private LocalDateTime timestamp;
-    
+
     @Column(length = 1000, name = "details")
     private String details;
-    
+
     @Column(name = "ip_address")
-    private String ipAddress; // Added
-    
+    private String ipAddress;
+
     @Column(name = "operation_type")
-    private String operationType; // Added (e.g., HTTP method)
-    
+    private String operationType;
+
     @Column(name = "old_state", columnDefinition = "TEXT")
-    private String oldState; // Added
-    
+    private String oldState; 
+
     @Column(name = "new_state", columnDefinition = "TEXT")
-    private String newState; // Added
+    private String newState;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "log_type")
+    private LogType logType;
+
+     @Column(name = "review_employe")
+    private Boolean reviewEmploye;
+
+    @Column(name="review_chef")
+    private Boolean reviewChef;
 
     // Constructors
     public Log() {}
 
-    public Log(String entityName, String action, String performedBy, 
-              LocalDateTime timestamp, String details) {
-        this.entityName = entityName;
+    public Log(LogType logType, String action, String performedBy, String details) {
+        this.logType = logType;
         this.action = action;
         this.performedBy = performedBy;
-        this.timestamp = timestamp;
+        this.timestamp = LocalDateTime.now();
         this.details = details;
     }
+
+    public Boolean getReviewEmploye() {
+        return reviewEmploye;
+    }
+
+     public void setReviewEmploye(Boolean reviewEmploye) {
+         this.reviewEmploye = reviewEmploye;
+     }
+    public Boolean getReviewChef() {
+        return reviewChef;
+    }
+    public void setReviewChef(Boolean reviewChef) {
+        this.reviewChef = reviewChef;
+    }
+
+    
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -86,7 +114,6 @@ public class Log {
     public void setAction(String action) {
         this.action = action;
     }
-    
 
     public String getPerformedBy() {
         return performedBy;
@@ -144,7 +171,25 @@ public class Log {
         this.newState = newState;
     }
 
+    public LogType getLogType() {
+        return logType;
+    }
 
+    public void setLogType(LogType logType) {
+        this.logType = logType;
+    }
 
-  
+    @Override
+    public String toString() {
+        return "Log{" +
+                "id=" + id +
+                ", logType=" + logType +
+                ", entityName='" + entityName + '\'' +
+                ", entityId='" + entityId + '\'' +
+                ", action='" + action + '\'' +
+                ", performedBy='" + performedBy + '\'' +
+                ", timestamp=" + timestamp +
+                ", details='" + details + '\'' +
+                '}';
+    }
 }

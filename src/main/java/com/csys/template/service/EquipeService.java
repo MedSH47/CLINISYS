@@ -4,6 +4,7 @@ import com.csys.template.domain.Equipe;
 import com.csys.template.dto.EquipeDTO;
 import com.csys.template.factory.EquipeFactory;
 import com.csys.template.repository.EquipeRepository;
+import com.csys.template.util.Helper;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
 import java.util.Collection;
@@ -46,15 +47,23 @@ public class EquipeService {
    * @param equipeDTO
    * @return the updated entity
    */
-  public EquipeDTO update(EquipeDTO equipeDTO) {
-    log.debug("Request to update Equipe: {}",equipeDTO);
-    Equipe inBase= equipeRepository.findById(equipeDTO.getId()).orElse(null);
-    Preconditions.checkArgument(inBase != null, "equipe.NotFound");
-    Equipe equipe = EquipeFactory.toEntity(equipeDTO);
-    equipe = equipeRepository.save(equipe);
-    EquipeDTO resultDTO = EquipeFactory.toDTO(equipe);
-    return resultDTO;
-  }
+public EquipeDTO update(EquipeDTO equipeDTO) {
+    log.debug("Request to update Equipe: {}", equipeDTO);
+
+    // 1. Load the existing entity
+    Equipe existing = equipeRepository.findById(equipeDTO.getId())
+        .orElseThrow(() -> new IllegalArgumentException("equipe.NotFound"));
+
+    // 2. Convert DTO to a temporary entity carrying only the incoming values
+    Equipe updatedFields = EquipeFactory.toEntity(equipeDTO);
+
+    // 3. Merge non-null fields from updatedFields into existing (skips static/final)
+    Helper.mergeNonNullFields(updatedFields, existing);
+
+    // 4. Persist and return the updated DTO
+    Equipe saved = equipeRepository.save(existing);
+    return EquipeFactory.toDTO(saved);
+}
 
   /**
    * Get one equipeDTO by id.

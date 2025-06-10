@@ -1,11 +1,11 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,12 +14,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
+
+import com.csys.template.log.listener.EntityLogger;
 
 @Entity
 @Table(name = "Module", catalog = "Gestion_Tickets", schema = "dbo")
+@EntityListeners(EntityLogger.class)
 
 public class Module implements Serializable {
 
@@ -30,8 +31,7 @@ public class Module implements Serializable {
     private Integer id;
     
     @Column(name = "date_creation")
-    @Temporal(TemporalType.DATE)
-    private Date dateCreation;
+    private LocalDateTime dateCreation;
 
     @Size(max = 50)
     @Column(name = "user_creation")
@@ -80,11 +80,11 @@ public class Module implements Serializable {
         this.equipe = equipe;
     }
 
-    public Date getDateCreation() {
+    public LocalDateTime getDateCreation() {
         return dateCreation;
     }
 
-    public void setDateCreation(Date dateCreation) {
+    public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
 

@@ -3,7 +3,9 @@ package com.csys.template.dto;
 import com.csys.template.domain.Ticket;
 import java.lang.Integer;
 import java.lang.String;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,17 +28,24 @@ public class TicketDTO {
   )
   private String description;
 
-  @Size(
-      min = 0,
-      max = 50
-  )
-  private Ticket parentTicket;
+
+  private TicketDTO parentTicket;
   private String userCreation;
 
   private Set<Ticket> childTickets;
 
+  private List<CommentaireDTO> commentaireList;
+
+  public List<CommentaireDTO> getCommentaireList() {
+    return commentaireList;
+}
+
+  public void setCommentaireList(List<CommentaireDTO> commentaireList) {
+    this.commentaireList = commentaireList;
+  }
+
   @Temporal(TemporalType.DATE)
-  private Date dateCreation;
+  private LocalDateTime dateCreation;
 
   @Size(
       min = 0,
@@ -66,11 +75,11 @@ public class TicketDTO {
     this.id = id;
   }
 
-  public Ticket getParentTicket() {
+  public TicketDTO getParentTicket() {
         return parentTicket;
     }
 
-    public void setParentTicket(Ticket parentTicket) {
+    public void setParentTicket(TicketDTO parentTicket) {
         this.parentTicket = parentTicket;
     }
 
@@ -106,11 +115,11 @@ public class TicketDTO {
     this.userCreation = userCreation;
   }
 
-  public Date getDateCreation() {
+  public LocalDateTime getDateCreation() {
     return dateCreation;
   }
 
-  public void setDateCreation(Date dateCreation) {
+  public void setDateCreation(LocalDateTime dateCreation) {
     this.dateCreation = dateCreation;
   }
 

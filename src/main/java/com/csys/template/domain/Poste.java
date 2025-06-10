@@ -9,15 +9,19 @@ import java.time.LocalDateTime;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import com.csys.template.log.listener.EntityLogger;
+
 
 @Entity
 @Table(name = "Poste", catalog = "Gestion_Tickets", schema = "dbo")
+@EntityListeners(EntityLogger.class)
 
 public class Poste implements Serializable {
 

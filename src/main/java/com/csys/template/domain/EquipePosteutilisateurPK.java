@@ -10,10 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
-/**
- *
- * @author harra
- */
+
 @Embeddable
 public class EquipePosteutilisateurPK implements Serializable {
 

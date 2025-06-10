@@ -1,29 +1,30 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.Basic;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
+
+import com.csys.template.log.listener.EntityLogger;
 
 
 @Entity
 @Table(name = "Client", catalog = "Gestion_Tickets", schema = "dbo")
+@EntityListeners(EntityLogger.class)
 public class Client implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
@@ -40,8 +41,7 @@ public class Client implements Serializable {
     @Column(name = "region")
     private String region;
     @Column(name = "date_creation")
-    @Temporal(TemporalType.DATE)
-    private Date dateCreation;
+    private LocalDateTime dateCreation;
     @Size(max = 50)
     @Column(name = "user_creation")
     private String userCreation;
@@ -105,11 +105,11 @@ public class Client implements Serializable {
         this.region = region;
     }
 
-    public Date getDateCreation() {
+    public LocalDateTime getDateCreation() {
         return dateCreation;
     }
 
-    public void setDateCreation(Date dateCreation) {
+    public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
 
@@ -138,7 +138,6 @@ public class Client implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Client)) {
             return false;
         }

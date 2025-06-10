@@ -10,6 +10,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
@@ -22,6 +24,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.imageio.ImageIO;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +67,6 @@ public class Helper {
         switch (day) {
             case 1:
                 name = "Monday";
-
                 break;
             case 2:
                 name = "Tuesday";
@@ -262,7 +266,32 @@ public class Helper {
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
+    private static final Logger log = LoggerFactory.getLogger(Helper.class);
+    public static void mergeNonNullFields(Object source, Object target) {
+        if (source == null || target == null) return;
 
+        Class<?> clazz = source.getClass();
+        while (clazz != null) {
+            for (Field field : clazz.getDeclaredFields()) {
+                int mods = field.getModifiers();
+                // Skip static or final fields
+                if (Modifier.isStatic(mods) || Modifier.isFinal(mods)) {
+                    continue;
+                }
+
+                field.setAccessible(true);
+                try {
+                    Object value = field.get(source);
+                    if (value != null) {
+                        field.set(target, value);
+                    }
+                } catch (IllegalAccessException e) {
+                    log.warn("Could not merge field {}: {}", field.getName(), e.getMessage());
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+    }
     public static int getWeeksBetween(Date a, Date b) {
         Date aa;
         Date bb;

@@ -3,6 +3,7 @@ package com.csys.template.dto;
 import com.csys.template.domain.Ticket;
 import java.lang.Integer;
 import java.lang.String;
+import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,8 +21,7 @@ public class DocumentJointesDTO {
 
   private byte[] document;
 
-  @Temporal(TemporalType.DATE)
-  private Date dateDocument;
+  private LocalDateTime dateDocument;
 
   @Size(
       min = 0,
@@ -55,11 +55,11 @@ public class DocumentJointesDTO {
     this.document = document;
   }
 
-  public Date getDateDocument() {
+  public LocalDateTime getDateDocument() {
     return dateDocument;
   }
 
-  public void setDateDocument(Date dateDocument) {
+  public void setDateDocument(LocalDateTime dateDocument) {
     this.dateDocument = dateDocument;
   }
 

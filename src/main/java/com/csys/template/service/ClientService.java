@@ -4,6 +4,7 @@ import com.csys.template.domain.Client;
 import com.csys.template.dto.ClientDTO;
 import com.csys.template.factory.ClientFactory;
 import com.csys.template.repository.ClientRepository;
+import com.csys.template.util.Helper;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
 import java.util.Collection;
@@ -12,9 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service Implementation for managing Client.
- */
+
 @Service
 @Transactional
 public class ClientService {
@@ -26,12 +25,7 @@ public class ClientService {
     this.clientRepository=clientRepository;
   }
 
-  /**
-   * Save a clientDTO.
-   *
-   * @param clientDTO
-   * @return the persisted entity
-   */
+
   public ClientDTO save(ClientDTO clientDTO) {
     log.debug("Request to save Client: {}",clientDTO);
     Client client = ClientFactory.toEntity(clientDTO);
@@ -40,28 +34,27 @@ public class ClientService {
     return resultDTO;
   }
 
-  /**
-   * Update a clientDTO.
-   *
-   * @param clientDTO
-   * @return the updated entity
-   */
-  public ClientDTO update(ClientDTO clientDTO) {
-    log.debug("Request to update Client: {}",clientDTO);
-    Client inBase= clientRepository.findById(clientDTO.getId()).orElse(null);
-    Preconditions.checkArgument(inBase != null, "client.NotFound");
-    Client client = ClientFactory.toEntity(clientDTO);
-    client = clientRepository.save(client);
-    ClientDTO resultDTO = ClientFactory.toDTO(client);
-    return resultDTO;
-  }
 
-  /**
-   * Get one clientDTO by id.
-   *
-   * @param id the id of the entity
-   * @return the entity DTO
-   */
+public ClientDTO update(ClientDTO clientDTO) {
+    log.debug("Request to update Client: {}", clientDTO);
+
+    // 1. Load existing entity
+    Client existingClient = clientRepository.findById(clientDTO.getId())
+        .orElseThrow(() -> new IllegalArgumentException("client.NotFound"));
+
+    // 2. Convert DTO to a temporary entity holding only the new values
+    Client updatedFields = ClientFactory.toEntity(clientDTO);
+
+    // 3. Merge non-null fields from updatedFields into existingClient
+    Helper.mergeNonNullFields(updatedFields, existingClient);
+
+    // 4. Save and return
+    Client saved = clientRepository.save(existingClient);
+    return ClientFactory.toDTO(saved);
+}
+
+
+
   @Transactional(
       readOnly = true
   )
@@ -72,12 +65,6 @@ public class ClientService {
     return dto;
   }
 
-  /**
-   * Get one client by id.
-   *
-   * @param id the id of the entity
-   * @return the entity
-   */
   @Transactional(
       readOnly = true
   )
@@ -87,11 +74,6 @@ public class ClientService {
     return client;
   }
 
-  /**
-   * Get all the clients.
-   *
-   * @return the the list of entities
-   */
   @Transactional(
       readOnly = true
   )
@@ -101,11 +83,7 @@ public class ClientService {
     return ClientFactory.toDTOs(result);
   }
 
-  /**
-   * Delete client by id.
-   *
-   * @param id the id of the entity
-   */
+
   public void delete(Integer id) {
     log.debug("Request to delete Client: {}",id);
     clientRepository.deleteById(id);

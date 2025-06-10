@@ -2,30 +2,28 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.Basic;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
-/**
- *
- * @author harra
- */
+import com.csys.template.log.listener.EntityLogger;
+
+
 @Entity
 @Table(name = "Commentaire", catalog = "Gestion_Tickets", schema = "dbo")
-
+@EntityListeners(EntityLogger.class)
 public class Commentaire implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
@@ -33,8 +31,29 @@ public class Commentaire implements Serializable {
     @Column(name = "commentaire")
     private String commentaire;
     @Column(name = "date_commentaire")
-    @Temporal(TemporalType.DATE)
-    private Date dateCommentaire;
+    private LocalDateTime dateCommentaire;
+    @JoinColumn(name="id_ticket")
+    @ManyToOne
+    private Ticket ticket;
+    @JoinColumn(name="id_utilisateur")
+    @ManyToOne
+    private Utilisateur utilisateur;
+
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
+    }
+
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
+    }
+
+    public Ticket getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
+    }
 
     public Commentaire() {
     }
@@ -59,11 +78,11 @@ public class Commentaire implements Serializable {
         this.commentaire = commentaire;
     }
 
-    public Date getDateCommentaire() {
+    public LocalDateTime getDateCommentaire() {
         return dateCommentaire;
     }
 
-    public void setDateCommentaire(Date dateCommentaire) {
+    public void setDateCommentaire(LocalDateTime dateCommentaire) {
         this.dateCommentaire = dateCommentaire;
     }
 
@@ -76,7 +95,6 @@ public class Commentaire implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Commentaire)) {
             return false;
         }

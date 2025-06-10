@@ -4,6 +4,7 @@ import com.csys.template.domain.Commentaire;
 import com.csys.template.dto.CommentaireDTO;
 import com.csys.template.factory.CommentaireFactory;
 import com.csys.template.repository.CommentaireRepository;
+import com.csys.template.util.Helper;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
 import java.util.Collection;
@@ -46,16 +47,23 @@ public class CommentaireService {
    * @param commentaireDTO
    * @return the updated entity
    */
-  public CommentaireDTO update(CommentaireDTO commentaireDTO) {
-    log.debug("Request to update Commentaire: {}",commentaireDTO);
-    Commentaire inBase= commentaireRepository.findById(commentaireDTO.getId()).orElse(null);
-    Preconditions.checkArgument(inBase != null, "commentaire.NotFound");
-    Commentaire commentaire = CommentaireFactory.toEntity(commentaireDTO);
-    commentaire = commentaireRepository.save(commentaire);
-    CommentaireDTO resultDTO = CommentaireFactory.toDTO(commentaire);
-    return resultDTO;
-  }
+public CommentaireDTO update(CommentaireDTO commentaireDTO) {
+    log.debug("Request to update Commentaire: {}", commentaireDTO);
 
+    // 1. Fetch existing entity, fail if not found
+    Commentaire existing = commentaireRepository.findById(commentaireDTO.getId())
+        .orElseThrow(() -> new IllegalArgumentException("commentaire.NotFound"));
+
+    // 2. Build a temp entity containing only the incoming DTO values
+    Commentaire updatedFields = CommentaireFactory.toEntity(commentaireDTO);
+
+    // 3. Merge non-null fields (skipping static/final) into the existing entity
+    Helper.mergeNonNullFields(updatedFields, existing);
+
+    // 4. Persist and return the updated DTO
+    Commentaire saved = commentaireRepository.save(existing);
+    return CommentaireFactory.toDTO(saved);
+}
   /**
    * Get one commentaireDTO by id.
    *

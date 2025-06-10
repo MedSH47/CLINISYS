@@ -1,8 +1,9 @@
 package com.csys.template.domain;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -16,12 +17,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
+
 @Entity
 @Table(name = "Ticket", catalog = "Gestion_Tickets", schema = "dbo")
-
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,8 +47,7 @@ public class Ticket implements Serializable {
     @Column(name = "user_creation")
     private String userCreation;
     @Column(name = "date_creation")
-    @Temporal(TemporalType.DATE)
-    private Date dateCreation;
+    private LocalDateTime dateCreation;
     @Size(max = 20)
     @Column(name = "priorite")
     private String priorite;
@@ -65,8 +63,19 @@ public class Ticket implements Serializable {
     @JoinColumn(name = "id_client", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Client idClient;
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Commentaire> commentaireList;
+    
    
     
+
+    public List<Commentaire> getCommentaireList() {
+        return commentaireList;
+    }
+
+    public void setCommentaireList(List<Commentaire> commentaireList) {
+        this.commentaireList = commentaireList;
+    }
 
     public Client getIdClient() {
         return idClient;
@@ -147,11 +156,11 @@ public class Ticket implements Serializable {
         this.userCreation = userCreation;
     }
 
-    public Date getDateCreation() {
+    public LocalDateTime getDateCreation() {
         return dateCreation;
     }
 
-    public void setDateCreation(Date dateCreation) {
+    public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
 

@@ -4,6 +4,7 @@ import com.csys.template.domain.Module;
 import com.csys.template.dto.ModuleDTO;
 import com.csys.template.factory.ModuleFactory;
 import com.csys.template.repository.ModuleRepository;
+import com.csys.template.util.Helper;
 import com.google.common.base.Preconditions;
 import java.lang.Integer;
 import java.util.Collection;
@@ -46,15 +47,23 @@ public class ModuleService {
    * @param moduleDTO
    * @return the updated entity
    */
-  public ModuleDTO update(ModuleDTO moduleDTO) {
-    log.debug("Request to update Module: {}",moduleDTO);
-    Module inBase= moduleRepository.findById(moduleDTO.getId()).orElse(null);
-    Preconditions.checkArgument(inBase != null, "module.NotFound");
-    Module module = ModuleFactory.toEntity(moduleDTO);
-    module = moduleRepository.save(module);
-    ModuleDTO resultDTO = ModuleFactory.toDTO(module);
-    return resultDTO;
-  }
+public ModuleDTO update(ModuleDTO moduleDTO) {
+    log.debug("Request to update Module: {}", moduleDTO);
+
+    // 1. Load the existing entity
+    Module existing = moduleRepository.findById(moduleDTO.getId())
+        .orElseThrow(() -> new IllegalArgumentException("module.NotFound"));
+
+    // 2. Convert DTO to a temporary entity carrying only the incoming values
+    Module updatedFields = ModuleFactory.toEntity(moduleDTO);
+
+    // 3. Merge non-null fields from updatedFields into existing (skips static/final)
+    Helper.mergeNonNullFields(updatedFields, existing);
+
+    // 4. Persist and return the updated DTO
+    Module saved = moduleRepository.save(existing);
+    return ModuleFactory.toDTO(saved);
+}
 
   /**
    * Get one moduleDTO by id.

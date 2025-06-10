@@ -6,7 +6,6 @@ import java.lang.Integer;
 import java.lang.String;
 import java.lang.Void;
 import com.csys.template.util.RestPreconditions;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -54,6 +53,9 @@ public class CommentaireResource {
   @PostMapping("/commentaires")
   public ResponseEntity<CommentaireDTO> createCommentaire(@Valid @RequestBody CommentaireDTO commentaireDTO, BindingResult bindingResult) throws URISyntaxException, MethodArgumentNotValidException {
     log.debug("REST request to save Commentaire : {}", commentaireDTO);
+    if (commentaireDTO.getCommentaire() == null || commentaireDTO.getCommentaire().isEmpty()) {
+      bindingResult.addError(new FieldError("CommentaireDTO", "commentaire", "commentaire is required"));
+    }
     if ( commentaireDTO.getId() != null) {
       bindingResult.addError( new FieldError("CommentaireDTO","id","POST method does not accepte "+ENTITY_NAME+" with code"));
       throw new MethodArgumentNotValidException(null, bindingResult);

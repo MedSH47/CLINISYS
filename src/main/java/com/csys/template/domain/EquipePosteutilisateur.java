@@ -7,15 +7,19 @@ package com.csys.template.domain;
 import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import javax.persistence.Table;
 
+import com.csys.template.log.listener.EntityLogger;
+
 
 @Entity
 @Table(name = "Equipe_Poste_utilisateur", catalog = "Gestion_Tickets", schema = "dbo")
+@EntityListeners(EntityLogger.class)
 
 public class EquipePosteutilisateur implements Serializable {
 

@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.csys.template.config;
 
+import com.csys.template.log.service.LogService;
 import java.util.logging.Level;
 import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
@@ -19,15 +15,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-/**
- *
- * @author admin
- */
 @Component("MailSender")
 public class MailSender {
 
     @Autowired
     JavaMailSender javaMailSender;
+
+    @Autowired
+    private LogService logService;
 
     private static String from;
 
@@ -46,7 +41,6 @@ public class MailSender {
     private final Logger log = LoggerFactory.getLogger(MailSender.class);
 
     public String sendMail(String subject, String body) {
-
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom(from);
         mail.setTo(to);
@@ -54,15 +48,13 @@ public class MailSender {
         mail.setText(body);
 
         log.info("Sending...");
-
         javaMailSender.send(mail);
-
         log.info("Done!");
+        logService.logNotification(String.join(", ", to), subject, body);
         return "Mail Sended Successfully";
     }
 
     public String sendMail(String[] to, String subject, String body) {
-
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom("nihel.turki@csys.com.tn");
         mail.setTo(to);
@@ -70,15 +62,13 @@ public class MailSender {
         mail.setText(body);
 
         log.info("Sending...");
-
         javaMailSender.send(mail);
-
         log.info("Done!");
+        logService.logNotification(String.join(", ", to), subject, body);
         return "Mail Sended Successfully";
     }
 
     public String sendMail(String from, String to, String subject, String body) {
-
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom(from);
         mail.setTo(to);
@@ -86,17 +76,14 @@ public class MailSender {
         mail.setText(body);
 
         log.info("Sending...");
-
         javaMailSender.send(mail);
-
         log.info("Done!");
+        logService.logNotification(to, subject, body);
         return "Mail Sended Successfully";
     }
 
     public String sendMessageWithAttachment(String from, String to, String subject, String text, byte[] file) throws MessagingException {
         try {
-            // ...
-
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper;
             if (file != null) {
@@ -113,11 +100,11 @@ public class MailSender {
             log.info("Sending...");
             javaMailSender.send(message);
             log.info("Done!");
+            logService.logNotification(to, subject, text);
             return "Mail Sended Successfully";
         } catch (SendFailedException ex) {
             java.util.logging.Logger.getLogger(MailSender.class.getName()).log(Level.SEVERE, null, ex);
             return ex.getMessage();
         }
     }
-
 }
