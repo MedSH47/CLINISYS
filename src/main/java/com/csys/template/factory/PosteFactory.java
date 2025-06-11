@@ -1,59 +1,47 @@
 package com.csys.template.factory;
 
 import com.csys.template.domain.Poste;
-import com.csys.template.dto.PosteDTO;
-
+import com.csys.template.dtoRequest.PosteRequestDTO;
+import com.csys.template.dtoResponse.PosteResponseDTO;
+import com.csys.template.util.Helper;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PosteFactory {
 
-  public static PosteDTO toDTO(Poste poste) {
-    if (poste == null)
-      return null;
-    PosteDTO dto = new PosteDTO();
-    dto.setId(poste.getId());
-    dto.setDesignation(poste.getDesignation());
-    dto.setDateCreation(poste.getDateCreation());
-    dto.setUserCreation(poste.getUserCreation());
-    dto.setActif(poste.isActif());
-   
-    return dto;
-  }
-
-  public static PosteDTO toDTOLight(Poste poste) {
-    if (poste == null)
-      return null;
-    PosteDTO dto = new PosteDTO();
-    dto.setId(poste.getId());
-    dto.setDesignation(poste.getDesignation());
-    return dto;
-  }
-
-  public static Poste toEntity(PosteDTO dto, Poste poste, String user) {
-    if (poste == null) {
-      poste = new Poste();
-      poste.setId(dto.getId());
-
-      poste.setDateCreation(LocalDateTime.now());
-      poste.setUserCreation(user);
+    public static PosteResponseDTO toResponseDTO(Poste poste) {
+        if (poste == null) return null;
+        PosteResponseDTO dto = new PosteResponseDTO();
+        dto.setId(poste.getId());
+        dto.setDesignation(poste.getDesignation());
+        dto.setActif(poste.isActif());
+        dto.setDateCreation(poste.getDateCreation());
+        dto.setUserCreation(poste.getUserCreation());
+        return dto;
     }
 
-    poste.setActif(dto.isActif());
-    poste.setDesignation(dto.getDesignation());
+    public static PosteResponseDTO toDTOLight(Poste poste) {
+        if (poste == null) return null;
+        PosteResponseDTO dto = new PosteResponseDTO();
+        dto.setId(poste.getId());
+        dto.setDesignation(poste.getDesignation());
+        return dto;
+    }
 
-    return poste;
-  }
+    public static Poste toEntity(PosteRequestDTO dto) {
+        if (dto == null) return null;
+        Poste entity = new Poste();
+        entity.setDesignation(dto.getDesignation());
+        entity.setActif(dto.isActif());
+        entity.setDateCreation(LocalDateTime.now());
+        entity.setUserCreation(Helper.getUserAuthenticated());
+        return entity;
+    }
 
-
-  
-    public static List<PosteDTO> toDTOs(List<Poste> postes) {
-        List<PosteDTO> posteDTO = new ArrayList<>();
-        postes.forEach(x -> {
-            posteDTO.add(toDTO(x));
-        });
-        return posteDTO;
+    public static List<PosteResponseDTO> toResponseDTOs(List<Poste> postes) {
+        if (postes == null) return Collections.emptyList();
+        return postes.stream().map(PosteFactory::toResponseDTO).collect(Collectors.toList());
     }
 }

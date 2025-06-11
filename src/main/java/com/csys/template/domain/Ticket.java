@@ -20,7 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-
+import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 
 @Entity
@@ -33,47 +33,54 @@ public class Ticket implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+    
     @ManyToOne
     @JoinColumn(name = "id_ticket_parent")
     private Ticket parentTicket;
 
-    // Enfants de ce ticket (inverse side)
     @OneToMany(mappedBy = "parentTicket", cascade = CascadeType.ALL)
     private Set<Ticket> childTickets = new HashSet<>();
 
     @Size(max = 200)
     @Column(name = "titre")
     private String titre;
+    
     @Size(max = 2147483647)
     @Column(name = "description")
     private String description;
+    
     @Size(max = 50)
     @Column(name = "user_creation")
     private String userCreation;
+    
     @Column(name = "date_creation")
     private LocalDateTime dateCreation;
+    
     @Size(max = 20)
     @Column(name = "priorite")
-    private String priorite;
+    @Enumerated(EnumType.STRING)
+    private Priorite priorite;
+    
     @Size(max = 20)
     @Column(name = "statue")
     @Enumerated(EnumType.STRING)
     private Status statue;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_module")
     private Module module;
+    
     @JoinColumn(name = "id_utilisateur", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Utilisateur idUtilisateur;
+    
     @JoinColumn(name = "id_client", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Client idClient;
+    
     @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Commentaire> commentaireList;
     
-   
-    
-
     public List<Commentaire> getCommentaireList() {
         return commentaireList;
     }
@@ -169,11 +176,11 @@ public class Ticket implements Serializable {
         this.dateCreation = dateCreation;
     }
 
-    public String getPriorite() {
+    public Priorite getPriorite() {
         return priorite;
     }
 
-    public void setPriorite(String priorite) {
+    public void setPriorite(Priorite priorite) {
         this.priorite = priorite;
     }
 
@@ -185,8 +192,6 @@ public class Ticket implements Serializable {
         this.statue = statue;
     }
 
-  
- 
     @Override
     public int hashCode() {
         int hash = 0;
@@ -196,7 +201,6 @@ public class Ticket implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Ticket)) {
             return false;
         }
@@ -209,7 +213,6 @@ public class Ticket implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.config.jpa.audit.log.demain.Ticket[ id=" + id + " ]";
+        return "com.csys.template.domain.Ticket[ id=" + id + " ]";
     }
-    
 }

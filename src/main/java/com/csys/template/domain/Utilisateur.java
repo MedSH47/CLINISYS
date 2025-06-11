@@ -72,6 +72,7 @@ public class Utilisateur implements Serializable {
 
     @OneToMany(mappedBy = "utilisateur", fetch = FetchType.LAZY)
     private List<EquipePosteutilisateur> equipePosteutilisateurList;
+    
     @OneToMany(mappedBy = "idUtilisateur", fetch = FetchType.LAZY)
     private List<Ticket> ticketList;
 
@@ -204,7 +205,6 @@ public class Utilisateur implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Utilisateur)) {
             return false;
         }
@@ -217,7 +217,6 @@ public class Utilisateur implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.config.jpa.audit.log.demain.Utilisateur[ id=" + id + " ]";
+        return "com.csys.template.domain.Utilisateur[ id=" + id + " ]";
     }
-    
 }

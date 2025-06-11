@@ -1,9 +1,11 @@
 package com.csys.template.factory;
 
+import com.csys.template.domain.Equipe;
 import com.csys.template.domain.Module;
-import com.csys.template.dto.ModuleDTO;
-
-
+import com.csys.template.dtoRequest.ModuleRequestDTO;
+import com.csys.template.dtoResponse.ModuleResponseDTO;
+import com.csys.template.util.Helper;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -11,48 +13,49 @@ import java.util.stream.Collectors;
 
 public class ModuleFactory {
 
-    public static ModuleDTO toDTO(Module module) {
+    public static ModuleResponseDTO toResponseDTO(Module module) {
         if (module == null) return null;
-        ModuleDTO dto = new ModuleDTO();
+        ModuleResponseDTO dto = new ModuleResponseDTO();
         dto.setId(module.getId());
         dto.setDesignation(module.getDesignation());
         dto.setDateCreation(module.getDateCreation());
         dto.setUserCreation(module.getUserCreation());
-        dto.setEquipe(EquipeFactory.toDTO(module.getEquipe()));
-        dto.setTicketSet(TicketFactory.toDTOsLight(module.getTicketSet()));
+        dto.setEquipe(EquipeFactory.toDTOLight(module.getEquipe()));
+        dto.setTicketList(TicketFactory.toDTOsLight(module.getTicketSet()));
         return dto;
     }
     
-    public static ModuleDTO toDTOLight(Module module) {
+    public static ModuleResponseDTO toDTOLight(Module module) {
         if (module == null) return null;
-        ModuleDTO dto = new ModuleDTO();
+        ModuleResponseDTO dto = new ModuleResponseDTO();
         dto.setId(module.getId());
         dto.setDesignation(module.getDesignation());
         return dto;
     }
 
-    public static Module toEntity(ModuleDTO dto) {
+    public static Module toEntity(ModuleRequestDTO dto) {
         if (dto == null) return null;
         Module entity = new Module();
-        entity.setId(dto.getId());
         entity.setDesignation(dto.getDesignation());
-        entity.setDateCreation(dto.getDateCreation());
-        entity.setUserCreation(dto.getUserCreation());
+        
+        if (dto.getIdEquipe() != null) {
+            Equipe equipe = new Equipe();
+            equipe.setId(dto.getIdEquipe());
+            entity.setEquipe(equipe);
+        }
+        
+        entity.setDateCreation(LocalDateTime.now());
+        entity.setUserCreation(Helper.getUserAuthenticated());
         return entity;
     }
 
-    public static List<ModuleDTO> toDTOs(Collection<Module> modules) {
+    public static List<ModuleResponseDTO> toResponseDTOs(Collection<Module> modules) {
         if (modules == null) return Collections.emptyList();
-        return modules.stream().map(ModuleFactory::toDTO).collect(Collectors.toList());
+        return modules.stream().map(ModuleFactory::toResponseDTO).collect(Collectors.toList());
     }
 
-    public static List<ModuleDTO> toDTOsLight(Collection<Module> modules) {
+    public static List<ModuleResponseDTO> toDTOsLight(Collection<Module> modules) {
         if (modules == null) return Collections.emptyList();
         return modules.stream().map(ModuleFactory::toDTOLight).collect(Collectors.toList());
-    }
-
-    public static List<Module> toEntities(Collection<ModuleDTO> dtos) {
-        if (dtos == null) return Collections.emptyList();
-        return dtos.stream().map(ModuleFactory::toEntity).collect(Collectors.toList());
     }
 }

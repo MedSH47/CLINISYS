@@ -1,123 +1,70 @@
 package com.csys.template.service;
 
 import com.csys.template.domain.Equipe;
-import com.csys.template.dto.EquipeDTO;
+import com.csys.template.domain.Utilisateur;
+import com.csys.template.dtoRequest.EquipeRequestDTO;
+import com.csys.template.dtoResponse.EquipeResponseDTO;
 import com.csys.template.factory.EquipeFactory;
 import com.csys.template.repository.EquipeRepository;
-import com.csys.template.util.Helper;
-import com.google.common.base.Preconditions;
-import java.lang.Integer;
-import java.util.Collection;
+import com.csys.template.repository.UtilisateurRepository;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service Implementation for managing Equipe.
- */
 @Service
 @Transactional
 public class EquipeService {
-  private final Logger log = LoggerFactory.getLogger(EquipeService.class);
+    private final Logger log = LoggerFactory.getLogger(EquipeService.class);
+    private final EquipeRepository equipeRepository;
+    private final UtilisateurRepository utilisateurRepository;
 
-  private final EquipeRepository equipeRepository;
+    public EquipeService(EquipeRepository equipeRepository, UtilisateurRepository utilisateurRepository) {
+        this.equipeRepository = equipeRepository;
+        this.utilisateurRepository = utilisateurRepository;
+    }
 
-  public EquipeService(EquipeRepository equipeRepository) {
-    this.equipeRepository=equipeRepository;
-  }
+    public EquipeResponseDTO save(EquipeRequestDTO equipeRequestDTO) {
+        log.debug("Request to save Equipe : {}", equipeRequestDTO);
+        Equipe equipe = EquipeFactory.toEntity(equipeRequestDTO);
+        utilisateurRepository.findById(equipe.getChefEquipe().getId())
+                .orElseThrow(() -> new IllegalArgumentException("chefEquipe.NotFound"));
+        equipe = equipeRepository.save(equipe);
+        return EquipeFactory.toResponseDTO(equipe);
+    }
 
-  /**
-   * Save a equipeDTO.
-   *
-   * @param equipeDTO
-   * @return the persisted entity
-   */
-  public EquipeDTO save(EquipeDTO equipeDTO) {
-    log.debug("Request to save Equipe: {}",equipeDTO);
-    Equipe equipe = EquipeFactory.toEntity(equipeDTO);
-    equipe = equipeRepository.save(equipe);
-    EquipeDTO resultDTO = EquipeFactory.toDTO(equipe);
-    return resultDTO;
-  }
+    public EquipeResponseDTO update(Integer equipeId, EquipeRequestDTO equipeRequestDTO) {
+        log.debug("Request to update Equipe : {}", equipeId);
+        Equipe existingEquipe = equipeRepository.findById(equipeId)
+                .orElseThrow(() -> new IllegalArgumentException("equipe.NotFound"));
+        
+        Utilisateur newChefEquipe = utilisateurRepository.findById(equipeRequestDTO.getIdChefEquipe())
+                .orElseThrow(() -> new IllegalArgumentException("chefEquipe.NotFound"));
+        
+        existingEquipe.setDesignation(equipeRequestDTO.getDesignation());
+        existingEquipe.setChefEquipe(newChefEquipe);
 
-  /**
-   * Update a equipeDTO.
-   *
-   * @param equipeDTO
-   * @return the updated entity
-   */
-public EquipeDTO update(EquipeDTO equipeDTO) {
-    log.debug("Request to update Equipe: {}", equipeDTO);
+        Equipe saved = equipeRepository.save(existingEquipe);
+        return EquipeFactory.toResponseDTO(saved);
+    }
 
-    // 1. Load the existing entity
-    Equipe existing = equipeRepository.findById(equipeDTO.getId())
-        .orElseThrow(() -> new IllegalArgumentException("equipe.NotFound"));
+    @Transactional(readOnly = true)
+    public EquipeResponseDTO findOne(Integer id) {
+        log.debug("Request to get Equipe : {}", id);
+        Equipe equipe = equipeRepository.findById(id).orElse(null);
+        return EquipeFactory.toResponseDTO(equipe);
+    }
 
-    // 2. Convert DTO to a temporary entity carrying only the incoming values
-    Equipe updatedFields = EquipeFactory.toEntity(equipeDTO);
+    @Transactional(readOnly = true)
+    public List<EquipeResponseDTO> findAll() {
+        log.debug("Request to get All Equipes");
+        List<Equipe> result = equipeRepository.findAll();
+        return EquipeFactory.toResponseDTOs(result);
+    }
 
-    // 3. Merge non-null fields from updatedFields into existing (skips static/final)
-    Helper.mergeNonNullFields(updatedFields, existing);
-
-    // 4. Persist and return the updated DTO
-    Equipe saved = equipeRepository.save(existing);
-    return EquipeFactory.toDTO(saved);
+    public void delete(Integer id) {
+        log.debug("Request to delete Equipe : {}", id);
+        equipeRepository.deleteById(id);
+    }
 }
-
-  /**
-   * Get one equipeDTO by id.
-   *
-   * @param id the id of the entity
-   * @return the entity DTO
-   */
-  @Transactional(
-      readOnly = true
-  )
-  public EquipeDTO findOne(Integer id) {
-    log.debug("Request to get Equipe: {}",id);
-    Equipe equipe= equipeRepository.findById(id).orElse(null);
-    EquipeDTO dto = EquipeFactory.toDTO(equipe);
-    return dto;
-  }
-
-  /**
-   * Get one equipe by id.
-   *
-   * @param id the id of the entity
-   * @return the entity
-   */
-  @Transactional(
-      readOnly = true
-  )
-  public Equipe findEquipe(Integer id) {
-    log.debug("Request to get Equipe: {}",id);
-    Equipe equipe= equipeRepository.findById(id).orElse(null);
-    return equipe;
-  }
-
-  /**
-   * Get all the equipes.
-   *
-   * @return the the list of entities
-   */
-  @Transactional(
-      readOnly = true
-  )
-  public Collection<EquipeDTO> findAll() {
-    log.debug("Request to get All Equipes");
-    Collection<Equipe> result= equipeRepository.findAll();
-    return EquipeFactory.toDTOs(result);
-  }
-
-  /**
-   * Delete equipe by id.
-   *
-   * @param id the id of the entity
-   */
-  public void delete(Integer id) {
-    log.debug("Request to delete Equipe: {}",id);
-    equipeRepository.deleteById(id);
-  }
-}
-

@@ -2,14 +2,13 @@ package com.csys.template.service;
 
 import com.csys.template.domain.QTicket;
 import com.csys.template.domain.Ticket;
+import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
-import com.csys.template.dto.TicketDTO;
+import com.csys.template.dtoRequest.TicketRequestDTO;
+import com.csys.template.dtoResponse.TicketResponseDTO;
 import com.csys.template.factory.TicketFactory;
-import com.csys.template.log.service.LogService;
 import com.csys.template.repository.TicketRepository;
-import com.csys.template.util.Helper;
 import com.csys.template.util.WhereClauseBuilder;
-import java.util.Collection;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,73 +19,58 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TicketService {
     private final Logger log = LoggerFactory.getLogger(TicketService.class);
-
     private final TicketRepository ticketRepository;
-    private final LogService logService;
 
-    public TicketService(TicketRepository ticketRepository, LogService logService) {
+    public TicketService(TicketRepository ticketRepository) {
         this.ticketRepository = ticketRepository;
-        this.logService = logService;
     }
 
-    public TicketDTO save(TicketDTO ticketDTO) {
-        log.debug("Request to save Ticket: {}", ticketDTO);
-        Ticket ticket = TicketFactory.toEntity(ticketDTO);
+    public TicketResponseDTO save(TicketRequestDTO ticketRequestDTO) {
+        log.debug("Request to save Ticket: {}", ticketRequestDTO);
+        Ticket ticket = TicketFactory.toEntity(ticketRequestDTO);
         ticket = ticketRepository.save(ticket);
-        TicketDTO resultDTO = TicketFactory.toDTO(ticket);
-        return resultDTO;
+        return TicketFactory.toResponseDTO(ticket);
     }
 
-    public TicketDTO update(TicketDTO ticketDTO) {
-        log.debug("Request to update Ticket: {}", ticketDTO);
-
-        Ticket existingTicket = ticketRepository.findById(ticketDTO.getId())
+    public TicketResponseDTO update(Integer ticketId, TicketRequestDTO ticketRequestDTO) {
+        log.debug("Request to update Ticket: {}", ticketId);
+        Ticket existingTicket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
+        
+        // Create a temporary entity from the DTO to get related objects
+        Ticket updatedData = TicketFactory.toEntity(ticketRequestDTO);
+        
+        existingTicket.setTitre(updatedData.getTitre());
+        existingTicket.setDescription(updatedData.getDescription());
+        existingTicket.setPriorite(updatedData.getPriorite());
+        existingTicket.setStatue(updatedData.getStatue());
+        existingTicket.setParentTicket(updatedData.getParentTicket());
+        existingTicket.setIdClient(updatedData.getIdClient());
+        existingTicket.setModule(updatedData.getModule());
+        existingTicket.setIdUtilisateur(updatedData.getIdUtilisateur());
 
-        boolean hasNewUser = existingTicket.getIdUtilisateur() == null && ticketDTO.getIdUtilisateur() != null;
-        boolean hasNewModule = existingTicket.getModule() == null && ticketDTO.getIdModule() != null;
-
-        if (hasNewUser && !hasNewModule) {
-            logService.logTicketReview(existingTicket, true, null);
-        } else if (!hasNewUser && hasNewModule) {
-            logService.logTicketReview(existingTicket, null, true);
-        } else if (hasNewUser && hasNewModule) {
-            logService.logTicketReview(existingTicket, true, true);
-        }
-
-        Ticket updatedTicket = TicketFactory.toEntity(ticketDTO);
-        Helper.mergeNonNullFields(updatedTicket, existingTicket);
         ticketRepository.save(existingTicket);
-
-        return TicketFactory.toDTO(existingTicket);
+        return TicketFactory.toResponseDTO(existingTicket);
     }
 
     @Transactional(readOnly = true)
-    public TicketDTO findOne(Integer id) {
+    public TicketResponseDTO findOne(Integer id) {
         log.debug("Request to get Ticket: {}", id);
         Ticket ticket = ticketRepository.findById(id).orElse(null);
-        TicketDTO dto = TicketFactory.toDTO(ticket);
-        return dto;
+        return TicketFactory.toResponseDTO(ticket);
     }
 
     @Transactional(readOnly = true)
-    public Ticket findTicket(Integer id) {
-        log.debug("Request to get Ticket: {}", id);
-        Ticket ticket = ticketRepository.findById(id).orElse(null);
-        return ticket;
-    }
-
-    @Transactional(readOnly = true)
-    public Collection<TicketDTO> findAll(Status statue, Integer idModule, String priorite) {
+    public List<TicketResponseDTO> findAll(Status statue, Integer idModule, Priorite priorite) {
         log.debug("Request to get All Tickets with filters");
         QTicket qTicket = QTicket.ticket;
         WhereClauseBuilder builder = new WhereClauseBuilder()
                 .optionalAnd(statue, () -> qTicket.statue.eq(statue))
                 .optionalAnd(idModule, () -> qTicket.module().id.eq(idModule))
-                .optionalAnd(priorite, () -> qTicket.priorite.equalsIgnoreCase(priorite));
-        
+                .optionalAnd(priorite, () -> qTicket.priorite.eq(priorite));
+
         List<Ticket> result = (List<Ticket>) ticketRepository.findAll(builder);
-        return TicketFactory.toDTOs(result);
+        return TicketFactory.toResponseDTOs(result);
     }
 
     public void delete(Integer id) {

@@ -1,85 +1,64 @@
 package com.csys.template.factory;
 
 import com.csys.template.domain.DocumentJointes;
-import com.csys.template.dto.DocumentJointesDTO;
+import com.csys.template.domain.Ticket;
+import com.csys.template.dtoResponse.DocumentJointesResponseDTO;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.io.FilenameUtils; // Add this dependency if not present
 
-/**
- * Factory for creating and converting DocumentJointes objects.
- * This is a self-contained utility class with static methods.
- */
 public class DocumentJointesFactory {
 
     /**
-     * Converts a DocumentJointes entity to a DocumentJointesDTO.
-     *
-     * @param entity The DocumentJointes entity to convert.
-     * @return The corresponding DTO, or null if the Entity is null.
+     * Converts a DocumentJointes entity to a DocumentJointesResponseDTO.
+     * The document content (byte array) is intentionally omitted for performance.
      */
-    public static DocumentJointesDTO toDTO(DocumentJointes entity) {
-        if (entity == null) {
-            return null;
-        }
-        DocumentJointesDTO dto = new DocumentJointesDTO();
+    public static DocumentJointesResponseDTO toResponseDTO(DocumentJointes entity) {
+        if (entity == null) return null;
+        
+        DocumentJointesResponseDTO dto = new DocumentJointesResponseDTO();
         dto.setId(entity.getId());
         dto.setExtension(entity.getExtension());
-        dto.setDocument(entity.getDocument());
         dto.setDateDocument(entity.getDateDocument());
         dto.setNomDocument(entity.getNomDocument());
+        if (entity.getTicket() != null) {
+            dto.setIdTicket(entity.getTicket().getId());
+        }
         
         return dto;
     }
 
     /**
-     * Converts a DocumentJointesDTO to a DocumentJointes entity.
-     *
-     * @param dto The DocumentJointesDTO to convert.
-     * @return The corresponding Entity, or null if the DTO is null.
+     * Creates a DocumentJointes entity from a file and ticket ID.
      */
-    public static DocumentJointes toEntity(DocumentJointesDTO dto) {
-        if (dto == null) {
-            return null;
-        }
+    public static DocumentJointes toEntity(MultipartFile file, Integer idTicket) throws IOException {
+        if (file == null || file.isEmpty()) return null;
+        
         DocumentJointes entity = new DocumentJointes();
-        entity.setId(dto.getId());
-        entity.setExtension(dto.getExtension());
-        entity.setDocument(dto.getDocument());
-        entity.setDateDocument(dto.getDateDocument());
-        entity.setNomDocument(dto.getNomDocument());
-      
+        entity.setNomDocument(FilenameUtils.getBaseName(file.getOriginalFilename()));
+        entity.setExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
+        entity.setDocument(file.getBytes());
+        entity.setDateDocument(LocalDateTime.now());
+        
+        if (idTicket != null) {
+            Ticket ticket = new Ticket();
+            ticket.setId(idTicket);
+            entity.setTicket(ticket);
+        }
+        
         return entity;
     }
 
-    /**
-     * Converts a collection of Entities to a list of DTOs.
-     *
-     * @param entities The collection of Entities to convert.
-     * @return A list of corresponding DTOs, or an empty list if the input is null.
-     */
-    public static List<DocumentJointesDTO> toDTOs(Collection<DocumentJointes> entities) {
-        if (entities == null) {
-            return Collections.emptyList();
-        }
+    public static List<DocumentJointesResponseDTO> toResponseDTOs(Collection<DocumentJointes> entities) {
+        if (entities == null) return Collections.emptyList();
         return entities.stream()
-                .map(DocumentJointesFactory::toDTO) // Corrected: Use class name for static method reference
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Converts a collection of DTOs to a list of Entities.
-     *
-     * @param dtos The collection of DTOs to convert.
-     * @return A list of corresponding Entities, or an empty list if the input is null.
-     */
-    public static List<DocumentJointes> toEntities(Collection<DocumentJointesDTO> dtos) {
-        if (dtos == null) {
-            return Collections.emptyList();
-        }
-        return dtos.stream()
-                .map(DocumentJointesFactory::toEntity) // Corrected: Use class name for static method reference
+                .map(DocumentJointesFactory::toResponseDTO)
                 .collect(Collectors.toList());
     }
 }

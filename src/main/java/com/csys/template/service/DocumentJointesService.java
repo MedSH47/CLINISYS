@@ -1,114 +1,51 @@
 package com.csys.template.service;
 
 import com.csys.template.domain.DocumentJointes;
-import com.csys.template.dto.DocumentJointesDTO;
+import com.csys.template.dtoResponse.DocumentJointesResponseDTO;
 import com.csys.template.factory.DocumentJointesFactory;
 import com.csys.template.repository.DocumentJointesRepository;
-import com.google.common.base.Preconditions;
-import java.lang.Integer;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-/**
- * Service Implementation for managing DocumentJointes.
- */
 @Service
 @Transactional
 public class DocumentJointesService {
-  private final Logger log = LoggerFactory.getLogger(DocumentJointesService.class);
+    private final Logger log = LoggerFactory.getLogger(DocumentJointesService.class);
+    private final DocumentJointesRepository documentJointesRepository;
 
-  private final DocumentJointesRepository documentjointesRepository;
+    public DocumentJointesService(DocumentJointesRepository documentJointesRepository) {
+        this.documentJointesRepository = documentJointesRepository;
+    }
 
-  public DocumentJointesService(DocumentJointesRepository documentjointesRepository) {
-    this.documentjointesRepository=documentjointesRepository;
-  }
+    public DocumentJointesResponseDTO save(MultipartFile file, Integer idTicket) throws IOException {
+        log.debug("Request to save DocumentJointes for ticket ID: {}", idTicket);
+        DocumentJointes documentJointes = DocumentJointesFactory.toEntity(file, idTicket);
+        documentJointes = documentJointesRepository.save(documentJointes);
+        return DocumentJointesFactory.toResponseDTO(documentJointes);
+    }
 
-  /**
-   * Save a documentjointesDTO.
-   *
-   * @param documentjointesDTO
-   * @return the persisted entity
-   */
-  public DocumentJointesDTO save(DocumentJointesDTO documentjointesDTO) {
-    log.debug("Request to save DocumentJointes: {}",documentjointesDTO);
-    DocumentJointes documentjointes = DocumentJointesFactory.toEntity(documentjointesDTO);
-    documentjointes = documentjointesRepository.save(documentjointes);
-    DocumentJointesDTO resultDTO = DocumentJointesFactory.toDTO(documentjointes);
-    return resultDTO;
-  }
+    @Transactional(readOnly = true)
+    public DocumentJointes findDocumentJointes(Integer id) {
+        log.debug("Request to get DocumentJointes entity: {}", id);
+        // This method can be used to fetch the full entity including byte[]
+        return documentJointesRepository.findById(id).orElse(null);
+    }
 
-  /**
-   * Update a documentjointesDTO.
-   *
-   * @param documentjointesDTO
-   * @return the updated entity
-   */
-  public DocumentJointesDTO update(DocumentJointesDTO documentjointesDTO) {
-    log.debug("Request to update DocumentJointes: {}",documentjointesDTO);
-    DocumentJointes inBase= documentjointesRepository.findById(documentjointesDTO.getId()).orElse(null);
-    Preconditions.checkArgument(inBase != null, "documentjointes.NotFound");
-    DocumentJointes documentjointes = DocumentJointesFactory.toEntity(documentjointesDTO);
-    documentjointes = documentjointesRepository.save(documentjointes);
-    DocumentJointesDTO resultDTO = DocumentJointesFactory.toDTO(documentjointes);
-    return resultDTO;
-  }
+    @Transactional(readOnly = true)
+    public List<DocumentJointesResponseDTO> findAll() {
+        log.debug("Request to get All DocumentJointes");
+        List<DocumentJointes> result = documentJointesRepository.findAll();
+        return DocumentJointesFactory.toResponseDTOs(result);
+    }
 
-  /**
-   * Get one documentjointesDTO by id.
-   *
-   * @param id the id of the entity
-   * @return the entity DTO
-   */
-  @Transactional(
-      readOnly = true
-  )
-  public DocumentJointesDTO findOne(Integer id) {
-    log.debug("Request to get DocumentJointes: {}",id);
-    DocumentJointes documentjointes= documentjointesRepository.findById(id).orElse(null);
-    DocumentJointesDTO dto = DocumentJointesFactory.toDTO(documentjointes);
-    return dto;
-  }
-
-  /**
-   * Get one documentjointes by id.
-   *
-   * @param id the id of the entity
-   * @return the entity
-   */
-  @Transactional(
-      readOnly = true
-  )
-  public DocumentJointes findDocumentJointes(Integer id) {
-    log.debug("Request to get DocumentJointes: {}",id);
-    DocumentJointes documentjointes= documentjointesRepository.findById(id).orElse(null);
-    return documentjointes;
-  }
-
-  /**
-   * Get all the documentjointess.
-   *
-   * @return the the list of entities
-   */
-  @Transactional(
-      readOnly = true
-  )
-  public Collection<DocumentJointesDTO> findAll() {
-    log.debug("Request to get All DocumentJointess");
-    Collection<DocumentJointes> result= documentjointesRepository.findAll();
-    return DocumentJointesFactory.toDTOs(result);
-  }
-
-  /**
-   * Delete documentjointes by id.
-   *
-   * @param id the id of the entity
-   */
-  public void delete(Integer id) {
-    log.debug("Request to delete DocumentJointes: {}",id);
-    documentjointesRepository.deleteById(id);
-  }
+    public void delete(Integer id) {
+        log.debug("Request to delete DocumentJointes: {}", id);
+        documentJointesRepository.deleteById(id);
+    }
 }
-

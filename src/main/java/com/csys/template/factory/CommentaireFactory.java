@@ -1,21 +1,23 @@
 package com.csys.template.factory;
 
 import com.csys.template.domain.Commentaire;
-import com.csys.template.dto.CommentaireDTO;
+import com.csys.template.domain.Ticket;
+import com.csys.template.domain.Utilisateur;
+import com.csys.template.dtoRequest.CommentaireRequestDTO;
+import com.csys.template.dtoResponse.CommentaireResponseDTO;
+import com.csys.template.util.Helper;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Factory for converting between Commentaire and CommentaireDTO.
- */
 public class CommentaireFactory {
 
-    public static CommentaireDTO toDTO(Commentaire commentaire) {
+    public static CommentaireResponseDTO toResponseDTO(Commentaire commentaire) {
         if (commentaire == null) return null;
 
-        CommentaireDTO dto = new CommentaireDTO();
+        CommentaireResponseDTO dto = new CommentaireResponseDTO();
         dto.setId(commentaire.getId());
         dto.setCommentaire(commentaire.getCommentaire());
         dto.setDateCommentaire(commentaire.getDateCommentaire());
@@ -25,41 +27,29 @@ public class CommentaireFactory {
         return dto;
     }
 
-    public static Commentaire toEntity(CommentaireDTO dto) {
+    public static Commentaire toEntity(CommentaireRequestDTO dto) {
         if (dto == null) return null;
 
         Commentaire entity = new Commentaire();
-        entity.setId(dto.getId());
         entity.setCommentaire(dto.getCommentaire());
-        entity.setDateCommentaire(dto.getDateCommentaire());
-        entity.setUtilisateur(UtilisateurFactory.toEntity(dto.getUtilisateur()));
-        entity.setTicket(TicketFactory.toEntity(dto.getTicket()));
+        entity.setDateCommentaire(LocalDateTime.now());
 
+        if (dto.getIdTicket() != null) {
+            Ticket ticket = new Ticket();
+            ticket.setId(dto.getIdTicket());
+            entity.setTicket(ticket);
+        }
+
+        if (dto.getIdUtilisateur() != null) {
+            Utilisateur utilisateur = new Utilisateur();
+            utilisateur.setId(dto.getIdUtilisateur());
+            entity.setUtilisateur(utilisateur);
+        }
         return entity;
     }
 
-    public static CommentaireDTO toDTOLight(Commentaire commentaire) {
-        if (commentaire == null) return null;
-
-        CommentaireDTO dto = new CommentaireDTO();
-        dto.setId(commentaire.getId());
-        dto.setCommentaire(commentaire.getCommentaire());
-        dto.setDateCommentaire(commentaire.getDateCommentaire());
-        return dto;
-    }
-
-    public static List<CommentaireDTO> toDTOs(Collection<Commentaire> commentaires) {
+    public static List<CommentaireResponseDTO> toResponseDTOs(Collection<Commentaire> commentaires) {
         if (commentaires == null) return Collections.emptyList();
-        return commentaires.stream().map(CommentaireFactory::toDTO).collect(Collectors.toList());
-    }
-
-    public static List<CommentaireDTO> toDTOsLight(Collection<Commentaire> commentaires) {
-        if (commentaires == null) return Collections.emptyList();
-        return commentaires.stream().map(CommentaireFactory::toDTOLight).collect(Collectors.toList());
-    }
-
-    public static List<Commentaire> toEntities(Collection<CommentaireDTO> dtos) {
-        if (dtos == null) return Collections.emptyList();
-        return dtos.stream().map(CommentaireFactory::toEntity).collect(Collectors.toList());
+        return commentaires.stream().map(CommentaireFactory::toResponseDTO).collect(Collectors.toList());
     }
 }

@@ -16,13 +16,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-
 import com.csys.template.log.listener.EntityLogger;
 
 @Entity
 @Table(name = "Equipe", catalog = "Gestion_Tickets", schema = "dbo")
 @EntityListeners(EntityLogger.class)
-
 public class Equipe implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,11 +28,14 @@ public class Equipe implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+    
     @Column(name = "date_creation")
     private LocalDateTime dateCreation;
+    
     @Size(max = 50)
     @Column(name = "user_creation")
     private String userCreation;
+    
     @Size(max = 2147483647)
     @Column(name = "designation")
     private String designation;
@@ -46,12 +47,9 @@ public class Equipe implements Serializable {
     @OneToMany(mappedBy = "equipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Module> moduleList;
 
-   
     @OneToMany(mappedBy = "equipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<EquipePosteutilisateur> equipePosteutilisateurList;
     
-    
-
     public List<EquipePosteutilisateur> getEquipePosteutilisateurList() {
         return equipePosteutilisateurList;
     }
@@ -81,7 +79,6 @@ public class Equipe implements Serializable {
     public void setModuleList(List<Module> moduleList) {
         this.moduleList = moduleList;
     }
-
 
     public Integer getId() {
         return id;
@@ -115,8 +112,6 @@ public class Equipe implements Serializable {
         this.designation = designation;
     }
 
-   
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -126,7 +121,6 @@ public class Equipe implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Equipe)) {
             return false;
         }
@@ -139,7 +133,6 @@ public class Equipe implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.config.jpa.audit.log.demain.Equipe[ id=" + id + " ]";
+        return "com.csys.template.domain.Equipe[ id=" + id + " ]";
     }
-    
 }

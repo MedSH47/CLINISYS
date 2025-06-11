@@ -1,24 +1,18 @@
-package com.csys.template.dto;
+package com.csys.template.dtoResponse;
 
-import java.lang.Integer;
-import java.lang.String;
-import java.time.LocalDateTime;
-import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class PosteDTO {
+public class PosteResponseDTO {
   private Integer id;
-
+  private String designation;
+  private Boolean actif;
   private LocalDateTime dateCreation;
-
-  @Size(min = 0, max = 50)
   private String userCreation;
 
-  @Size(min = 0, max = 100)
-  private String designation;
 
-  private Boolean actif;
+  // Getters and Setters
 
   public Integer getId() {
     return id;
@@ -27,7 +21,23 @@ public class PosteDTO {
   public void setId(Integer id) {
     this.id = id;
   }
+  
+  public String getDesignation() {
+    return designation;
+  }
 
+  public void setDesignation(String designation) {
+    this.designation = designation;
+  }
+
+  public Boolean isActif() {
+    return actif;
+  }
+
+  public void setActif(Boolean actif) {
+    this.actif = actif;
+  }
+  
   public LocalDateTime getDateCreation() {
     return dateCreation;
   }
@@ -43,21 +53,4 @@ public class PosteDTO {
   public void setUserCreation(String userCreation) {
     this.userCreation = userCreation;
   }
-   public Boolean isActif() {
-    return actif;
-  }
-
-  public void setActif(Boolean actif) {
-    this.actif = actif;
-  }
-
-  public String getDesignation() {
-    return designation;
-  }
-
-  public void setDesignation(String designation) {
-    this.designation = designation;
-  }
-
-
 }

@@ -1,4 +1,3 @@
-
 package com.csys.template.domain;
 
 import java.io.Serializable;
@@ -13,9 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-
 import com.csys.template.log.listener.EntityLogger;
-
 
 @Entity
 @Table(name = "Commentaire", catalog = "Gestion_Tickets", schema = "dbo")
@@ -27,14 +24,18 @@ public class Commentaire implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+    
     @Size(max = 2147483647)
     @Column(name = "commentaire")
     private String commentaire;
+    
     @Column(name = "date_commentaire")
     private LocalDateTime dateCommentaire;
+    
     @JoinColumn(name="id_ticket")
     @ManyToOne
     private Ticket ticket;
+    
     @JoinColumn(name="id_utilisateur")
     @ManyToOne
     private Utilisateur utilisateur;
@@ -107,7 +108,6 @@ public class Commentaire implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.config.jpa.audit.log.demain.Commentaire[ id=" + id + " ]";
+        return "com.csys.template.domain.Commentaire[ id=" + id + " ]";
     }
-    
 }

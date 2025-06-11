@@ -17,7 +17,6 @@ import javax.validation.constraints.Size;
 
 import com.csys.template.log.listener.EntityLogger;
 
-
 @Entity
 @Table(name = "Client", catalog = "Gestion_Tickets", schema = "dbo")
 @EntityListeners(EntityLogger.class)
@@ -28,25 +27,33 @@ public class Client implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+    
     @Size(max = 100)
     @Column(name = "nom_complet")
     private String nomComplet;
+    
     @Size(max = 200)
     @Column(name = "adress")
     private String adress;
+    
     @Size(max = 100)
     @Column(name = "email")
     private String email;
+    
     @Size(max = 50)
     @Column(name = "region")
     private String region;
+    
     @Column(name = "date_creation")
     private LocalDateTime dateCreation;
+    
     @Size(max = 50)
     @Column(name = "user_creation")
     private String userCreation;
+    
     @Column(name = "actif")
     private Boolean actif;
+    
     @OneToMany(mappedBy = "idClient", fetch = FetchType.LAZY)
     private List<Ticket> ticketList;
 
@@ -150,7 +157,6 @@ public class Client implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.config.jpa.audit.log.demain.Client[ id=" + id + " ]";
+        return "com.csys.template.domain.Client[ id=" + id + " ]";
     }
-    
 }

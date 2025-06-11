@@ -15,13 +15,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-
 import com.csys.template.log.listener.EntityLogger;
 
 @Entity
 @Table(name = "Module", catalog = "Gestion_Tickets", schema = "dbo")
 @EntityListeners(EntityLogger.class)
-
 public class Module implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,7 +45,6 @@ public class Module implements Serializable {
 
     @OneToMany(mappedBy = "module", fetch = FetchType.LAZY)
     private List<Ticket> ticketSet;
-
 
     public List<Ticket> getTicketSet() {
         return ticketSet;
@@ -113,7 +110,6 @@ public class Module implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Module)) {
             return false;
         }
@@ -126,7 +122,6 @@ public class Module implements Serializable {
 
     @Override
     public String toString() {
-        return "com.csys.template.config.jpa.audit.log.demain.Module[ id=" + id + " ]";
+        return "com.csys.template.domain.Module[ id=" + id + " ]";
     }
-
 }
