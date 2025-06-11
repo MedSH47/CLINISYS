@@ -1,12 +1,17 @@
 package com.csys.template.dto;
 
 import com.csys.template.domain.Ticket;
+import com.csys.template.domain.enum_identifier.Status;
+
 import java.lang.Integer;
 import java.lang.String;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
@@ -57,7 +62,8 @@ public class TicketDTO {
       min = 0,
       max = 20
   )
-  private String statue;
+  @Enumerated(EnumType.STRING)
+  private Status statue;
 
   private ClientDTO idClient;
 
@@ -131,11 +137,11 @@ public class TicketDTO {
     this.priorite = priorite;
   }
 
-  public String getStatue() {
+  public Status getStatue() {
     return statue;
   }
 
-  public void setStatue(String statue) {
+  public void setStatue(Status statue) {
     this.statue = statue;
   }
 

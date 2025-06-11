@@ -9,6 +9,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +20,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+
+import com.csys.template.domain.enum_identifier.Status;
 
 @Entity
 @Table(name = "Ticket", catalog = "Gestion_Tickets", schema = "dbo")
@@ -53,7 +57,8 @@ public class Ticket implements Serializable {
     private String priorite;
     @Size(max = 20)
     @Column(name = "statue")
-    private String statue;
+    @Enumerated(EnumType.STRING)
+    private Status statue;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_module")
     private Module module;
@@ -172,11 +177,11 @@ public class Ticket implements Serializable {
         this.priorite = priorite;
     }
 
-    public String getStatue() {
+    public Status getStatue() {
         return statue;
     }
 
-    public void setStatue(String statue) {
+    public void setStatue(Status statue) {
         this.statue = statue;
     }
 
