@@ -12,7 +12,6 @@ import com.csys.template.log.listener.EntityLogger;
 
 @Entity
 @Table(name = "Equipe_Poste_utilisateur", catalog = "Gestion_Tickets", schema = "dbo")
-@EntityListeners(EntityLogger.class)
 public class EquipePosteutilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;

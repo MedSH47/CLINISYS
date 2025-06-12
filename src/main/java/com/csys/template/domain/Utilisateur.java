@@ -3,6 +3,8 @@ package com.csys.template.domain;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -18,6 +20,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.log.listener.EntityLogger;
+
+import liquibase.pro.packaged.C;
 
 @Entity
 @Table(name = "Utilisateur", catalog = "Gestion_Tickets", schema = "dbo")
@@ -70,10 +74,10 @@ public class Utilisateur implements Serializable {
     @Column(name = "activite")
     private Boolean activite;
 
-    @OneToMany(mappedBy = "utilisateur", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "utilisateur", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<EquipePosteutilisateur> equipePosteutilisateurList;
-    
-    @OneToMany(mappedBy = "idUtilisateur", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "idUtilisateur", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<Ticket> ticketList;
 
     public List<Ticket> getTicketList() {

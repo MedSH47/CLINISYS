@@ -25,8 +25,17 @@ public class TicketResponseDTO {
     private ModuleResponseDTO idModule;
     private UtilisateurResponseDTO idUtilisateur;
     private List<CommentaireResponseDTO> commentaireList;
+    private List<DocumentJointesResponseDTO> documentJointesList;
 
     // Getters and Setters
+
+    public List<DocumentJointesResponseDTO> getDocumentJointesList() {
+        return documentJointesList;
+    }
+
+    public void setDocumentJointesList(List<DocumentJointesResponseDTO> documentJointesList) {
+        this.documentJointesList = documentJointesList;
+    }
 
     public Integer getId() {
         return id;

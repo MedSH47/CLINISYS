@@ -8,9 +8,12 @@ import com.csys.template.util.RestPreconditions;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,14 +29,22 @@ public class EquipePosteutilisateurResource {
     }
 
     @PostMapping("/equipe-poste-utilisateurs")
-    public ResponseEntity<EquipePosteutilisateurResponseDTO> createEquipePosteutilisateur(
-            @Valid @RequestBody EquipePosteutilisateurRequestDTO requestDTO) throws URISyntaxException {
-        log.debug("REST request to save EquipePosteutilisateur : {}", requestDTO);
-        EquipePosteutilisateurResponseDTO result = equipePosteutilisateurService.save(requestDTO);
-        String locationUri = String.format("/api/equipe-poste-utilisateurs/%d/%d/%d",
-                result.getPoste(), result.getUtilisateur(), result.getEquipe());
-        return ResponseEntity.created(new URI(locationUri)).body(result);
-    }
+public ResponseEntity<EquipePosteutilisateurResponseDTO> createEquipePosteutilisateur(
+        @Valid @RequestBody EquipePosteutilisateurRequestDTO requestDTO) throws URISyntaxException {
+    log.debug("REST request to save EquipePosteutilisateur : {}", requestDTO);
+    EquipePosteutilisateurResponseDTO result = equipePosteutilisateurService.save(requestDTO);
+
+    // <-- extract the actual IDs from your light DTOs here:
+    Integer posteId       = result.getPoste().getId();
+    Integer utilisateurId = result.getUtilisateur().getId();
+    Integer equipeId      = result.getEquipe().getId();
+
+    String locationUri = String.format(
+        "/api/equipe-poste-utilisateurs/%d/%d/%d",
+        posteId, utilisateurId, equipeId
+    );
+    return ResponseEntity.created(new URI(locationUri)).body(result);
+}
 
     @GetMapping("/equipe-poste-utilisateurs/{idPoste}/{idUtilisateur}/{idEquipe}")
     public ResponseEntity<EquipePosteutilisateurResponseDTO> getEquipePosteutilisateur(
@@ -55,14 +66,22 @@ public class EquipePosteutilisateurResource {
     }
 
     @DeleteMapping("/equipe-poste-utilisateurs/{idPoste}/{idUtilisateur}/{idEquipe}")
-    public ResponseEntity<Void> deleteEquipePosteutilisateur(
+    public ResponseEntity<?> deleteEquipePosteutilisateur(
             @PathVariable Integer idPoste,
             @PathVariable Integer idUtilisateur,
             @PathVariable Integer idEquipe) {
-        log.debug("Request to delete EquipePosteutilisateur: idPoste={}, idUtilisateur={}, idEquipe={}",
-                idPoste, idUtilisateur, idEquipe);
-        EquipePosteutilisateurPK id = new EquipePosteutilisateurPK(idPoste, idUtilisateur, idEquipe);
-        equipePosteutilisateurService.delete(id);
-        return ResponseEntity.noContent().build();
+      try {
+          log.debug("Request to delete EquipePosteutilisateur: idPoste={}, idUtilisateur={}, idEquipe={}",
+                  idPoste, idUtilisateur, idEquipe);
+          EquipePosteutilisateurPK id = new EquipePosteutilisateurPK(idPoste, idUtilisateur, idEquipe);
+          equipePosteutilisateurService.delete(id);
+          return ResponseEntity.ok().build();
+      } catch (EntityNotFoundException e) {
+          log.error("Error deleting EquipePosteutilisateur: {}", e.getMessage());
+          return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EquipePosteutilisateur not found"); // Return 404 if the entity is not found
+      }
     }
+
+
+
 }

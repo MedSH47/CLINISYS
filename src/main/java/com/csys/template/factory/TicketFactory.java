@@ -25,6 +25,8 @@ public class TicketFactory {
         dto.setUserCreation(ticket.getUserCreation());
         dto.setPriorite(ticket.getPriorite());
         dto.setStatue(ticket.getStatue());
+        dto.setDocumentJointesList(
+                DocumentJointesFactory.toResponseDTOs(ticket.getDocumentJointesList()));
         
         // Use light DTOs for all nested objects
         dto.setIdUtilisateur(UtilisateurFactory.toDTOLight(ticket.getIdUtilisateur()));

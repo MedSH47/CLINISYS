@@ -11,6 +11,7 @@ public class DocumentJointesResponseDTO {
     private LocalDateTime dateDocument;
     private String nomDocument;
     private Integer idTicket;
+    private byte[] document; // Optional, can be omitted for performance
 
     // Getters and Setters
     public Integer getId() {
@@ -51,5 +52,13 @@ public class DocumentJointesResponseDTO {
 
     public void setIdTicket(Integer idTicket) {
         this.idTicket = idTicket;
+    }
+
+    public byte[] getDocument() {
+        return document;
+    }
+
+    public void setDocument(byte[] document) {
+        this.document = document;
     }
 }

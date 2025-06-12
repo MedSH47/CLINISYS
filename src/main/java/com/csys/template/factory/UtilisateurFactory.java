@@ -66,6 +66,7 @@ public class UtilisateurFactory {
         entity.setActivite(dto.getActivite());
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated()); 
+        entity.setPhoto(dto.getPhoto());
         return entity;
     }
 

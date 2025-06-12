@@ -5,6 +5,13 @@ management:
 security:
     basic:
         enabled: false
+logging:
+  level:
+    org:
+        hibernate:
+            sql:
+            basicbinding:
+                log-level: trace
 spring:
     servlet:
         multipart:
@@ -52,6 +59,10 @@ spring:
                 implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
                 physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         properties:
+            hibernate:
+                formatsql: true
+                sql:
+                    debug: true
             hibernate.default_schema: dbo
             hibernate.id.new_generator_mappings: true
             hibernate.cache.use_second_level_cache: false

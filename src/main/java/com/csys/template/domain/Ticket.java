@@ -80,13 +80,25 @@ public class Ticket implements Serializable {
     
     @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Commentaire> commentaireList;
-    
+
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DocumentJointes> documentJointesList;
+
+   
+
     public List<Commentaire> getCommentaireList() {
         return commentaireList;
     }
 
     public void setCommentaireList(List<Commentaire> commentaireList) {
         this.commentaireList = commentaireList;
+    }
+     public List<DocumentJointes> getDocumentJointesList() {
+        return documentJointesList;
+    }
+
+    public void setDocumentJointesList(List<DocumentJointes> documentJointesList) {
+        this.documentJointesList = documentJointesList;
     }
 
     public Client getIdClient() {

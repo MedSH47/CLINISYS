@@ -27,10 +27,10 @@ public class DocumentJointesFactory {
         dto.setExtension(entity.getExtension());
         dto.setDateDocument(entity.getDateDocument());
         dto.setNomDocument(entity.getNomDocument());
+        dto.setDocument(entity.getDocument());
         if (entity.getTicket() != null) {
             dto.setIdTicket(entity.getTicket().getId());
         }
-        
         return dto;
     }
 
