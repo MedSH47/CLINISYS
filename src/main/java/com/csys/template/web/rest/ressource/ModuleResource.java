@@ -7,6 +7,8 @@ import com.csys.template.util.RestPreconditions;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
+
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +48,9 @@ public class ModuleResource {
     }
 
     @GetMapping("/modules")
-    public Collection<ModuleResponseDTO> getAllModules() {
+    public Collection<ModuleResponseDTO> getAllModules(@RequestParam(required = false)List<Integer> equipes) {
         log.debug("Request to get all Modules");
-        return moduleService.findAll();
+        return moduleService.findAll(equipes);
     }
 
     @DeleteMapping("/modules/{id}")

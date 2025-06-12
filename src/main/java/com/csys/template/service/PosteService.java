@@ -57,7 +57,7 @@ public class PosteService {
   }
   
   @Transactional(readOnly = true)
-  public List<PosteResponseDTO> findAll(Boolean[] actifs) {
+  public List<PosteResponseDTO> findAll(Boolean[] actifs) { 
     log.debug("Request to get All Postes");
     QPoste qPoste = QPoste.poste;
     WhereClauseBuilder builder = new WhereClauseBuilder()

@@ -93,4 +93,11 @@ public class UtilisateurResource {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
+    @GetMapping("/utilisateurs/findbyemail")
+    public ResponseEntity<UtilisateurResponseDTO> getUtilisateurByEmail(@RequestParam String email) {
+        log.debug("Request to get Utilisateur by email: {}", email);
+        UtilisateurResponseDTO dto = utilisateurService.findByLogin(email);
+        RestPreconditions.checkFound(dto, "utilisateur.NotFound");
+        return ResponseEntity.ok().body(dto);
+    }
 }
