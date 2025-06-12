@@ -16,7 +16,7 @@ public class TicketRequestDTO {
 
     private Integer idParentTicket;
 
-    @NotNull
+    
     private Priorite priorite;
 
     @NotNull

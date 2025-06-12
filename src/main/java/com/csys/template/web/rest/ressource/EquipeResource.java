@@ -10,6 +10,7 @@ import java.util.List;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,14 +25,16 @@ public class EquipeResource {
     }
 
     @PostMapping("/equipes")
-    public ResponseEntity<EquipeResponseDTO> createEquipe(@Valid @RequestBody EquipeRequestDTO equipeRequestDTO) throws URISyntaxException {
+    public ResponseEntity<EquipeResponseDTO> createEquipe(@Valid @RequestBody EquipeRequestDTO equipeRequestDTO)
+            throws URISyntaxException {
         log.debug("REST request to save Equipe : {}", equipeRequestDTO);
         EquipeResponseDTO result = equipeService.save(equipeRequestDTO);
         return ResponseEntity.created(new URI("/api/equipes/" + result.getId())).body(result);
     }
 
     @PutMapping("/equipes/{id}")
-    public ResponseEntity<EquipeResponseDTO> updateEquipe(@PathVariable Integer id, @Valid @RequestBody EquipeRequestDTO equipeRequestDTO) {
+    public ResponseEntity<EquipeResponseDTO> updateEquipe(@PathVariable Integer id,
+            @Valid @RequestBody EquipeRequestDTO equipeRequestDTO) {
         log.debug("Request to update Equipe: {}", id);
         EquipeResponseDTO result = equipeService.update(id, equipeRequestDTO);
         return ResponseEntity.ok().body(result);
@@ -52,9 +55,14 @@ public class EquipeResource {
     }
 
     @DeleteMapping("/equipes/{id}")
-    public ResponseEntity<Void> deleteEquipe(@PathVariable Integer id) {
-        log.debug("Request to delete Equipe: {}", id);
-        equipeService.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteEquipe(@PathVariable Integer id) {
+        try {
+            log.debug("Request to delete Equipe: {}", id);
+            equipeService.delete(id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            log.error("Error deleting Equipe: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

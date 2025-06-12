@@ -65,6 +65,12 @@ public class EquipeService {
 
     public void delete(Integer id) {
         log.debug("Request to delete Equipe : {}", id);
+        Equipe equipe = equipeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("equipe.NotFound"));
+        EquipeResponseDTO equipeResponseDTO = EquipeFactory.toResponseDTO(equipe);
+        if (!equipeResponseDTO.getUtilisateurs().isEmpty()) {
+            throw new IllegalArgumentException("equipe.HasUsers");
+        }
         equipeRepository.deleteById(id);
     }
 }

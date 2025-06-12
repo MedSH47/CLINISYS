@@ -8,8 +8,12 @@ import com.csys.template.factory.PosteFactory;
 import com.csys.template.repository.PosteRepository;
 import com.csys.template.util.WhereClauseBuilder;
 import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +30,9 @@ public class PosteService {
   public PosteResponseDTO save(PosteRequestDTO posteRequestDTO) {
     log.debug("Request to save Poste: {}", posteRequestDTO);
     Poste poste = PosteFactory.toEntity(posteRequestDTO);
+    if (posteRepository.existsByDesignation(poste.getDesignation())) {
+      throw new IllegalArgumentException("poste.DesignationExists");
+    }
     poste = posteRepository.save(poste);
     return PosteFactory.toResponseDTO(poste);
   }
@@ -59,8 +66,19 @@ public class PosteService {
     return PosteFactory.toResponseDTOs(result);
   }
 
-  public void delete(Integer id) {
+  public ResponseEntity<?> delete(Integer id) {
+    Optional<Poste> poste =posteRepository.findById(id);
+    if (poste.isPresent()) {
+      if (poste.get().isActif()) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body("poste.NotDeletable");
+      }
+    } else {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body("poste.NotFound");
+    }
     log.debug("Request to delete Poste: {}", id);
     posteRepository.deleteById(id);
+    return ResponseEntity.noContent().build();
   }
 }

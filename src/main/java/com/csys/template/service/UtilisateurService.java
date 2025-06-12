@@ -1,11 +1,14 @@
 package com.csys.template.service;
 
 import com.csys.template.domain.Utilisateur;
+import com.csys.template.domain.enum_identifier.Status;
 import com.csys.template.dtoRequest.UtilisateurRequestDTO;
 import com.csys.template.dtoResponse.UtilisateurResponseDTO;
 import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.UtilisateurRepository;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class UtilisateurService {
- 
+
   private final Logger log = LoggerFactory.getLogger(UtilisateurService.class);
   private final PasswordEncoder passwordEncoder;
   private final UtilisateurRepository utilisateurRepository;
@@ -27,6 +30,10 @@ public class UtilisateurService {
 
   public UtilisateurResponseDTO save(UtilisateurRequestDTO utilisateurRequestDTO) {
     log.debug("Service: Request to save Utilisateur: {}", utilisateurRequestDTO);
+    if (utilisateurRepository.findByLogin(utilisateurRequestDTO.getLogin()) != null) {
+      throw new IllegalArgumentException("Login already exists: " + utilisateurRequestDTO.getLogin());
+
+    }
     Utilisateur utilisateur = UtilisateurFactory.toEntity(utilisateurRequestDTO);
     utilisateur.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));
     utilisateur = utilisateurRepository.save(utilisateur);
@@ -47,12 +54,12 @@ public class UtilisateurService {
     existing.setActivite(userRequestDTO.getActivite());
 
     if (userRequestDTO.getMotDePasse() != null && !userRequestDTO.getMotDePasse().isEmpty()) {
-        existing.setMotDePasse(passwordEncoder.encode(userRequestDTO.getMotDePasse()));
+      existing.setMotDePasse(passwordEncoder.encode(userRequestDTO.getMotDePasse()));
     }
     if (photo != null && photo.length > 0) {
-        existing.setPhoto(photo);
+      existing.setPhoto(photo);
     }
-    
+
     Utilisateur saved = utilisateurRepository.save(existing);
     return UtilisateurFactory.toResponseDTO(saved);
   }
@@ -72,10 +79,11 @@ public class UtilisateurService {
 
   public void delete(Integer id) {
     log.debug("Request to delete Utilisateur: {}", id);
+    
     utilisateurRepository.deleteById(id);
   }
-  
-  public UtilisateurResponseDTO findByLogin(String login){
+
+  public UtilisateurResponseDTO findByLogin(String login) {
     Utilisateur utilisateur = utilisateurRepository.findByLogin(login);
     return UtilisateurFactory.toResponseDTO(utilisateur);
   }

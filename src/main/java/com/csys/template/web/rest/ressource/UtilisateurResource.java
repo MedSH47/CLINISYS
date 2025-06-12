@@ -4,6 +4,9 @@ import com.csys.template.dtoRequest.UtilisateurRequestDTO;
 import com.csys.template.dtoResponse.UtilisateurResponseDTO;
 import com.csys.template.service.UtilisateurService;
 import com.csys.template.util.RestPreconditions;
+
+import liquibase.pro.packaged.js;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,6 +14,7 @@ import java.util.Collection;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -77,9 +81,16 @@ public class UtilisateurResource {
     }
 
     @DeleteMapping("/utilisateurs/{id}")
-    public ResponseEntity<Void> deleteUtilisateur(@PathVariable Integer id) {
-        log.debug("Request to delete Utilisateur: {}", id);
-        utilisateurService.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteUtilisateur(@PathVariable Integer id) {
+        try {
+            log.debug("Request to delete Utilisateur: {}", id);
+            utilisateurService.delete(id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalStateException e) {
+            log.error("Error deleting Utilisateur: {}", e.getMessage());
+            java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
     }
 }

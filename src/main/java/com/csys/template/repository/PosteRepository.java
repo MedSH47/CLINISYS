@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PosteRepository extends JpaRepository<Poste, Integer>,QuerydslPredicateExecutor<Poste> {
+    boolean existsByDesignation(String designation);
 }
 

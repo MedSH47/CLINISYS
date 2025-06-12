@@ -56,12 +56,10 @@ public class Ticket implements Serializable {
     @Column(name = "date_creation")
     private LocalDateTime dateCreation;
     
-    @Size(max = 20)
     @Column(name = "priorite")
     @Enumerated(EnumType.STRING)
     private Priorite priorite;
     
-    @Size(max = 20)
     @Column(name = "statue")
     @Enumerated(EnumType.STRING)
     private Status statue;
