@@ -79,7 +79,21 @@ public class UtilisateurService {
 
   public void delete(Integer id) {
     log.debug("Request to delete Utilisateur: {}", id);
-    
+    Utilisateur found = utilisateurRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Utilisateur not found with id: " + id));
+    UtilisateurResponseDTO foundComplete = UtilisateurFactory.toResponseDTO(found);
+    boolean hasEnCoursTicket = false;
+    if (foundComplete.getTicketList() != null) {
+      for (var ticket : foundComplete.getTicketList()) {
+        if (ticket.getStatue().equals(Status.En_cours)) {
+          hasEnCoursTicket = true;
+          break;
+        }
+      }
+      if (hasEnCoursTicket) {
+        throw new IllegalStateException("Cannot delete Utilisateur with existing tickets En_cours: " + id);
+      }
+    }
     utilisateurRepository.deleteById(id);
   }
 
