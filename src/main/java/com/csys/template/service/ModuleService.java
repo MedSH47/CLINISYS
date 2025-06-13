@@ -3,6 +3,7 @@ package com.csys.template.service;
 import com.csys.template.domain.Equipe;
 import com.csys.template.domain.Module;
 import com.csys.template.domain.QEquipe;
+import com.csys.template.domain.QModule;
 import com.csys.template.dtoRequest.ModuleRequestDTO;
 import com.csys.template.dtoResponse.ModuleResponseDTO;
 import com.csys.template.factory.ModuleFactory;
@@ -65,10 +66,12 @@ public class ModuleService {
   }
 
   @Transactional(readOnly = true)
-  public Collection<ModuleResponseDTO> findAll(List<Integer> equipeIds) {
+  public Collection<ModuleResponseDTO> findAll(List<Integer> equipeIds, Boolean[] actifs) {
     QEquipe qEquipe = QEquipe.equipe;
+    QModule qModule = QModule.module;
     WhereClauseBuilder builder = new WhereClauseBuilder()
-        .optionalAnd(equipeIds, () -> qEquipe.id.in(equipeIds));
+        .optionalAnd(equipeIds, () -> qEquipe.id.in(equipeIds))
+        .optionalAnd(actifs, () -> qModule.actif.in(actifs));
     log.debug("Request to get All Modules");
     List<Module> result = (List<Module>) moduleRepository.findAll(builder);
     return ModuleFactory.toResponseDTOs(result);

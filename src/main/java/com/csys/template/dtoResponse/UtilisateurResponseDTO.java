@@ -1,6 +1,7 @@
 package com.csys.template.dtoResponse;
 
 import com.csys.template.domain.enum_identifier.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -15,9 +16,10 @@ public class UtilisateurResponseDTO {
     private String email;
     private String numTelephone;
     private Role role;
-    private Boolean activite;
+    private Boolean actif;
     private LocalDateTime dateCreation;
     private String userCreation;
+    @JsonIgnore
     private byte[] photo;
 
     // Simplified collection to avoid circular dependencies
@@ -83,13 +85,13 @@ public class UtilisateurResponseDTO {
     public void setRole(Role role) {
         this.role = role;
     }
-    
-    public Boolean getActivite() {
-        return activite;
+
+    public Boolean getActif() {
+        return actif;
     }
 
-    public void setActivite(Boolean activite) {
-        this.activite = activite;
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 
     public LocalDateTime getDateCreation() {

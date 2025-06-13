@@ -24,7 +24,7 @@ public class UtilisateurFactory {
         dto.setEmail(utilisateur.getEmail());
         dto.setNumTelephone(utilisateur.getNumTelephone());
         dto.setRole(utilisateur.getRole());
-        dto.setActivite(utilisateur.getActivite());
+        dto.setActif(utilisateur.getActif());
         dto.setDateCreation(utilisateur.getDateCreation());
         dto.setUserCreation(utilisateur.getUserCreation());
         dto.setPhoto(utilisateur.getPhoto());
@@ -63,7 +63,7 @@ public class UtilisateurFactory {
         entity.setNumTelephone(dto.getNumTelephone());
         entity.setMotDePasse(dto.getMotDePasse());
         entity.setRole(dto.getRole());
-        entity.setActivite(dto.getActivite());
+        entity.setActif(dto.getActif());
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated()); 
         entity.setPhoto(dto.getPhoto());

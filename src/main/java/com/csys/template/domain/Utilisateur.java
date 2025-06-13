@@ -72,7 +72,7 @@ public class Utilisateur implements Serializable {
     private Role role;
 
     @Column(name = "activite")
-    private Boolean activite;
+    private Boolean actif;
 
     @OneToMany(mappedBy = "utilisateur", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<EquipePosteutilisateur> equipePosteutilisateurList;
@@ -191,12 +191,12 @@ public class Utilisateur implements Serializable {
         this.role = role;
     }
 
-    public Boolean getActivite() {
-        return activite;
+    public Boolean getActif() {
+        return actif;
     }
 
-    public void setActivite(Boolean activite) {
-        this.activite = activite;
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 
   

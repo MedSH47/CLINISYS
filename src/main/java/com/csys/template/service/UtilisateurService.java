@@ -1,14 +1,22 @@
 package com.csys.template.service;
 
+import com.csys.template.domain.QUtilisateur;
 import com.csys.template.domain.Utilisateur;
+import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.domain.enum_identifier.Status;
 import com.csys.template.dtoRequest.UtilisateurRequestDTO;
 import com.csys.template.dtoResponse.UtilisateurResponseDTO;
 import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.UtilisateurRepository;
+import com.csys.template.util.WhereClauseBuilder;
+
+import liquibase.pro.packaged.W;
+
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.hibernate.annotations.Where;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,7 +59,7 @@ public class UtilisateurService {
     existing.setEmail(userRequestDTO.getEmail());
     existing.setNumTelephone(userRequestDTO.getNumTelephone());
     existing.setRole(userRequestDTO.getRole());
-    existing.setActivite(userRequestDTO.getActivite());
+    existing.setActif(userRequestDTO.getActif());
 
     if (userRequestDTO.getMotDePasse() != null && !userRequestDTO.getMotDePasse().isEmpty()) {
       existing.setMotDePasse(passwordEncoder.encode(userRequestDTO.getMotDePasse()));
@@ -72,9 +80,16 @@ public class UtilisateurService {
   }
 
   @Transactional(readOnly = true)
-  public Collection<UtilisateurResponseDTO> findAll() {
+  public Collection<UtilisateurResponseDTO> findAll(Role role, Boolean[] actifs) {
     log.debug("Request to get All Utilisateurs");
-    return UtilisateurFactory.toResponseDTOs(utilisateurRepository.findAll());
+    QUtilisateur qUtilisateur = QUtilisateur.utilisateur;
+    WhereClauseBuilder builder = new WhereClauseBuilder()
+        .optionalAnd(role, () -> qUtilisateur.role.in(role));
+    if (actifs != null && actifs.length == 1) {
+      builder.optionalAnd(actifs.length == 1, () -> qUtilisateur.actif.eq(actifs[0]));
+    }
+    List<Utilisateur> result = (List<Utilisateur>) utilisateurRepository.findAll(builder);
+    return UtilisateurFactory.toResponseDTOs(result);
   }
 
   public void delete(Integer id) {

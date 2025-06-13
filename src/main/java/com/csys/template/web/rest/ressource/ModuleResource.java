@@ -58,9 +58,10 @@ public class ModuleResource {
     }
 
     @GetMapping("/modules")
-    public Collection<ModuleResponseDTO> getAllModules(@RequestParam(required = false)List<Integer> equipes) {
+    public Collection<ModuleResponseDTO> getAllModules(@RequestParam(required = false)List<Integer> equipes,
+                                                       @RequestParam(required = false) Boolean[] actifs) {
         log.debug("Request to get all Modules");
-        return moduleService.findAll(equipes);
+        return moduleService.findAll(equipes, actifs);
     }
 
     @DeleteMapping("/modules/{id}")

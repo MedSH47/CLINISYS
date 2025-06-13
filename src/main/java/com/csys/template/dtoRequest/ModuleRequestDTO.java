@@ -14,7 +14,6 @@ public class ModuleRequestDTO {
     private Boolean actif ;
     
 
-    // Getters and Setters
 
     public Boolean getActif() {
         return actif;

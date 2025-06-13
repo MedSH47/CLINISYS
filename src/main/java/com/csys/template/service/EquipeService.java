@@ -1,12 +1,17 @@
 package com.csys.template.service;
 
 import com.csys.template.domain.Equipe;
+import com.csys.template.domain.QEquipe;
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.dtoRequest.EquipeRequestDTO;
 import com.csys.template.dtoResponse.EquipeResponseDTO;
 import com.csys.template.factory.EquipeFactory;
 import com.csys.template.repository.EquipeRepository;
 import com.csys.template.repository.UtilisateurRepository;
+import com.csys.template.util.WhereClauseBuilder;
+
+import liquibase.pro.packaged.B;
+
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,9 +62,13 @@ public class EquipeService {
     }
 
     @Transactional(readOnly = true)
-    public List<EquipeResponseDTO> findAll() {
+    public List<EquipeResponseDTO> findAll(Boolean[] actifs) {
         log.debug("Request to get All Equipes");
-        List<Equipe> result = equipeRepository.findAll();
+        QEquipe qEquipe = QEquipe.equipe;
+       WhereClauseBuilder builder = new WhereClauseBuilder()
+        .optionalAnd(actifs, () -> qEquipe.actif.in(actifs));
+        log.debug("Request to get All Equipes");
+        List<Equipe> result = (List<Equipe>) equipeRepository.findAll(builder);
         return EquipeFactory.toResponseDTOs(result);
     }
 

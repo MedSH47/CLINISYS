@@ -12,6 +12,8 @@ public class EquipeRequestDTO {
     @NotNull(message = "Team leader ID cannot be null")
     private Integer idChefEquipe;
 
+    private Boolean actif ;
+
     // Getters and Setters
     public String getDesignation() {
         return designation;
@@ -27,5 +29,11 @@ public class EquipeRequestDTO {
 
     public void setIdChefEquipe(Integer idChefEquipe) {
         this.idChefEquipe = idChefEquipe;
+    }
+    public Boolean getActif() {
+        return actif;
+    }
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 }

@@ -15,7 +15,7 @@ public class EquipeResponseDTO {
     private UtilisateurResponseDTO chefEquipe;
     private List<ModuleResponseDTO> moduleList;
     private List<UtilisateurResponseDTO> utilisateurs;
-
+    private Boolean actif;
     // Getters and Setters
 
     public Integer getId() {
@@ -24,6 +24,12 @@ public class EquipeResponseDTO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+    public Boolean getActif() {
+        return actif;
+    }
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 
     public String getDesignation() {

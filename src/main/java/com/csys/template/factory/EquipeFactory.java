@@ -20,6 +20,7 @@ public class EquipeFactory {
         dto.setId(equipe.getId());
         dto.setDesignation(equipe.getDesignation());
         dto.setDateCreation(equipe.getDateCreation());
+        dto.setActif(equipe.getActif());
         dto.setUserCreation(equipe.getUserCreation());
         dto.setChefEquipe(UtilisateurFactory.toDTOLight(equipe.getChefEquipe()));
         dto.setModuleList(ModuleFactory.toDTOsLight(equipe.getModuleList()));
@@ -39,6 +40,7 @@ public class EquipeFactory {
         EquipeResponseDTO dto = new EquipeResponseDTO();
         dto.setId(equipe.getId());
         dto.setDesignation(equipe.getDesignation());
+        dto.setActif(equipe.getActif());
         return dto;
     }
 
@@ -48,6 +50,7 @@ public class EquipeFactory {
         entity.setDesignation(dto.getDesignation());
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated());
+        entity.setActif(dto.getActif());
 
         if (dto.getIdChefEquipe() != null) {
             Utilisateur chefEquipe = new Utilisateur();

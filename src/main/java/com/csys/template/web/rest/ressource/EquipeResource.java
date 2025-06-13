@@ -49,9 +49,9 @@ public class EquipeResource {
     }
 
     @GetMapping("/equipes")
-    public List<EquipeResponseDTO> getAllEquipes() {
+    public List<EquipeResponseDTO> getAllEquipes(@RequestParam(value = "actifs", required = false) Boolean[] actifs) {
         log.debug("Request to get all Equipes");
-        return equipeService.findAll();
+        return equipeService.findAll(actifs);
     }
 
     @DeleteMapping("/equipes/{id}")

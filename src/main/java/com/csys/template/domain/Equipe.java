@@ -44,6 +44,9 @@ public class Equipe implements Serializable {
     @JoinColumn(name = "chef_equipe")
     private Utilisateur chefEquipe;
 
+    @Column(name = "actif")
+    private Boolean actif;
+
     @OneToMany(mappedBy = "equipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Module> moduleList;
 
@@ -69,10 +72,19 @@ public class Equipe implements Serializable {
     public Equipe() {
     }
 
+
     public Equipe(Integer id) {
         this.id = id;
     }
-     public List<Module> getModuleList() {
+    public Boolean getActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
+    }
+
+    public List<Module> getModuleList() {
         return moduleList;
     }
 

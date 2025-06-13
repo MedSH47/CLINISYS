@@ -39,7 +39,7 @@ public class UtilisateurRequestDTO {
     private Role role;
     
     @NotNull(message = "Activity status cannot be null")
-    private Boolean activite;
+    private Boolean actif;
 
     // Getters and Setters
 
@@ -107,11 +107,11 @@ public class UtilisateurRequestDTO {
         this.role = role;
     }
 
-    public Boolean getActivite() {
-        return activite;
+    public Boolean getActif() {
+        return actif;
     }
 
-    public void setActivite(Boolean activite) {
-        this.activite = activite;
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 }

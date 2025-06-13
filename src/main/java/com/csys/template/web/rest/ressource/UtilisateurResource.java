@@ -1,11 +1,12 @@
 package com.csys.template.web.rest.ressource;
 
+import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.dtoRequest.UtilisateurRequestDTO;
 import com.csys.template.dtoResponse.UtilisateurResponseDTO;
 import com.csys.template.service.UtilisateurService;
 import com.csys.template.util.RestPreconditions;
 
-import liquibase.pro.packaged.js;
+import liquibase.pro.packaged.R;
 
 import java.io.IOException;
 import java.net.URI;
@@ -67,9 +68,10 @@ public class UtilisateurResource {
     }
 
     @GetMapping("/utilisateurs")
-    public Collection<UtilisateurResponseDTO> getAllUtilisateurs() {
+    public Collection<UtilisateurResponseDTO> getAllUtilisateurs(@RequestParam(required = false) Boolean[] actifs ,
+                                                                @RequestParam(required = false) Role role) {
         log.debug("Request to get all Utilisateurs");
-        return utilisateurService.findAll();
+        return utilisateurService.findAll(role, actifs);
     }
     
     @GetMapping("/utilisateurs/find-by-login/{login}")
