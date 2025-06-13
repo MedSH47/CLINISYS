@@ -51,6 +51,7 @@ public class ModuleService {
 
     existing.setDesignation(moduleRequestDTO.getDesignation());
     existing.setEquipe(newEquipe);
+    existing.setActif(moduleRequestDTO.getActif());
 
     Module saved = moduleRepository.save(existing);
     return ModuleFactory.toResponseDTO(saved);

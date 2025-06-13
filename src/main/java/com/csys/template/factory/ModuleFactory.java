@@ -47,7 +47,7 @@ public class ModuleFactory {
         
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated());
-        entity.setActif(dto.getActif() != null ? dto.getActif() : true);
+        entity.setActif(dto.getActif());
         return entity;
     }
 

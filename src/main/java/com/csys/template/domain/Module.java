@@ -40,7 +40,7 @@ public class Module implements Serializable {
     private String designation;
 
     @Column(name="actif")
-    private Boolean actif = true;
+    private Boolean actif ;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_equipe")
