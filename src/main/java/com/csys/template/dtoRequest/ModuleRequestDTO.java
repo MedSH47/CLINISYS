@@ -9,10 +9,20 @@ public class ModuleRequestDTO {
     @Size(min = 1, max = 100, message = "Designation must be between 1 and 100 characters")
     private String designation;
 
-    @NotNull(message = "Equipe ID cannot be null")
     private Integer idEquipe;
 
+    private Boolean actif ;
+    
+
     // Getters and Setters
+
+    public Boolean getActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
+    }
 
     public String getDesignation() {
         return designation;

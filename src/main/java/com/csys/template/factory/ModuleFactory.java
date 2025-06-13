@@ -22,6 +22,7 @@ public class ModuleFactory {
         dto.setUserCreation(module.getUserCreation());
         dto.setEquipe(EquipeFactory.toDTOLight(module.getEquipe()));
         dto.setTicketList(TicketFactory.toDTOsLight(module.getTicketSet()));
+        dto.setActif(module.getActif());
         return dto;
     }
     
@@ -46,6 +47,7 @@ public class ModuleFactory {
         
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated());
+        entity.setActif(dto.getActif() != null ? dto.getActif() : true);
         return entity;
     }
 

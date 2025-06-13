@@ -39,6 +39,9 @@ public class Module implements Serializable {
     @Column(name = "designation")
     private String designation;
 
+    @Column(name="actif")
+    private Boolean actif = true;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_equipe")
     private Equipe equipe;
@@ -52,6 +55,14 @@ public class Module implements Serializable {
 
     public void setTicketSet(List<Ticket> ticketSet) {
         this.ticketSet = ticketSet;
+    }
+
+    public Boolean getActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 
     public Module() {

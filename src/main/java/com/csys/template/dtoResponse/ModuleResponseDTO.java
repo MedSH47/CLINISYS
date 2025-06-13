@@ -13,7 +13,17 @@ public class ModuleResponseDTO {
   private EquipeResponseDTO equipe;
   private Collection<TicketResponseDTO> ticketList;
 
+  private Boolean actif;
+
   // Getters and Setters
+
+  public Boolean getActif() {
+    return actif;
+  }
+
+  public void setActif(Boolean actif) {
+    this.actif = actif;
+  }
 
   public Integer getId() {
     return id;
