@@ -20,7 +20,7 @@ public class ModuleFactory {
         dto.setDesignation(module.getDesignation());
         dto.setDateCreation(module.getDateCreation());
         dto.setUserCreation(module.getUserCreation());
-        dto.setEquipe(EquipeFactory.toDTOLight(module.getEquipe()));
+       dto.setEquipe(EquipeFactory.toDTOLight(module.getEquipe()));
         dto.setTicketList(TicketFactory.toDTOsLight(module.getTicketSet()));
         dto.setActif(module.getActif());
         return dto;
@@ -30,7 +30,7 @@ public class ModuleFactory {
         if (module == null) return null;
         ModuleResponseDTO dto = new ModuleResponseDTO();
         dto.setId(module.getId());
-        dto.setDesignation(module.getDesignation());
+        dto.setEquipe(EquipeFactory.toDTOLight(module.getEquipe()));
         return dto;
     }
 

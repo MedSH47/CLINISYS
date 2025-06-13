@@ -33,8 +33,10 @@ public class ModuleService {
   public ModuleResponseDTO save(ModuleRequestDTO moduleRequestDTO) {
     log.debug("Request to save Module: {}", moduleRequestDTO);
     Module module = ModuleFactory.toEntity(moduleRequestDTO);
-    equipeRepository.findById(module.getEquipe().getId())
-            .orElseThrow(() -> new IllegalArgumentException("equipe.NotFound"));
+    if(module.getEquipe()!=null){
+        equipeRepository.findById(module.getEquipe().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("equipe.NotFound"));
+    }
     module = moduleRepository.save(module);
     return ModuleFactory.toResponseDTO(module);
   }
