@@ -34,15 +34,10 @@ public class EquipeService {
 
     public EquipeResponseDTO save(EquipeRequestDTO equipeRequestDTO) {
         log.debug("Request to save Equipe : {}", equipeRequestDTO);
-        Equipe equipe = EquipeFactory.toEntity(equipeRequestDTO);
-        if (equipe.getChefEquipe() != null && equipe.getChefEquipe().getId() != null) {
-            Utilisateur chefEquipe = utilisateurRepository.findById(equipe.getChefEquipe().getId())
-                .orElseThrow(() -> new IllegalArgumentException("chefEquipe.NotFound"));
-            equipe.setChefEquipe(chefEquipe);
-        } else {
-            equipe.setChefEquipe(null); // Ensure chefEquipe is null if not provided
+        if(equipeRepository.existsBydesignation(equipeRequestDTO.getDesignation())) {
+            throw new IllegalArgumentException("equipe.AlreadyExists");
         }
-        
+        Equipe equipe = EquipeFactory.toEntity(equipeRequestDTO);
         equipe = equipeRepository.save(equipe);
         return EquipeFactory.toResponseDTO(equipe);
     }
