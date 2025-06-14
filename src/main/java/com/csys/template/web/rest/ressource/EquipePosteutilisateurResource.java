@@ -64,6 +64,15 @@ public ResponseEntity<EquipePosteutilisateurResponseDTO> createEquipePosteutilis
         log.debug("Request to get all EquipePosteutilisateurs");
         return equipePosteutilisateurService.findAll();
     }
+     // --- NEW ENDPOINT TO ADD ---
+    @GetMapping("/equipe-poste-utilisateurs/equipe/{idEquipe}")
+    public ResponseEntity<List<EquipePosteutilisateurResponseDTO>> getAllEquipePosteutilisateursByEquipeId(
+            @PathVariable Integer idEquipe) {
+        log.debug("REST request to get all EquipePosteutilisateurs for Equipe ID : {}", idEquipe);
+        List<EquipePosteutilisateurResponseDTO> result = equipePosteutilisateurService.findByEquipeId(idEquipe);
+        return ResponseEntity.ok().body(result);
+    }
+    // --- END NEW ENDPOINT ---
 
     @DeleteMapping("/equipe-poste-utilisateurs/{idPoste}/{idUtilisateur}/{idEquipe}")
     public ResponseEntity<?> deleteEquipePosteutilisateur(
