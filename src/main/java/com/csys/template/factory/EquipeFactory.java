@@ -22,7 +22,9 @@ public class EquipeFactory {
         dto.setDateCreation(equipe.getDateCreation());
         dto.setActif(equipe.getActif());
         dto.setUserCreation(equipe.getUserCreation());
-        dto.setChefEquipe(UtilisateurFactory.toDTOLight(equipe.getChefEquipe()));
+        if (equipe.getChefEquipe()!=null) {
+            dto.setChefEquipe(UtilisateurFactory.toDTOLight(equipe.getChefEquipe()));
+        }
         dto.setModuleList(ModuleFactory.toDTOsLight(equipe.getModuleList()));
 
         if (equipe.getEquipePosteutilisateurList() != null) {

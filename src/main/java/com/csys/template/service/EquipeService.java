@@ -3,6 +3,7 @@ package com.csys.template.service;
 import com.csys.template.domain.Equipe;
 import com.csys.template.domain.QEquipe;
 import com.csys.template.domain.Utilisateur;
+import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.dtoRequest.EquipeRequestDTO;
 import com.csys.template.dtoResponse.EquipeResponseDTO;
 import com.csys.template.factory.EquipeFactory;
@@ -11,6 +12,7 @@ import com.csys.template.repository.UtilisateurRepository;
 import com.csys.template.util.WhereClauseBuilder;
 
 import liquibase.pro.packaged.B;
+import liquibase.pro.packaged.el;
 
 import java.util.List;
 import org.slf4j.Logger;
@@ -33,8 +35,14 @@ public class EquipeService {
     public EquipeResponseDTO save(EquipeRequestDTO equipeRequestDTO) {
         log.debug("Request to save Equipe : {}", equipeRequestDTO);
         Equipe equipe = EquipeFactory.toEntity(equipeRequestDTO);
-        utilisateurRepository.findById(equipe.getChefEquipe().getId())
+        if (equipe.getChefEquipe() != null && equipe.getChefEquipe().getId() != null) {
+            Utilisateur chefEquipe = utilisateurRepository.findById(equipe.getChefEquipe().getId())
                 .orElseThrow(() -> new IllegalArgumentException("chefEquipe.NotFound"));
+            equipe.setChefEquipe(chefEquipe);
+        } else {
+            equipe.setChefEquipe(null); // Ensure chefEquipe is null if not provided
+        }
+        
         equipe = equipeRepository.save(equipe);
         return EquipeFactory.toResponseDTO(equipe);
     }
@@ -43,12 +51,16 @@ public class EquipeService {
         log.debug("Request to update Equipe : {}", equipeId);
         Equipe existingEquipe = equipeRepository.findById(equipeId)
                 .orElseThrow(() -> new IllegalArgumentException("equipe.NotFound"));
-        
-        Utilisateur newChefEquipe = utilisateurRepository.findById(equipeRequestDTO.getIdChefEquipe())
+
+        if(equipeRequestDTO.getIdChefEquipe() !=null) {
+            Utilisateur newChefEquipe = utilisateurRepository.findById(equipeRequestDTO.getIdChefEquipe())
                 .orElseThrow(() -> new IllegalArgumentException("chefEquipe.NotFound"));
+           
+             existingEquipe.setChefEquipe(newChefEquipe);
+
+        }
         
         existingEquipe.setDesignation(equipeRequestDTO.getDesignation());
-        existingEquipe.setChefEquipe(newChefEquipe);
 
         Equipe saved = equipeRepository.save(existingEquipe);
         return EquipeFactory.toResponseDTO(saved);

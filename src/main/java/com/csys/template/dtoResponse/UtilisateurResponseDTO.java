@@ -19,7 +19,6 @@ public class UtilisateurResponseDTO {
     private Boolean actif;
     private LocalDateTime dateCreation;
     private String userCreation;
-    @JsonIgnore
     private byte[] photo;
 
     // Simplified collection to avoid circular dependencies

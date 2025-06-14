@@ -9,7 +9,6 @@ public class EquipeRequestDTO {
     @Size(min = 2, max = 255, message = "Designation must be between 2 and 255 characters")
     private String designation;
 
-    @NotNull(message = "Team leader ID cannot be null")
     private Integer idChefEquipe;
 
     private Boolean actif ;
