@@ -56,7 +56,7 @@ public class EquipeService {
         }
         
         existingEquipe.setDesignation(equipeRequestDTO.getDesignation());
-
+        existingEquipe.setActif(equipeRequestDTO.getActif());
         Equipe saved = equipeRepository.save(existingEquipe);
         return EquipeFactory.toResponseDTO(saved);
     }

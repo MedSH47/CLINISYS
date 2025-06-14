@@ -52,7 +52,12 @@ public class EquipeFactory {
         entity.setDesignation(dto.getDesignation());
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated());
-        entity.setActif(dto.getActif());
+        if (dto.getActif()!=null) {
+            entity.setActif(dto.getActif());
+        } else {
+            entity.setActif(true); // Default to true if not specified
+            
+        }
 
         if (dto.getIdChefEquipe() != null) {
             Utilisateur chefEquipe = new Utilisateur();
