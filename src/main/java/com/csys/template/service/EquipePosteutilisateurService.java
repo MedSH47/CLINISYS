@@ -106,17 +106,6 @@ public class EquipePosteutilisateurService {
     @Transactional(readOnly = true)
     public List<EquipePosteutilisateurResponseDTO> findByEquipeId(Integer equipeId) {
         // Assuming your EquipePosteutilisateur entity has a relationship to Equipe,
-        // you might have a property like 'equipe' which has an 'id'.
-        // Or, your primary key includes the equipeId.
-        // You need to query your repository for assignments related to this equipeId.
-
-        // Example using a custom query method in your repository:
-        // You will need to add `List<EquipePosteutilisateur> findByIdEquipeId(Integer equipeId);`
-        // or `@Query("SELECT epu FROM EquipePosteutilisateur epu WHERE epu.id.idEquipe = :equipeId")`
-        // in your EquipePosteutilisateurRepository.
-
-        // For simplicity, let's assume your repository has a method like this:
-        // (You might need to adjust based on your actual entity/PK structure)
         return equipePosteutilisateurRepository.findByEquipeId(equipeId).stream() // <--- THIS METHOD NEEDS TO EXIST IN YOUR REPOSITORY
                 .map(EquipePosteutilisateurFactory::toResponseDTO)
                 .collect(Collectors.toList());
