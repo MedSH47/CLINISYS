@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 
 public class TicketRequestDTO {
 
-    @NotNull
+    
     @Size(min = 1, max = 200)
     private String titre;
 
@@ -18,14 +18,12 @@ public class TicketRequestDTO {
 
     
     private Priorite priorite;
-
-    @NotNull
     private Status statue;
     
-    @NotNull
+    
     private Integer idClient;
 
-    @NotNull
+    
     private Integer idModule;
 
     private Integer idUtilisateur; // Can be nullable if a ticket can be unassigned

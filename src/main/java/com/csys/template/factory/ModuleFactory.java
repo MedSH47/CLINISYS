@@ -30,6 +30,7 @@ public class ModuleFactory {
         if (module == null) return null;
         ModuleResponseDTO dto = new ModuleResponseDTO();
         dto.setId(module.getId());
+        dto.setDesignation(module.getDesignation());
         dto.setEquipe(EquipeFactory.toDTOLight(module.getEquipe()));
         return dto;
     }
