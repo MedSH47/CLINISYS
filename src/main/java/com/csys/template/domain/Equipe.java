@@ -47,10 +47,10 @@ public class Equipe implements Serializable {
     @Column(name = "actif")
     private Boolean actif;
 
-    @OneToMany(mappedBy = "equipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "equipe", fetch = FetchType.LAZY)
     private List<Module> moduleList;
 
-    @OneToMany(mappedBy = "equipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "equipe", fetch = FetchType.LAZY)
     private List<EquipePosteutilisateur> equipePosteutilisateurList;
     
     public List<EquipePosteutilisateur> getEquipePosteutilisateurList() {

@@ -2,12 +2,11 @@ package com.csys.template.dtoRequest;
 
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
-import javax.validation.constraints.NotNull;
+
 import javax.validation.constraints.Size;
 
 public class TicketRequestDTO {
 
-    
     @Size(min = 1, max = 200)
     private String titre;
 
@@ -15,20 +14,28 @@ public class TicketRequestDTO {
     private String description;
 
     private Integer idParentTicket;
-
     
     private Priorite priorite;
+
     private Status statue;
-    
-    
+
     private Integer idClient;
 
-    
     private Integer idModule;
 
-    private Integer idUtilisateur; // Can be nullable if a ticket can be unassigned
+    private Integer idUtilisateur;
+
+    private Boolean actif;
 
     // Getters and Setters
+
+    public Boolean getActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
+    }
 
     public String getTitre() {
         return titre;

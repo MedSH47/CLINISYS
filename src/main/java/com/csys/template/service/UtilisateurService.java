@@ -109,6 +109,9 @@ public class UtilisateurService {
         throw new IllegalStateException("Cannot delete Utilisateur with existing tickets En_cours: " + id);
       }
     }
+    if (!found.getTicketList().isEmpty()) {
+      log.debug("ticket related with this user setted nulls", foundComplete.getId());
+    }
     utilisateurRepository.deleteById(id);
   }
 

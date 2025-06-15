@@ -74,10 +74,10 @@ public class Utilisateur implements Serializable {
     @Column(name = "activite")
     private Boolean actif;
 
-    @OneToMany(mappedBy = "utilisateur", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "utilisateur", fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
     private List<EquipePosteutilisateur> equipePosteutilisateurList;
 
-    @OneToMany(mappedBy = "idUtilisateur", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "idUtilisateur", fetch = FetchType.LAZY)
     private List<Ticket> ticketList;
 
     public List<Ticket> getTicketList() {

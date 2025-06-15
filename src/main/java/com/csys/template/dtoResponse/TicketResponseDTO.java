@@ -4,14 +4,13 @@ import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import liquibase.pro.packaged.E;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketResponseDTO {
@@ -22,19 +21,25 @@ public class TicketResponseDTO {
     private String userCreation;
     private LocalDateTime dateCreation;
     private Priorite priorite;
-
     private Status statue;
-
-    // Using light DTOs for all nested relationships
     private TicketResponseDTO parentTicket; 
-    private Set<TicketResponseDTO> childTickets; 
+    private List<TicketResponseDTO> childTickets; 
     private ClientResponseDTO idClient; 
     private ModuleResponseDTO idModule;
     private UtilisateurResponseDTO idUtilisateur;
     private List<CommentaireResponseDTO> commentaireList;
     private List<DocumentJointesResponseDTO> documentJointesList;
+    private Boolean actif;
 
     // Getters and Setters
+
+    public Boolean getActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
+    }
 
     public List<DocumentJointesResponseDTO> getDocumentJointesList() {
         return documentJointesList;
@@ -108,11 +113,11 @@ public class TicketResponseDTO {
         this.parentTicket = parentTicket;
     }
 
-    public Set<TicketResponseDTO> getChildTickets() {
+    public List<TicketResponseDTO> getChildTickets() {
         return childTickets;
     }
 
-    public void setChildTickets(Set<TicketResponseDTO> childTickets) {
+    public void setChildTickets(List<TicketResponseDTO> childTickets) {
         this.childTickets = childTickets;
     }
 

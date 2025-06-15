@@ -4,6 +4,7 @@ import com.csys.template.domain.Client;
 import com.csys.template.domain.Module;
 import com.csys.template.domain.Ticket;
 import com.csys.template.domain.Utilisateur;
+import com.csys.template.domain.enum_identifier.Status;
 import com.csys.template.dtoRequest.TicketRequestDTO;
 import com.csys.template.dtoResponse.TicketResponseDTO;
 import com.csys.template.util.Helper;
@@ -16,33 +17,34 @@ import java.util.stream.Collectors;
 public class TicketFactory {
 
     public static TicketResponseDTO toResponseDTO(Ticket ticket) {
-        if (ticket == null) return null;
+        if (ticket == null)
+            return null;
         TicketResponseDTO dto = new TicketResponseDTO();
         dto.setId(ticket.getId());
         dto.setTitre(ticket.getTitre());
         dto.setDescription(ticket.getDescription());
         dto.setDateCreation(ticket.getDateCreation());
         dto.setUserCreation(ticket.getUserCreation());
+        dto.setActif(ticket.getActif());
         dto.setPriorite(ticket.getPriorite());
         dto.setStatue(ticket.getStatue());
-        dto.setDocumentJointesList(
-                DocumentJointesFactory.toResponseDTOs(ticket.getDocumentJointesList()));
-        
-        // Use light DTOs for all nested objects
+        dto.setChildTickets(TicketFactory.toDTOsLight(ticket.getChildTickets()));
+        dto.setDocumentJointesList(DocumentJointesFactory.toResponseDTOs(ticket.getDocumentJointesList()));
         dto.setIdUtilisateur(UtilisateurFactory.toDTOLight(ticket.getIdUtilisateur()));
         dto.setCommentaireList(CommentaireFactory.toResponseDTOs(ticket.getCommentaireList()));
         dto.setIdClient(ClientFactory.toDTOLight(ticket.getIdClient()));
         dto.setIdModule(ModuleFactory.toDTOLight(ticket.getModule()));
-        
         if (ticket.getParentTicket() != null) {
-             dto.setParentTicket(TicketFactory.toDTOLight(ticket.getParentTicket()));
+            dto.setParentTicket(TicketFactory.toDTOLight(ticket.getParentTicket()));
         }
         return dto;
     }
 
     public static TicketResponseDTO toDTOLight(Ticket ticket) {
-        if (ticket == null) return null;
+        if (ticket == null)
+            return null;
         TicketResponseDTO dto = new TicketResponseDTO();
+        dto.setActif(ticket.getActif());
         dto.setId(ticket.getId());
         dto.setTitre(ticket.getTitre());
         dto.setStatue(ticket.getStatue());
@@ -52,7 +54,8 @@ public class TicketFactory {
     }
 
     public static Ticket toEntity(TicketRequestDTO dto) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
         Ticket entity = new Ticket();
         entity.setTitre(dto.getTitre());
         entity.setDescription(dto.getDescription());
@@ -60,6 +63,7 @@ public class TicketFactory {
         entity.setStatue(dto.getStatue());
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated());
+        entity.setActif(dto.getActif());
 
         if (dto.getIdParentTicket() != null) {
             Ticket parent = new Ticket();
@@ -85,12 +89,74 @@ public class TicketFactory {
     }
 
     public static List<TicketResponseDTO> toResponseDTOs(Collection<Ticket> tickets) {
-        if (tickets == null) return Collections.emptyList();
+        if (tickets == null)
+            return Collections.emptyList();
         return tickets.stream().map(TicketFactory::toResponseDTO).collect(Collectors.toList());
     }
 
     public static List<TicketResponseDTO> toDTOsLight(Collection<Ticket> tickets) {
-        if (tickets == null) return Collections.emptyList();
+        if (tickets == null)
+            return Collections.emptyList();
         return tickets.stream().map(TicketFactory::toDTOLight).collect(Collectors.toList());
+    }
+
+    public static void updateFromDTO(Ticket entity, TicketRequestDTO dto) {
+        if (dto == null || entity == null) {
+            return;
+        }
+
+        // Rule 2: Validate that a user is assigned if the status is "EN_COURS"
+        if (dto.getStatue() == Status.En_cours && entity.getIdUtilisateur() == null) {
+            throw new IllegalArgumentException(
+                    "A user must be assigned to the ticket to change its status to EN_COURS.");
+        }
+
+        // Update standard fields
+        if (dto.getTitre() != null) {
+            entity.setTitre(dto.getTitre());
+        }
+        if (dto.getDescription() != null) {
+            entity.setDescription(dto.getDescription());
+        }
+        if (dto.getPriorite() != null) {
+            entity.setPriorite(dto.getPriorite());
+        }
+        if (dto.getActif()!=entity.getActif() && dto.getActif()!=null) {
+            entity.setActif(dto.getActif());
+        }
+
+        // Update status
+        if (dto.getStatue() != null) {
+            entity.setStatue(dto.getStatue());
+        }
+        
+        if (entity.getStatue() == Status.Refuse) {
+            entity.setModule(null);
+            entity.setIdUtilisateur(null);
+        } else {
+            // Otherwise, update module and user from the DTO if provided
+            if (dto.getIdModule() != null) {
+                Module module = new Module();
+                module.setId(dto.getIdModule());
+                entity.setModule(module);
+            }
+            if (dto.getIdUtilisateur() != null) {
+                Utilisateur user = new Utilisateur();
+                user.setId(dto.getIdUtilisateur());
+                entity.setIdUtilisateur(user);
+            }
+        }
+
+        // Update other relationships
+        if (dto.getIdParentTicket() != null) {
+            Ticket parent = new Ticket();
+            parent.setId(dto.getIdParentTicket());
+            entity.setParentTicket(parent);
+        }
+        if (dto.getIdClient() != null) {
+            Client client = new Client();
+            client.setId(dto.getIdClient());
+            entity.setIdClient(client);
+        }
     }
 }

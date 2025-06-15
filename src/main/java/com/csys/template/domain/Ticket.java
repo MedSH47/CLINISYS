@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,7 +34,10 @@ public class Ticket implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    
+
+    @Column(name = "actif")
+    private Boolean actif;
+
     @ManyToOne
     @JoinColumn(name = "id_ticket_parent")
     private Ticket parentTicket;
@@ -44,45 +48,43 @@ public class Ticket implements Serializable {
     @Size(max = 200)
     @Column(name = "titre")
     private String titre;
-    
+
     @Size(max = 2147483647)
     @Column(name = "description")
     private String description;
-    
+
     @Size(max = 50)
     @Column(name = "user_creation")
     private String userCreation;
-    
+
     @Column(name = "date_creation")
     private LocalDateTime dateCreation;
-    
+
     @Column(name = "priorite")
     @Enumerated(EnumType.STRING)
     private Priorite priorite;
-    
+
     @Column(name = "statue")
     @Enumerated(EnumType.STRING)
     private Status statue;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_module")
     private Module module;
-    
-    @JoinColumn(name = "id_utilisateur", referencedColumnName = "id")
+
+    @JoinColumn(name = "id_utilisateur", nullable = true, referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_Ticket_Utilisateur", foreignKeyDefinition = "FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id) ON DELETE SET NULL"))
     @ManyToOne(fetch = FetchType.LAZY)
     private Utilisateur idUtilisateur;
-    
+
     @JoinColumn(name = "id_client", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Client idClient;
-    
-    @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY)
     private List<Commentaire> commentaireList;
 
-    @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY)
     private List<DocumentJointes> documentJointesList;
-
-   
 
     public List<Commentaire> getCommentaireList() {
         return commentaireList;
@@ -91,12 +93,21 @@ public class Ticket implements Serializable {
     public void setCommentaireList(List<Commentaire> commentaireList) {
         this.commentaireList = commentaireList;
     }
-     public List<DocumentJointes> getDocumentJointesList() {
+
+    public List<DocumentJointes> getDocumentJointesList() {
         return documentJointesList;
     }
 
     public void setDocumentJointesList(List<DocumentJointes> documentJointesList) {
         this.documentJointesList = documentJointesList;
+    }
+
+    public Boolean getActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 
     public Client getIdClient() {
@@ -138,7 +149,7 @@ public class Ticket implements Serializable {
         this.id = id;
     }
 
-   public Ticket getParentTicket() {
+    public Ticket getParentTicket() {
         return parentTicket;
     }
 
