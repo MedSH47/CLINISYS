@@ -37,6 +37,9 @@ public class Ticket implements Serializable {
 
     @Column(name = "actif")
     private Boolean actif;
+    @Column(name = "date_echeance")
+    private LocalDateTime date_echeance;
+  
 
     @ManyToOne
     @JoinColumn(name = "id_ticket_parent")
@@ -113,7 +116,14 @@ public class Ticket implements Serializable {
     public Client getIdClient() {
         return idClient;
     }
+  
+    public LocalDateTime getDate_echeance() {
+        return date_echeance;
+    }
 
+    public void setDate_echeance(LocalDateTime date_echeance) {
+        this.date_echeance = date_echeance;
+    }
     public void setIdClient(Client idClient) {
         this.idClient = idClient;
     }

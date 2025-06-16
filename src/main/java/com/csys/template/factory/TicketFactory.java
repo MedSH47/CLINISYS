@@ -40,6 +40,7 @@ public class TicketFactory {
         dto.setActif(ticket.getActif());
         dto.setPriorite(ticket.getPriorite());
         dto.setStatue(ticket.getStatue());
+        dto.setDate_echeance(ticket.getDate_echeance());
         dto.setChildTickets(TicketFactory.toDTOsLight(ticket.getChildTickets()));
         dto.setDocumentJointesList(DocumentJointesFactory.toResponseDTOs(ticket.getDocumentJointesList()));
         dto.setIdUtilisateur(UtilisateurFactory.toDTOLight(ticket.getIdUtilisateur()));
@@ -62,6 +63,7 @@ public class TicketFactory {
         dto.setStatue(ticket.getStatue());
         dto.setPriorite(ticket.getPriorite());
         dto.setDateCreation(ticket.getDateCreation());
+        dto.setDate_echeance(ticket.getDate_echeance());
         return dto;
     }
 
@@ -76,6 +78,7 @@ public class TicketFactory {
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated());
         entity.setActif(dto.getActif());
+        entity.setDate_echeance(dto.getDate_echeance());
 
         if (dto.getIdParentTicket() != null) {
             Ticket parent = new Ticket();
@@ -121,6 +124,9 @@ public class TicketFactory {
         if (dto.getStatue() == Status.En_cours && entity.getIdUtilisateur() == null) {
             throw new IllegalArgumentException(
                     "A user must be assigned to the ticket to change its status to EN_COURS.");
+        }
+        if (dto.getDate_echeance()!=null) {
+            entity.setDate_echeance(dto.getDate_echeance());
         }
 
         // Update standard fields

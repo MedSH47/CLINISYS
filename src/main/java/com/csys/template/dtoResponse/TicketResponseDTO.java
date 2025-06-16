@@ -4,13 +4,11 @@ import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketResponseDTO {
@@ -20,11 +18,13 @@ public class TicketResponseDTO {
     private String description;
     private String userCreation;
     private LocalDateTime dateCreation;
+    private LocalDateTime date_echeance;
+
     private Priorite priorite;
     private Status statue;
-    private TicketResponseDTO parentTicket; 
-    private List<TicketResponseDTO> childTickets; 
-    private ClientResponseDTO idClient; 
+    private TicketResponseDTO parentTicket;
+    private List<TicketResponseDTO> childTickets;
+    private ClientResponseDTO idClient;
     private ModuleResponseDTO idModule;
     private UtilisateurResponseDTO idUtilisateur;
     private List<CommentaireResponseDTO> commentaireList;
@@ -72,7 +72,7 @@ public class TicketResponseDTO {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public String getUserCreation() {
         return userCreation;
     }
@@ -88,7 +88,7 @@ public class TicketResponseDTO {
     public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
-    
+
     public Priorite getPriorite() {
         return priorite;
     }
@@ -103,6 +103,14 @@ public class TicketResponseDTO {
 
     public void setStatue(Status statue) {
         this.statue = statue;
+    }
+
+    public LocalDateTime getDate_echeance() {
+        return date_echeance;
+    }
+
+    public void setDate_echeance(LocalDateTime date_echeance) {
+        this.date_echeance = date_echeance;
     }
 
     public TicketResponseDTO getParentTicket() {
@@ -144,7 +152,7 @@ public class TicketResponseDTO {
     public void setIdUtilisateur(UtilisateurResponseDTO idUtilisateur) {
         this.idUtilisateur = idUtilisateur;
     }
-    
+
     public List<CommentaireResponseDTO> getCommentaireList() {
         return commentaireList;
     }

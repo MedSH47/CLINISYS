@@ -3,6 +3,8 @@ package com.csys.template.dtoRequest;
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 
+import java.time.LocalDateTime;
+
 import javax.validation.constraints.Size;
 
 public class TicketRequestDTO {
@@ -27,7 +29,17 @@ public class TicketRequestDTO {
 
     private Boolean actif;
 
+    private LocalDateTime date_echeance;
+
     // Getters and Setters
+
+    public LocalDateTime getDate_echeance() {
+        return date_echeance;
+    }
+
+    public void setDate_echeance(LocalDateTime date_echeance) {
+        this.date_echeance = date_echeance;
+    }
 
     public Boolean getActif() {
         return actif;
