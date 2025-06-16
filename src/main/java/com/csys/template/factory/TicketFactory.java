@@ -16,6 +16,18 @@ import java.util.stream.Collectors;
 
 public class TicketFactory {
 
+    public static List<TicketResponseDTO> toResponseDTOsParents(Collection<Ticket> tickets) {
+        if (tickets == null) {
+            return Collections.emptyList();
+        }
+        return tickets.stream()
+                // keep only tickets whose parentTicket is null
+                .filter(t -> t.getParentTicket() == null)
+                // map to the full DTO
+                .map(TicketFactory::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     public static TicketResponseDTO toResponseDTO(Ticket ticket) {
         if (ticket == null)
             return null;
@@ -121,7 +133,7 @@ public class TicketFactory {
         if (dto.getPriorite() != null) {
             entity.setPriorite(dto.getPriorite());
         }
-        if (dto.getActif()!=entity.getActif() && dto.getActif()!=null) {
+        if (dto.getActif() != entity.getActif() && dto.getActif() != null) {
             entity.setActif(dto.getActif());
         }
 
@@ -129,7 +141,7 @@ public class TicketFactory {
         if (dto.getStatue() != null) {
             entity.setStatue(dto.getStatue());
         }
-        
+
         if (entity.getStatue() == Status.Refuse) {
             entity.setModule(null);
             entity.setIdUtilisateur(null);

@@ -90,4 +90,9 @@ public class TicketService {
         ticketRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
+
+    public List<TicketResponseDTO> findAllParents(){
+        List<Ticket> tickets = ticketRepository.findAll();
+        return TicketFactory.toResponseDTOsParents(tickets);
+    }
 }
