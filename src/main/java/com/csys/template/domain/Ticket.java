@@ -71,6 +71,9 @@ public class Ticket implements Serializable {
     @Enumerated(EnumType.STRING)
     private Status statue;
 
+    // @Column(name = "id_module")
+    // private Integer idModule;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_module")
     private Module module;
