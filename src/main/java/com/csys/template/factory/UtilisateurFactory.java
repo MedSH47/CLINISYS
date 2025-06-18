@@ -69,6 +69,46 @@ public class UtilisateurFactory {
         entity.setPhoto(dto.getPhoto());
         return entity;
     }
+    public static void updateFromDTO(Utilisateur entity, UtilisateurRequestDTO dto) {
+    if (entity == null || dto == null) {
+        return;
+    }
+
+    // Update scalar fields only if the DTO provided a non-null value
+    if (dto.getNom() != null) {
+        entity.setNom(dto.getNom());
+    }
+    if (dto.getPrenom() != null) {
+        entity.setPrenom(dto.getPrenom());
+    }
+    if (dto.getLogin() != null) {
+        entity.setLogin(dto.getLogin());
+    }
+    if (dto.getEmail() != null) {
+        entity.setEmail(dto.getEmail());
+    }
+    if (dto.getNumTelephone() != null) {
+        entity.setNumTelephone(dto.getNumTelephone());
+    }
+    if (dto.getMotDePasse() != null) {
+        entity.setMotDePasse(dto.getMotDePasse());
+    }
+    if (dto.getPhoto() != null) {
+        entity.setPhoto(dto.getPhoto());
+    }
+
+    // Enums and Booleans
+    if (dto.getRole() != null) {
+        entity.setRole(dto.getRole());
+    }
+    if (dto.getActif() != null) {
+        entity.setActif(dto.getActif());
+    }
+
+    // NOTE: we generally do NOT update dateCreation/userCreation here,
+    // since those are set on creation and should remain immutable.
+}
+
 
     public static List<UtilisateurResponseDTO> toResponseDTOs(Collection<Utilisateur> utilisateurs) {
         if (utilisateurs == null) return Collections.emptyList();

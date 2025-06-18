@@ -9,24 +9,20 @@ import javax.validation.constraints.Size;
 
 public class UtilisateurRequestDTO {
 
-    @NotNull(message = "Name cannot be null")
     @Size(min = 1, max = 50)
     private String nom;
 
-    @NotNull(message = "First name cannot be null")
     @Size(min = 1, max = 50)
     private String prenom;
 
-    @NotNull(message = "Login cannot be null")
     @Size(min = 1, max = 50)
     private String login;
 
     @Lob
     private byte[] photo;
 
-
     @Email(message = "A valid email is required")
-    @NotNull
+
     @Size(min = 5, max = 100)
     private String email;
 
@@ -35,10 +31,8 @@ public class UtilisateurRequestDTO {
 
     private String numTelephone;
 
-    @NotNull(message = "Role cannot be null")
     private Role role;
-    
-    @NotNull(message = "Activity status cannot be null")
+
     private Boolean actif;
 
     // Getters and Setters
@@ -50,7 +44,7 @@ public class UtilisateurRequestDTO {
     public void setNom(String nom) {
         this.nom = nom;
     }
-    
+
     public byte[] getPhoto() {
         return photo;
     }

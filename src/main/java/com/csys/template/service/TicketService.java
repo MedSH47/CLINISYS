@@ -7,6 +7,7 @@ import com.csys.template.domain.enum_identifier.Status;
 import com.csys.template.dtoRequest.TicketRequestDTO;
 import com.csys.template.dtoResponse.TicketResponseDTO;
 import com.csys.template.factory.TicketFactory;
+import com.csys.template.log.service.LogService;
 import com.csys.template.repository.TicketRepository;
 import com.csys.template.util.WhereClauseBuilder;
 
@@ -27,9 +28,11 @@ import com.csys.template.util.Helper;;
 public class TicketService {
     private final Logger log = LoggerFactory.getLogger(TicketService.class);
     private final TicketRepository ticketRepository;
+    private final LogService logService;
 
-    public TicketService(TicketRepository ticketRepository) {
+    public TicketService(TicketRepository ticketRepository, LogService logService) {
         this.ticketRepository = ticketRepository;
+        this.logService = logService;
     }
 
     public TicketResponseDTO save(TicketRequestDTO ticketRequestDTO) {
@@ -43,8 +46,14 @@ public class TicketService {
         log.debug("Request to update Ticket: {}", ticketId);
         Ticket existingTicket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
-
+        if (ticketRequestDTO.getIdModule()!=null && existingTicket.getModule()==null ) {
+            logService.logTicketReview(existingTicket, false, true);
+        }
+        if (ticketRequestDTO.getIdUtilisateur()!=null && existingTicket.getIdUtilisateur()==null) {
+            logService.logTicketReview(existingTicket, true, true);
+        }
         TicketFactory.updateFromDTO(existingTicket, ticketRequestDTO);
+        
         ticketRepository.save(existingTicket);
         return TicketFactory.toResponseDTO(existingTicket);
     }
@@ -57,7 +66,7 @@ public class TicketService {
     }
 
     @Transactional(readOnly = true)
-    public List<TicketResponseDTO> findAll(Status statue, Integer idModule, Priorite priorite,Boolean[] actifs) {
+    public List<TicketResponseDTO> findAll(Status statue, Integer idModule, Priorite priorite, Boolean[] actifs) {
         log.debug("Request to get All Tickets with filters");
         QTicket qTicket = QTicket.ticket;
         WhereClauseBuilder builder = new WhereClauseBuilder()
@@ -73,7 +82,7 @@ public class TicketService {
     public ResponseEntity<?> delete(Integer id) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
-        if(ticket.getModule()!=null){
+        if (ticket.getModule() != null) {
             return ResponseEntity.status(HttpStatus.LOCKED)
                     .body(java.util.Map.of("message", "ticket " + ticket.getId() + " cannot Delete With Module"));
         }
@@ -84,14 +93,15 @@ public class TicketService {
         TicketResponseDTO ticketResponseDTO = TicketFactory.toResponseDTO(ticket);
         if (!ticketResponseDTO.getChildTickets().isEmpty()) {
             return ResponseEntity.status(HttpStatus.LOCKED)
-                    .body(java.util.Map.of("message", "ticket " + ticketResponseDTO.getId() + " cannot Delete With Child Tickets"));
+                    .body(java.util.Map.of("message",
+                            "ticket " + ticketResponseDTO.getId() + " cannot Delete With Child Tickets"));
         }
         log.debug("Request to delete Ticket: {}", id);
         ticketRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
-    public List<TicketResponseDTO> findAllParents(){
+    public List<TicketResponseDTO> findAllParents() {
         List<Ticket> tickets = ticketRepository.findAll();
         return TicketFactory.toResponseDTOsParents(tickets);
     }

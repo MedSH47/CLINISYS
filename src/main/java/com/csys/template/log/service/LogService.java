@@ -40,7 +40,7 @@ public class LogService {
         logRepository.save(log);
     }
     public void logTicketReview(Ticket ticket, Boolean reviewEmploye,Boolean reviewChef) {
-        Log log = new Log(Log.LogType.AUDIT, "REVIEW", "SYSTEM", "Ticket review for employee updated");
+        Log log = new Log(Log.LogType.AUDIT, "NOTIFICATION", "SYSTEM", "Ticket review for employee updated");
         log.setEntityName("Ticket");
         log.setEntityId(ticket.getId().toString());
         log.setReviewEmploye(reviewEmploye);

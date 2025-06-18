@@ -52,24 +52,12 @@ public class UtilisateurService {
     log.debug("Service: Request to update Utilisateur ID: {}", userId);
     Utilisateur existing = utilisateurRepository.findById(userId)
         .orElseThrow(() -> new IllegalArgumentException("Utilisateur not found with id: " + userId));
-
-    existing.setNom(userRequestDTO.getNom());
-    existing.setPrenom(userRequestDTO.getPrenom());
-    existing.setLogin(userRequestDTO.getLogin());
-    existing.setEmail(userRequestDTO.getEmail());
-    existing.setNumTelephone(userRequestDTO.getNumTelephone());
-    existing.setRole(userRequestDTO.getRole());
-    existing.setActif(userRequestDTO.getActif());
-
-    if (userRequestDTO.getMotDePasse() != null && !userRequestDTO.getMotDePasse().isEmpty()) {
-      existing.setMotDePasse(passwordEncoder.encode(userRequestDTO.getMotDePasse()));
+    if (photo!=null) {
+      userRequestDTO.setPhoto(photo);
     }
-    if (photo != null && photo.length > 0) {
-      existing.setPhoto(photo);
-    }
-
-    Utilisateur saved = utilisateurRepository.save(existing);
-    return UtilisateurFactory.toResponseDTO(saved);
+    UtilisateurFactory.updateFromDTO(existing, userRequestDTO);
+    utilisateurRepository.save(existing);
+    return UtilisateurFactory.toResponseDTO(existing);
   }
 
   @Transactional(readOnly = true)

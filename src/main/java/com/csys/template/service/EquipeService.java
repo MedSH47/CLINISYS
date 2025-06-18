@@ -72,7 +72,7 @@ public class EquipeService {
     public List<EquipeResponseDTO> findAll(Boolean[] actifs) {
         log.debug("Request to get All Equipes");
         QEquipe qEquipe = QEquipe.equipe;
-       WhereClauseBuilder builder = new WhereClauseBuilder()
+        WhereClauseBuilder builder = new WhereClauseBuilder()
         .optionalAnd(actifs, () -> qEquipe.actif.in(actifs));
         log.debug("Request to get All Equipes");
         List<Equipe> result = (List<Equipe>) equipeRepository.findAll(builder);
