@@ -1,25 +1,33 @@
 package com.csys.template.web.rest.ressource;
 
-import com.csys.template.domain.enum_identifier.Role;
-import com.csys.template.dtoRequest.UtilisateurRequestDTO;
-import com.csys.template.dtoResponse.UtilisateurResponseDTO;
-import com.csys.template.service.UtilisateurService;
-import com.csys.template.util.RestPreconditions;
-
-import liquibase.pro.packaged.R;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+
 import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.csys.template.domain.enum_identifier.Role;
+import com.csys.template.dtoRequest.UtilisateurRequestDTO;
+import com.csys.template.dtoResponse.UtilisateurResponseDTO;
+import com.csys.template.service.UtilisateurService;
+import com.csys.template.util.RestPreconditions;
 
 @RestController
 @RequestMapping("/api")
@@ -58,7 +66,6 @@ public class UtilisateurResource {
         UtilisateurResponseDTO result = utilisateurService.update(id, utilisateurRequestDTO, photoBytes);
         return ResponseEntity.ok().body(result);
     }
-
     @GetMapping("/utilisateurs/{id}")
     public ResponseEntity<UtilisateurResponseDTO> getUtilisateur(@PathVariable Integer id) {
         log.debug("Request to get Utilisateur: {}", id);
@@ -102,4 +109,9 @@ public class UtilisateurResource {
         RestPreconditions.checkFound(dto, "utilisateur.NotFound");
         return ResponseEntity.ok().body(dto);
     }
+
+    //   @GetMapping("/utilisateurs/role")
+    //  public Collection<EnumDTO> role() {
+    //     return Role.ROLE.values();
+    // }
 }
