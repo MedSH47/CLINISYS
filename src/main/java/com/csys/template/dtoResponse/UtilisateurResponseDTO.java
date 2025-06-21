@@ -14,7 +14,7 @@ public class UtilisateurResponseDTO {
     private String login;
     private String email;
     private String numTelephone;
-    private Role role;
+    private String role;
     private Boolean actif;
     private LocalDateTime dateCreation;
     private String userCreation;
@@ -76,11 +76,11 @@ public class UtilisateurResponseDTO {
         this.numTelephone = numTelephone;
     }
     
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 

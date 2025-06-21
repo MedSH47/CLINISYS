@@ -44,6 +44,7 @@ public class CommentaireResource {
         RestPreconditions.checkFound(dto, "commentaire.NotFound");
         return ResponseEntity.ok().body(dto);
     }
+    
 
     @GetMapping("/commentaires")
     public List<CommentaireResponseDTO> getAllCommentaires() {

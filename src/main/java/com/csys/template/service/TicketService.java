@@ -1,5 +1,7 @@
 package com.csys.template.service;
 
+import com.csys.template.AI_ml.AiQueryResponse;
+import com.csys.template.AI_ml.TicketSpecification;
 import com.csys.template.domain.QTicket;
 import com.csys.template.domain.Ticket;
 import com.csys.template.domain.enum_identifier.Priorite;
@@ -14,13 +16,20 @@ import com.csys.template.util.WhereClauseBuilder;
 import liquibase.pro.packaged.he;
 import liquibase.pro.packaged.js;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
 import com.csys.template.util.Helper;;
 
 @Service
@@ -29,10 +38,13 @@ public class TicketService {
     private final Logger log = LoggerFactory.getLogger(TicketService.class);
     private final TicketRepository ticketRepository;
     private final LogService logService;
+    private final RestTemplate restTemplate; // <-- ADD THIS LINE to declare the field
 
-    public TicketService(TicketRepository ticketRepository, LogService logService) {
+
+    public TicketService(TicketRepository ticketRepository, LogService logService,RestTemplate restTemplate) {
         this.ticketRepository = ticketRepository;
         this.logService = logService;
+        this.restTemplate= restTemplate;
     }
 
     public TicketResponseDTO save(TicketRequestDTO ticketRequestDTO) {
@@ -105,4 +117,31 @@ public class TicketService {
         List<Ticket> tickets = ticketRepository.findAll();
         return TicketFactory.toResponseDTOsParents(tickets);
     }
+
+  public List<TicketResponseDTO> searchByNaturalLanguage(String query) {
+    // Define the AI service URL
+    String aiServiceUrl = "http://localhost:5001/parse-query";
+
+    // Create the request body for the AI service
+    Map<String, String> requestBody = Collections.singletonMap("query", query);
+
+    // Call the Flask AI service
+    // Note: AiQueryResponse now uses 'entityType' instead of 'intent'
+    AiQueryResponse aiResponse = restTemplate.postForObject(aiServiceUrl, requestBody, AiQueryResponse.class);
+
+    // The logic to decide what to do based on the response is now in AiSearchService.
+    // This example assumes you might still want a ticket-specific search.
+    if (aiResponse != null && "ticket".equals(aiResponse.getEntityType())) {
+        // Build the specification from the entities
+        Specification<Ticket> spec = TicketSpecification.findByEntities(aiResponse.getEntities());
+
+        // Execute the query and map to DTOs
+        return ticketRepository.findAll(spec).stream()
+                .map(TicketFactory::toResponseDTO) 
+                .collect(Collectors.toList());
+    }
+
+    // Return empty list if intent is not recognized or AI service fails
+    return Collections.emptyList();
+}
 }

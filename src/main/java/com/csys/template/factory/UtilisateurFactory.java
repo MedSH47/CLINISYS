@@ -23,7 +23,7 @@ public class UtilisateurFactory {
         dto.setLogin(utilisateur.getLogin());
         dto.setEmail(utilisateur.getEmail());
         dto.setNumTelephone(utilisateur.getNumTelephone());
-        dto.setRole(utilisateur.getRole());
+        dto.setRole(utilisateur.getRole().getName());
         dto.setActif(utilisateur.getActif());
         dto.setDateCreation(utilisateur.getDateCreation());
         dto.setUserCreation(utilisateur.getUserCreation());
@@ -69,6 +69,7 @@ public class UtilisateurFactory {
         entity.setPhoto(dto.getPhoto());
         return entity;
     }
+
     public static void updateFromDTO(Utilisateur entity, UtilisateurRequestDTO dto) {
     if (entity == null || dto == null) {
         return;

@@ -1,5 +1,6 @@
 package com.csys.template.service;
 
+import com.csys.template.domain.Client;
 import com.csys.template.domain.QUtilisateur;
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.domain.enum_identifier.Role;
@@ -9,19 +10,15 @@ import com.csys.template.dtoResponse.UtilisateurResponseDTO;
 import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.UtilisateurRepository;
 import com.csys.template.util.WhereClauseBuilder;
-
-import liquibase.pro.packaged.W;
-
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.hibernate.annotations.Where;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.concurrent.CompletableFuture; // <-- Import
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -35,6 +32,27 @@ public class UtilisateurService {
     this.passwordEncoder = passwordEncoder;
     this.utilisateurRepository = utilisateurRepository;
   }
+  
+
+
+//...
+
+
+    public CompletableFuture<Utilisateur> saveUserWithPhoto(UtilisateurRequestDTO dto, byte[] photoBytes) {
+        // Here you would perform long-running operations like resizing the photo, 
+        // saving it to cloud storage, etc.
+        // For this example, we just set the bytes.
+        
+        dto.setPhoto(photoBytes);
+        Utilisateur utilisateur = UtilisateurFactory.toEntity(dto);
+        utilisateur.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));
+        utilisateur = utilisateurRepository.save(utilisateur);
+        
+        return CompletableFuture.completedFuture(utilisateur);
+    }
+    // ... other methods
+
+
 
   public UtilisateurResponseDTO save(UtilisateurRequestDTO utilisateurRequestDTO) {
     log.debug("Service: Request to save Utilisateur: {}", utilisateurRequestDTO);
@@ -106,5 +124,14 @@ public class UtilisateurService {
   public UtilisateurResponseDTO findByLogin(String login) {
     Utilisateur utilisateur = utilisateurRepository.findByLogin(login);
     return UtilisateurFactory.toResponseDTO(utilisateur);
+  }
+
+  
+  public List<String> getAllNames(){
+    log.debug("Request to get all names of clients: {}");
+        List<Utilisateur> utilisateurs = utilisateurRepository.findAll();
+        return utilisateurs.stream()
+                  .map(Utilisateur::getLogin)
+                  .collect(Collectors.toList());
   }
 }

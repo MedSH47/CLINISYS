@@ -6,6 +6,8 @@ import com.csys.template.dtoResponse.ClientResponseDTO;
 import com.csys.template.factory.ClientFactory;
 import com.csys.template.repository.ClientRepository;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -60,5 +62,12 @@ public class ClientService {
     public void delete(Integer id) {
         log.debug("Request to delete Client: {}", id);
         clientRepository.deleteById(id);
+    }
+    public List<String> getAllNames(){
+        log.debug("Request to get all names of clients: {}");
+        List<Client> clients = clientRepository.findAll();
+        return clients.stream()
+                  .map(Client::getNomComplet)
+                  .collect(Collectors.toList());
     }
 }

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import javax.validation.Valid;
 
@@ -26,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.dtoRequest.UtilisateurRequestDTO;
 import com.csys.template.dtoResponse.UtilisateurResponseDTO;
+import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.service.UtilisateurService;
 import com.csys.template.util.RestPreconditions;
 
@@ -40,19 +43,25 @@ public class UtilisateurResource {
         this.utilisateurService = utilisateurService;
     }
 
-    @PostMapping(value = "/utilisateurs", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<UtilisateurResponseDTO> createUtilisateur(
-            @RequestPart("utilisateur") @Valid UtilisateurRequestDTO utilisateurRequestDTO,
-            @RequestPart(value = "photo", required = false) MultipartFile photo) throws URISyntaxException, IOException {
-        log.debug("REST request to save Utilisateur : {}", utilisateurRequestDTO);
-        
-        if (photo != null && !photo.isEmpty()) {
-            utilisateurRequestDTO.setPhoto(photo.getBytes());
-        }
-        
-        UtilisateurResponseDTO result = utilisateurService.save(utilisateurRequestDTO);
-        return ResponseEntity.created(new URI("/api/utilisateurs/" + result.getId())).body(result);
-    }
+@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE} ,value="/utilisateurs")
+public CompletableFuture<ResponseEntity<UtilisateurResponseDTO>> createUtilisateur(
+        @RequestPart("utilisateur") @Valid UtilisateurRequestDTO utilisateurRequestDTO,
+        @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException, URISyntaxException {
+    
+    log.debug("REST request to asynchronously save Utilisateur : {}", utilisateurRequestDTO);
+    
+    byte[] photoBytes = (photo != null && !photo.isEmpty()) ? photo.getBytes() : null;
+
+    return utilisateurService.saveUserWithPhoto(utilisateurRequestDTO, photoBytes)
+            .thenApply(savedUser -> {
+                try {
+                    UtilisateurResponseDTO result = UtilisateurFactory.toResponseDTO(savedUser);
+                    return ResponseEntity.created(new URI("/api/utilisateurs/" + result.getId())).body(result);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+}
 
     @PutMapping(value = "/utilisateurs/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UtilisateurResponseDTO> updateUtilisateur(
@@ -114,4 +123,9 @@ public class UtilisateurResource {
     //  public Collection<EnumDTO> role() {
     //     return Role.ROLE.values();
     // }
+
+    @GetMapping("/utilisateurs/names")
+    public List<String> getAllNames() {
+        return utilisateurService.getAllNames();
+    }
 }

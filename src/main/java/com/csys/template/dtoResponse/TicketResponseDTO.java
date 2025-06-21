@@ -7,8 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketResponseDTO {

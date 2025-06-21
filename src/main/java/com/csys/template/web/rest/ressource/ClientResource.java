@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api")
@@ -57,4 +60,9 @@ public class ClientResource {
         clientService.delete(id);
         return ResponseEntity.noContent().build(); // Changed to 204 No Content for better practice
     }
+    @GetMapping("/clients/names")
+    public List<String> getAllNames() {
+        return clientService.getAllNames();
+    }
+    
 }

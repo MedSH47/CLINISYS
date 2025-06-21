@@ -13,8 +13,10 @@ import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.web.client.RestTemplate;
 
 //@EnableEncryptableProperties
 @SpringBootApplication(exclude = {SessionAutoConfiguration.class})
@@ -23,6 +25,12 @@ import org.springframework.core.env.Environment;
 @RefreshScope
 @ComponentScan(basePackages="com.csys.template")
 public class TemplateApplication {
+
+
+    @Bean // Add this bean definition
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
     
     
 
@@ -50,6 +58,7 @@ public class TemplateApplication {
                 env.getProperty("server.port"),
                 env.getActiveProfiles());
     }
+    
 
     
 }

@@ -1,5 +1,6 @@
 package com.csys.template.dtoResponse;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +18,7 @@ public class ClientResponseDTO {
     private Boolean actif;
     
     // This will be a list of "light" TicketResponseDTOs
+    @JsonIgnore
     private List<TicketResponseDTO> ticketList; 
 
     // Getters and Setters

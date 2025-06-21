@@ -61,7 +61,7 @@ public class SecurityConfiguration {
                 .antMatchers(HttpMethod.GET, "**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "**").permitAll()
                 .antMatchers(HttpMethod.PUT,"**").permitAll()
-                .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .antMatchers("/swagger-ui/**", "/v3/api-docs/**","/api/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
