@@ -17,26 +17,27 @@ public class TicketSpecification {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (entities.containsKey("client_name")) {
-                predicates.add(criteriaBuilder.equal(root.get("idClient").get("nomComplet"), entities.get("client_name")));
+            if (entities.containsKey("idClient")) {
+                predicates.add(criteriaBuilder.equal(root.get("idClient").get("nomComplet"), entities.get("idClient")));
             }
-            if (entities.containsKey("user_name")) {
-                predicates.add(criteriaBuilder.equal(root.get("idUtilisateur").get("login"), entities.get("user_name")));
+            if (entities.containsKey("idUtilisateur")) {
+                predicates.add(criteriaBuilder.equal(root.get("idUtilisateur").get("login"), entities.get("idUtilisateur")));
             }
-            if (entities.containsKey("module_name")) {
-                predicates.add(criteriaBuilder.equal(root.get("module").get("designation"), entities.get("module_name")));
+            if (entities.containsKey("module")) {
+                predicates.add(criteriaBuilder.equal(root.get("module").get("designation"), entities.get("module")));
             }
-            if (entities.containsKey("status")) {
+            if (entities.containsKey("statue")) {
                 try {
-                    predicates.add(criteriaBuilder.equal(root.get("statue"), Status.valueOf(entities.get("status"))));
+                    predicates.add(criteriaBuilder.equal(root.get("statue"), Status.valueOf(entities.get("statue"))));
                 } catch (IllegalArgumentException e) { /* Ignore invalid status */ }
             }
-            if (entities.containsKey("priority")) {
+            if (entities.containsKey("priorite")) {
                  try {
-                    predicates.add(criteriaBuilder.equal(root.get("priorite"), Priorite.valueOf(entities.get("priority"))));
+                    predicates.add(criteriaBuilder.equal(root.get("priorite"), Priorite.valueOf(entities.get("priorite"))));
                 } catch (IllegalArgumentException e) { /* Ignore invalid priority */ }
             }
 
+            // Date filtering remains the same
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
             if (entities.containsKey("dateCreation_after")) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dateCreation"), LocalDateTime.parse(entities.get("dateCreation_after"), formatter)));

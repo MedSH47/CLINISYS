@@ -96,7 +96,7 @@ lang:
 server:
     servlet:
         contextPath: /template-core
-    port: 9000
+    port: 9010
     compression:
         enabled: true
         mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json

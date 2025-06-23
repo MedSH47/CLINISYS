@@ -16,27 +16,22 @@ public class GenericSpecification {
                 predicates.add(criteriaBuilder.equal(root.get("actif"), Boolean.parseBoolean(entities.get("actif"))));
             }
 
-            // Handles 'designation', 'nomComplet', 'titre', etc.
-            if (entities.containsKey("name")) {
-                try {
-                    predicates.add(criteriaBuilder.like(root.get("designation"), "%" + entities.get("name") + "%"));
-                } catch (IllegalArgumentException e) {
-                    try {
-                        predicates.add(criteriaBuilder.like(root.get("nomComplet"), "%" + entities.get("name") + "%"));
-                    } catch (IllegalArgumentException e2) {
-                        try {
-                           predicates.add(criteriaBuilder.like(root.get("titre"), "%" + entities.get("name") + "%"));
-                        } catch (IllegalArgumentException e3) {/* Field not found */}
-                    }
-                }
+            // Handles 'designation' or 'nomComplet'
+            if (entities.containsKey("designation")) {
+                 predicates.add(criteriaBuilder.like(root.get("designation"), "%" + entities.get("designation") + "%"));
             }
-
-            // Handles filtering a related entity by its name (e.g., Module by Equipe's name)
-            if (entities.containsKey("equipe_name")) {
-                 predicates.add(criteriaBuilder.equal(root.get("equipe").get("designation"), entities.get("equipe_name")));
+             if (entities.containsKey("nomComplet")) {
+                 predicates.add(criteriaBuilder.like(root.get("nomComplet"), "%" + entities.get("nomComplet") + "%"));
             }
-            if (entities.containsKey("chef_equipe_name")) {
-                 predicates.add(criteriaBuilder.equal(root.get("chefEquipe").get("login"), entities.get("chef_equipe_name")));
+            
+            // Filter for Module by Equipe name
+            if (entities.containsKey("equipe")) {
+                 predicates.add(criteriaBuilder.equal(root.get("equipe").get("designation"), entities.get("equipe")));
+            }
+            
+            // Filter for Equipe by ChefEquipe login
+            if (entities.containsKey("chefEquipe")) {
+                 predicates.add(criteriaBuilder.equal(root.get("chefEquipe").get("login"), entities.get("chefEquipe")));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

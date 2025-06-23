@@ -1,7 +1,6 @@
 package com.csys.template.repository;
 
 import com.csys.template.domain.Equipe;
-import com.querydsl.core.Query;
 
 import java.lang.Integer;
 import org.springframework.data.jpa.repository.JpaRepository;
