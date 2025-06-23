@@ -7,15 +7,13 @@ import java.util.List;
 public class AiSearchResponseDTO {
     private String entityType;
     private List<?> data;
-    private String doumean; // ADD THIS LINE
+    private String doumean;
 
-    // Constructor for a successful search
     public AiSearchResponseDTO(String entityType, List<?> data) {
         this.entityType = entityType;
         this.data = data;
     }
 
-    // NEW: Constructor for a "did you mean" suggestion
     public AiSearchResponseDTO(String doumean) {
         this.doumean = doumean;
     }
@@ -23,10 +21,8 @@ public class AiSearchResponseDTO {
     // Getters and Setters
     public String getEntityType() { return entityType; }
     public void setEntityType(String entityType) { this.entityType = entityType; }
-
     public List<?> getData() { return data; }
     public void setData(List<?> data) { this.data = data; }
-    
     public String getDoumean() { return doumean; }
     public void setDoumean(String doumean) { this.doumean = doumean; }
 }

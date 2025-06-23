@@ -7,16 +7,13 @@ import java.util.Map;
 public class AiQueryResponse {
     private String entityType;
     private Map<String, String> entities;
-    private String doumean; // ADD THIS LINE
+    private String doumean;
 
     // Getters and Setters
     public String getEntityType() { return entityType; }
     public void setEntityType(String entityType) { this.entityType = entityType; }
-
     public Map<String, String> getEntities() { return entities; }
     public void setEntities(Map<String, String> entities) { this.entities = entities; }
-    
-    // ADD GETTERS AND SETTERS FOR doumean
     public String getDoumean() { return doumean; }
     public void setDoumean(String doumean) { this.doumean = doumean; }
 }

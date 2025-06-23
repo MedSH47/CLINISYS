@@ -4,7 +4,6 @@ import com.csys.template.domain.*;
 import com.csys.template.domain.Module;
 import com.csys.template.factory.*;
 import com.csys.template.repository.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -25,7 +24,13 @@ public class AiSearchService {
     private final PosteRepository posteRepository;
     private final ClientRepository clientRepository;
 
-    public AiSearchService(RestTemplate restTemplate, TicketRepository ticketRepository, UtilisateurRepository utilisateurRepository, EquipeRepository equipeRepository, ModuleRepository moduleRepository, PosteRepository posteRepository, ClientRepository clientRepository) {
+    public AiSearchService(RestTemplate restTemplate,
+                           TicketRepository ticketRepository,
+                           UtilisateurRepository utilisateurRepository,
+                           EquipeRepository equipeRepository,
+                           ModuleRepository moduleRepository,
+                           PosteRepository posteRepository,
+                           ClientRepository clientRepository) {
         this.restTemplate = restTemplate;
         this.ticketRepository = ticketRepository;
         this.utilisateurRepository = utilisateurRepository;
@@ -45,47 +50,89 @@ public class AiSearchService {
             return new AiSearchResponseDTO("unknown", Collections.emptyList());
         }
 
-        // --- ADD THIS LOGIC TO HANDLE "did you mean" ---
         if (aiResponse.getDoumean() != null && !aiResponse.getDoumean().isEmpty()) {
             return new AiSearchResponseDTO(aiResponse.getDoumean());
         }
-        // --- END OF NEW LOGIC ---
 
         if (aiResponse.getEntityType() != null && !"unknown".equals(aiResponse.getEntityType())) {
-             String entityType = aiResponse.getEntityType();
-             Map<String, String> entities = aiResponse.getEntities();
-             
-             if (entities == null || entities.isEmpty()) {
-                return new AiSearchResponseDTO(entityType, Collections.emptyList());
-             }
+            String entityType = aiResponse.getEntityType();
+            Map<String, String> entities = aiResponse.getEntities();
 
-             List<?> data;
-             switch (entityType) {
-                case "ticket":
-                    data = ticketRepository.findAll(TicketSpecification.findByEntities(entities)).stream().map(TicketFactory::toResponseDTO).collect(Collectors.toList());
-                    break;
-                case "utilisateur":
-                    data = utilisateurRepository.findAll(UtilisateurSpecification.findByEntities(entities)).stream().map(UtilisateurFactory::toResponseDTO).collect(Collectors.toList());
-                    break;
-                case "equipe":
-                    data = equipeRepository.findAll(GenericSpecification.findByEntities(entities)).stream().map(EquipeFactory::toResponseDTO).collect(Collectors.toList());
-                    break;
-                case "module":
-                    data = moduleRepository.findAll(GenericSpecification.findByEntities(entities)).stream().map(ModuleFactory::toResponseDTO).collect(Collectors.toList());
-                    break;
-                case "poste":
-                    data = posteRepository.findAll(GenericSpecification.findByEntities(entities)).stream().map(PosteFactory::toResponseDTO).collect(Collectors.toList());
-                    break;
-                case "client":
-                    data = clientRepository.findAll(GenericSpecification.findByEntities(entities)).stream().map(ClientFactory::toResponseDTO).collect(Collectors.toList());
-                    break;
-                default:
-                    data = Collections.emptyList();
-                    break;
+            List<?> data;
+
+            if ("ticket".equals(entityType)) {
+                if (entities == null || entities.isEmpty()) {
+                    data = ticketRepository.findAll().stream()
+                            .map(TicketFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                } else {
+                    data = ticketRepository.findAll(TicketSpecification.findByEntities(entities)).stream()
+                            .map(TicketFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                }
+
+            } else if ("utilisateur".equals(entityType)) {
+                if (entities == null || entities.isEmpty()) {
+                    data = utilisateurRepository.findAll().stream()
+                            .map(UtilisateurFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                } else {
+                    data = utilisateurRepository.findAll(UtilisateurSpecification.findByEntities(entities)).stream()
+                            .map(UtilisateurFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                }
+
+            } else if ("equipe".equals(entityType)) {
+                if (entities == null || entities.isEmpty()) {
+                    data = equipeRepository.findAll().stream()
+                            .map(EquipeFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                } else {
+                    data = equipeRepository.findAll(GenericSpecification.findByEntities(entities)).stream()
+                            .map(EquipeFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                }
+
+            } else if ("module".equals(entityType)) {
+                if (entities == null || entities.isEmpty()) {
+                    data = moduleRepository.findAll().stream()
+                            .map(ModuleFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                } else {
+                    data = moduleRepository.findAll(GenericSpecification.findByEntities(entities)).stream()
+                            .map(ModuleFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                }
+
+            } else if ("poste".equals(entityType)) {
+                if (entities == null || entities.isEmpty()) {
+                    data = posteRepository.findAll().stream()
+                            .map(PosteFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                } else {
+                    data = posteRepository.findAll(GenericSpecification.findByEntities(entities)).stream()
+                            .map(PosteFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                }
+
+            } else if ("client".equals(entityType)) {
+                if (entities == null || entities.isEmpty()) {
+                    data = clientRepository.findAll().stream()
+                            .map(ClientFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                } else {
+                    data = clientRepository.findAll(GenericSpecification.findByEntities(entities)).stream()
+                            .map(ClientFactory::toResponseDTO)
+                            .collect(Collectors.toList());
+                }
+
+            } else {
+                data = Collections.emptyList();
             }
+
             return new AiSearchResponseDTO(entityType, data);
         }
-        
+
         return new AiSearchResponseDTO("unknown", Collections.emptyList());
     }
 }
