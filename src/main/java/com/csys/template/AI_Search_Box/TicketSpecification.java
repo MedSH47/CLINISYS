@@ -1,4 +1,4 @@
-package com.csys.template.AI_ml;
+package com.csys.template.AI_Search_Box;
 
 import com.csys.template.domain.Ticket;
 import com.csys.template.domain.enum_identifier.Priorite;
@@ -16,7 +16,17 @@ public class TicketSpecification {
     public static Specification<Ticket> findByEntities(Map<String, String> entities) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-
+            
+            if (entities.containsKey("titre")) {
+                predicates.add(criteriaBuilder.like(root.get("titre"), "%" + entities.get("titre") + "%"));
+            }
+            if (entities.containsKey("actif")) {
+                if ("true".equalsIgnoreCase(entities.get("actif"))) {
+                    predicates.add(criteriaBuilder.isTrue(root.get("actif")));
+                } else if ("false".equalsIgnoreCase(entities.get("actif"))) {
+                    predicates.add(criteriaBuilder.isFalse(root.get("actif")));
+                }
+            }
             if (entities.containsKey("idClient")) {
                 predicates.add(criteriaBuilder.equal(root.get("idClient").get("nomComplet"), entities.get("idClient")));
             }
@@ -37,7 +47,6 @@ public class TicketSpecification {
                 } catch (IllegalArgumentException e) { /* Ignore invalid priority */ }
             }
 
-            // Date filtering remains the same
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
             if (entities.containsKey("dateCreation_after")) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dateCreation"), LocalDateTime.parse(entities.get("dateCreation_after"), formatter)));

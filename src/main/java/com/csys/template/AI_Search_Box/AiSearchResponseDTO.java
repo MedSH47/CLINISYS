@@ -1,4 +1,4 @@
-package com.csys.template.AI_ml;
+package com.csys.template.AI_Search_Box;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;

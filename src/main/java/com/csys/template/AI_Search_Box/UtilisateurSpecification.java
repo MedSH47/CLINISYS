@@ -1,4 +1,4 @@
-package com.csys.template.AI_ml;
+package com.csys.template.AI_Search_Box;
 
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.domain.enum_identifier.Role;
@@ -19,12 +19,13 @@ public class UtilisateurSpecification {
                     predicates.add(criteriaBuilder.equal(root.get("role"), Role.valueOf(entities.get("role"))));
                 } catch (IllegalArgumentException e) { /* Ignore invalid role */ }
             }
-
             if (entities.containsKey("actif")) {
-                predicates.add(criteriaBuilder.equal(root.get("actif"), Boolean.parseBoolean(entities.get("actif"))));
+                if ("true".equalsIgnoreCase(entities.get("actif"))) {
+                    predicates.add(criteriaBuilder.isTrue(root.get("actif")));
+                } else if ("false".equalsIgnoreCase(entities.get("actif"))) {
+                    predicates.add(criteriaBuilder.isFalse(root.get("actif")));
+                }
             }
-
-            // Add filtering for other text fields
             if (entities.containsKey("nom")) {
                 predicates.add(criteriaBuilder.like(root.get("nom"), "%" + entities.get("nom") + "%"));
             }

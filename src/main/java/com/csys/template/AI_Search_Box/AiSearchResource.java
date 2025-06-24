@@ -1,4 +1,4 @@
-package com.csys.template.AI_ml;
+package com.csys.template.AI_Search_Box;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

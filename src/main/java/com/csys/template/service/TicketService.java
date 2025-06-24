@@ -1,7 +1,7 @@
 package com.csys.template.service;
 
-import com.csys.template.AI_ml.AiQueryResponse;
-import com.csys.template.AI_ml.TicketSpecification;
+import com.csys.template.AI_Search_Box.AiQueryResponse;
+import com.csys.template.AI_Search_Box.TicketSpecification;
 import com.csys.template.domain.QTicket;
 import com.csys.template.domain.Ticket;
 import com.csys.template.domain.enum_identifier.Priorite;
