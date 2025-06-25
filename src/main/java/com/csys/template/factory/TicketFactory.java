@@ -116,65 +116,60 @@ public class TicketFactory {
     }
 
     public static void updateFromDTO(Ticket entity, TicketRequestDTO dto) {
-        if (dto == null || entity == null) {
-            return;
-        }
-
-        // Rule 2: Validate that a user is assigned if the status is "EN_COURS"
-        if (dto.getStatue() == Status.En_cours && entity.getIdUtilisateur() == null) {
-            throw new IllegalArgumentException(
-                    "A user must be assigned to the ticket to change its status to EN_COURS.");
-        }
-        if (dto.getDate_echeance()!=null) {
-            entity.setDate_echeance(dto.getDate_echeance());
-        }
-
-        // Update standard fields
-        if (dto.getTitre() != null) {
-            entity.setTitre(dto.getTitre());
-        }
-        if (dto.getDescription() != null) {
-            entity.setDescription(dto.getDescription());
-        }
-        if (dto.getPriorite() != null) {
-            entity.setPriorite(dto.getPriorite());
-        }
-        if (dto.getActif() != entity.getActif() && dto.getActif() != null) {
-            entity.setActif(dto.getActif());
-        }
-
-        // Update status
-        if (dto.getStatue() != null) {
-            entity.setStatue(dto.getStatue());
-        }
-
-        if (entity.getStatue() == Status.Refuse) {
-            entity.setModule(null);
-            entity.setIdUtilisateur(null);
-        } else {
-            // Otherwise, update module and user from the DTO if provided
-            if (dto.getIdModule() != null) {
-                Module module = new Module();
-                module.setId(dto.getIdModule());
-                entity.setModule(module);
-            }
-            if (dto.getIdUtilisateur() != null) {
-                Utilisateur user = new Utilisateur();
-                user.setId(dto.getIdUtilisateur());
-                entity.setIdUtilisateur(user);
-            }
-        }
-
-        // Update other relationships
-        if (dto.getIdParentTicket() != null) {
-            Ticket parent = new Ticket();
-            parent.setId(dto.getIdParentTicket());
-            entity.setParentTicket(parent);
-        }
-        if (dto.getIdClient() != null) {
-            Client client = new Client();
-            client.setId(dto.getIdClient());
-            entity.setIdClient(client);
-        }
+    if (dto == null || entity == null) {
+        return;
     }
+
+    if (dto.getDate_echeance() != null) {
+        entity.setDate_echeance(dto.getDate_echeance());
+    }
+
+    if (dto.getTitre() != null) {
+        entity.setTitre(dto.getTitre());
+    }
+
+    if (dto.getDescription() != null) {
+        entity.setDescription(dto.getDescription());
+    }
+
+    if (dto.getPriorite() != null) {
+        entity.setPriorite(dto.getPriorite());
+    }
+
+    if (dto.getActif() != null) {
+        entity.setActif(dto.getActif());
+    }
+
+    if (dto.getStatue() != null) {
+        entity.setStatue(dto.getStatue());
+    }
+
+    if (dto.getIdModule() != null) {
+        Module module = new Module();
+        module.setId(dto.getIdModule());
+        entity.setModule(module);
+    }
+    else{
+        entity.setModule(null);
+    }
+
+    if (dto.getIdUtilisateur() != null) {
+        Utilisateur user = new Utilisateur();
+        user.setId(dto.getIdUtilisateur());
+        entity.setIdUtilisateur(user);
+    }
+
+    if (dto.getIdParentTicket() != null) {
+        Ticket parent = new Ticket();
+        parent.setId(dto.getIdParentTicket());
+        entity.setParentTicket(parent);
+    }
+
+    if (dto.getIdClient() != null) {
+        Client client = new Client();
+        client.setId(dto.getIdClient());
+        entity.setIdClient(client);
+    }
+}
+
 }
