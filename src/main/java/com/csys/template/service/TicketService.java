@@ -2,25 +2,24 @@ package com.csys.template.service;
 
 import com.csys.template.AI_Search_Box.AiQueryResponse;
 import com.csys.template.AI_Search_Box.TicketSpecification;
+import com.csys.template.domain.Module;
 import com.csys.template.domain.QTicket;
 import com.csys.template.domain.Ticket;
+import com.csys.template.domain.Utilisateur;
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 import com.csys.template.dtoRequest.TicketRequestDTO;
 import com.csys.template.dtoResponse.TicketResponseDTO;
 import com.csys.template.factory.TicketFactory;
 import com.csys.template.log.service.LogService;
+import com.csys.template.repository.ModuleRepository;
 import com.csys.template.repository.TicketRepository;
+import com.csys.template.repository.UtilisateurRepository;
 import com.csys.template.util.WhereClauseBuilder;
-
-import liquibase.pro.packaged.he;
-import liquibase.pro.packaged.js;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,21 +29,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.csys.template.util.Helper;;
-
 @Service
 @Transactional
 public class TicketService {
     private final Logger log = LoggerFactory.getLogger(TicketService.class);
     private final TicketRepository ticketRepository;
     private final LogService logService;
-    private final RestTemplate restTemplate; // <-- ADD THIS LINE to declare the field
+    private final RestTemplate restTemplate;
+    private final ModuleRepository moduleRepository;
+    private final UtilisateurRepository utilisateurRepository;
+    private final NotificationService notificationService; // <-- ADDED
 
-
-    public TicketService(TicketRepository ticketRepository, LogService logService,RestTemplate restTemplate) {
+    public TicketService(TicketRepository ticketRepository, LogService logService, RestTemplate restTemplate,
+                         ModuleRepository moduleRepository, UtilisateurRepository utilisateurRepository,
+                         NotificationService notificationService) { // <-- MODIFIED CONSTRUCTOR
         this.ticketRepository = ticketRepository;
         this.logService = logService;
-        this.restTemplate= restTemplate;
+        this.restTemplate = restTemplate;
+        this.moduleRepository = moduleRepository;
+        this.utilisateurRepository = utilisateurRepository;
+        this.notificationService = notificationService; // <-- ADDED
     }
 
     public TicketResponseDTO save(TicketRequestDTO ticketRequestDTO) {
@@ -58,12 +62,41 @@ public class TicketService {
         log.debug("Request to update Ticket: {}", ticketId);
         Ticket existingTicket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
-        if (ticketRequestDTO.getIdModule()!=null && existingTicket.getModule()==null ) {
+
+        // Notification for Module Assignment
+        if (ticketRequestDTO.getIdModule() != null && existingTicket.getModule() == null) {
             logService.logTicketReview(existingTicket, false, true);
+
+            Module assignedModule = moduleRepository.findById(ticketRequestDTO.getIdModule())
+                    .orElseThrow(() -> new IllegalArgumentException("module.NotFound"));
+
+            if (assignedModule.getEquipe() != null && assignedModule.getEquipe().getChefEquipe() != null) {
+                Utilisateur chefEquipe = assignedModule.getEquipe().getChefEquipe();
+                String message = String.format(
+                    "Ticket '#%d: %s' has been assigned to the module '%s', managed by your team.",
+                    existingTicket.getId(),
+                    existingTicket.getTitre(),
+                    assignedModule.getDesignation()
+                );
+                notificationService.notifyUser(chefEquipe.getId(), message);
+            }
         }
-        if (ticketRequestDTO.getIdUtilisateur()!=null && existingTicket.getIdUtilisateur()==null) {
+
+        // Notification for User Assignment
+        if (ticketRequestDTO.getIdUtilisateur() != null && existingTicket.getIdUtilisateur() == null) {
             logService.logTicketReview(existingTicket, true, true);
+
+            Utilisateur assignedUser = utilisateurRepository.findById(ticketRequestDTO.getIdUtilisateur())
+                    .orElseThrow(() -> new IllegalArgumentException("utilisateur.NotFound"));
+            
+            String message = String.format(
+                "You have been assigned a new ticket: '#%d: %s'.",
+                existingTicket.getId(),
+                existingTicket.getTitre()
+            );
+            notificationService.notifyUser(assignedUser.getId(), message);
         }
+
         TicketFactory.updateFromDTO(existingTicket, ticketRequestDTO);
         
         ticketRepository.save(existingTicket);
@@ -118,30 +151,17 @@ public class TicketService {
         return TicketFactory.toResponseDTOsParents(tickets);
     }
 
-  public List<TicketResponseDTO> searchByNaturalLanguage(String query) {
-    // Define the AI service URL
-    String aiServiceUrl = "http://localhost:5001/parse-query";
+    public List<TicketResponseDTO> searchByNaturalLanguage(String query) {
+        String aiServiceUrl = "http://localhost:5001/parse-query";
+        Map<String, String> requestBody = Collections.singletonMap("query", query);
+        AiQueryResponse aiResponse = restTemplate.postForObject(aiServiceUrl, requestBody, AiQueryResponse.class);
 
-    // Create the request body for the AI service
-    Map<String, String> requestBody = Collections.singletonMap("query", query);
-
-    // Call the Flask AI service
-    // Note: AiQueryResponse now uses 'entityType' instead of 'intent'
-    AiQueryResponse aiResponse = restTemplate.postForObject(aiServiceUrl, requestBody, AiQueryResponse.class);
-
-    // The logic to decide what to do based on the response is now in AiSearchService.
-    // This example assumes you might still want a ticket-specific search.
-    if (aiResponse != null && "ticket".equals(aiResponse.getEntityType())) {
-        // Build the specification from the entities
-        Specification<Ticket> spec = TicketSpecification.findByEntities(aiResponse.getEntities());
-
-        // Execute the query and map to DTOs
-        return ticketRepository.findAll(spec).stream()
-                .map(TicketFactory::toResponseDTO) 
-                .collect(Collectors.toList());
+        if (aiResponse != null && "ticket".equals(aiResponse.getEntityType())) {
+            Specification<Ticket> spec = TicketSpecification.findByEntities(aiResponse.getEntities());
+            return ticketRepository.findAll(spec).stream()
+                    .map(TicketFactory::toResponseDTO) 
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
-
-    // Return empty list if intent is not recognized or AI service fails
-    return Collections.emptyList();
-}
 }

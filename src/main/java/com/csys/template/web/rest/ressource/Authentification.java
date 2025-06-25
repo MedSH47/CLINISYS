@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,6 @@ import com.csys.template.service.UtilisateurService;
 import com.csys.template.util.Helper;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -44,9 +44,6 @@ public class Authentification {
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody Utilisateur authenticationRequest) {
         try {
-            // Validate user existence
-            utilisateurService.findByLogin(authenticationRequest.getLogin());
-
             // Authenticate credentials
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -62,12 +59,15 @@ public class Authentification {
             // Return token as JSON
             return ResponseEntity.ok(Collections.singletonMap("token", jwt));
 
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "Utilisateur non trouvé"));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Collections.singletonMap("message", "Identifiants incorrects"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonMap("message", "user not found"));
+                    .body(Collections.singletonMap("message", "Erreur d'authentification: " + e.getMessage()));
         }
     }
     @GetMapping("/getuserauth")

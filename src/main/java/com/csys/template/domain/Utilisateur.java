@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.log.listener.EntityLogger;
@@ -60,7 +61,8 @@ public class Utilisateur implements Serializable {
     private LocalDateTime dateCreation;
 
     @Size(max = 2147483647)
-    @Column(name = "mot_de_passe")
+    @NotNull
+    @Column(name = "mot_de_passe", nullable = false)
     private String motDePasse;
 
     @Lob

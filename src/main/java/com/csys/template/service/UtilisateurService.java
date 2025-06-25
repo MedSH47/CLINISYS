@@ -1,6 +1,5 @@
 package com.csys.template.service;
 
-import com.csys.template.domain.Client;
 import com.csys.template.domain.QUtilisateur;
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.domain.enum_identifier.Role;
@@ -14,10 +13,9 @@ import java.util.Collection;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.concurrent.CompletableFuture; // <-- Import
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,34 +23,24 @@ import java.util.stream.Collectors;
 public class UtilisateurService {
 
   private final Logger log = LoggerFactory.getLogger(UtilisateurService.class);
-  private final PasswordEncoder passwordEncoder;
   private final UtilisateurRepository utilisateurRepository;
 
-  public UtilisateurService(PasswordEncoder passwordEncoder, UtilisateurRepository utilisateurRepository) {
-    this.passwordEncoder = passwordEncoder;
+  public UtilisateurService(UtilisateurRepository utilisateurRepository) {
     this.utilisateurRepository = utilisateurRepository;
   }
-  
 
+  public CompletableFuture<Utilisateur> saveUserWithPhoto(UtilisateurRequestDTO dto, byte[] photoBytes) {
+    // Here you would perform long-running operations like resizing the photo,
+    // saving it to cloud storage, etc.
+    // For this example, we just set the bytes.
 
-//...
+    dto.setPhoto(photoBytes);
+    Utilisateur utilisateur = UtilisateurFactory.toEntity(dto);
+    utilisateur = utilisateurRepository.save(utilisateur);
 
-
-    public CompletableFuture<Utilisateur> saveUserWithPhoto(UtilisateurRequestDTO dto, byte[] photoBytes) {
-        // Here you would perform long-running operations like resizing the photo, 
-        // saving it to cloud storage, etc.
-        // For this example, we just set the bytes.
-        
-        dto.setPhoto(photoBytes);
-        Utilisateur utilisateur = UtilisateurFactory.toEntity(dto);
-        utilisateur.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));
-        utilisateur = utilisateurRepository.save(utilisateur);
-        
-        return CompletableFuture.completedFuture(utilisateur);
-    }
-    // ... other methods
-
-
+    return CompletableFuture.completedFuture(utilisateur);
+  }
+  // ... other methods
 
   public UtilisateurResponseDTO save(UtilisateurRequestDTO utilisateurRequestDTO) {
     log.debug("Service: Request to save Utilisateur: {}", utilisateurRequestDTO);
@@ -61,7 +49,6 @@ public class UtilisateurService {
 
     }
     Utilisateur utilisateur = UtilisateurFactory.toEntity(utilisateurRequestDTO);
-    utilisateur.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));
     utilisateur = utilisateurRepository.save(utilisateur);
     return UtilisateurFactory.toResponseDTO(utilisateur);
   }
@@ -70,7 +57,7 @@ public class UtilisateurService {
     log.debug("Service: Request to update Utilisateur ID: {}", userId);
     Utilisateur existing = utilisateurRepository.findById(userId)
         .orElseThrow(() -> new IllegalArgumentException("Utilisateur not found with id: " + userId));
-    if (photo!=null) {
+    if (photo != null) {
       userRequestDTO.setPhoto(photo);
     }
     UtilisateurFactory.updateFromDTO(existing, userRequestDTO);
@@ -126,12 +113,11 @@ public class UtilisateurService {
     return UtilisateurFactory.toResponseDTO(utilisateur);
   }
 
-  
-  public List<String> getAllNames(){
+  public List<String> getAllNames() {
     log.debug("Request to get all names of clients: {}");
-        List<Utilisateur> utilisateurs = utilisateurRepository.findAll();
-        return utilisateurs.stream()
-                  .map(Utilisateur::getLogin)
-                  .collect(Collectors.toList());
+    List<Utilisateur> utilisateurs = utilisateurRepository.findAll();
+    return utilisateurs.stream()
+        .map(Utilisateur::getLogin)
+        .collect(Collectors.toList());
   }
 }

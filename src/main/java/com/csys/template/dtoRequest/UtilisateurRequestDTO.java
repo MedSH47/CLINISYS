@@ -4,6 +4,7 @@ import com.csys.template.domain.enum_identifier.Role;
 
 import javax.persistence.Lob;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class UtilisateurRequestDTO {
@@ -25,7 +26,8 @@ public class UtilisateurRequestDTO {
     @Size(min = 5, max = 100)
     private String email;
 
-    @Size(min = 4, max = 100, message = "Password must be between 4 and 100 characters")
+    @NotNull(message = "Password cannot be null")
+    @Size(min = 1, max = 100, message = "Password must be at least 1 character")
     private String motDePasse;
 
     private String numTelephone;

@@ -22,6 +22,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         Utilisateur utilisateur = utilisateurRepository.findByLogin(login);
 
+        if (utilisateur == null) {
+            throw new UsernameNotFoundException("User not found with login: " + login);
+        }
+
         return User.builder()
                 .username(utilisateur.getLogin())
                 .password(utilisateur.getMotDePasse())
