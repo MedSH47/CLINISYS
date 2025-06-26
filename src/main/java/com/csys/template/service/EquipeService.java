@@ -15,6 +15,8 @@ import liquibase.pro.packaged.B;
 import liquibase.pro.packaged.el;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -88,5 +90,14 @@ public class EquipeService {
             throw new IllegalArgumentException("equipe.HasUsers");
         }
         equipeRepository.deleteById(id);
+    }
+
+    public List<EquipeResponseDTO> findByChefEquipe(Integer chef_equipe){
+        Optional<Utilisateur> user = utilisateurRepository.findById(chef_equipe);
+        if (user.isPresent()) {
+            return EquipeFactory.toResponseDTOs(equipeRepository.findByChefEquipe(user.get())) ;
+        }
+        return null;
+        
     }
 }
