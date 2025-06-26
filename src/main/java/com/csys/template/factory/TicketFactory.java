@@ -59,6 +59,7 @@ public class TicketFactory {
         dto.setId(ticket.getId());
         dto.setTitre(ticket.getTitre());
         dto.setStatue(ticket.getStatue());
+        dto.setDescription(ticket.getDescription());
         dto.setPriorite(ticket.getPriorite());
         dto.setDateCreation(ticket.getDateCreation());
         dto.setDate_echeance(ticket.getDate_echeance());
