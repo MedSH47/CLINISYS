@@ -28,6 +28,13 @@ public class TicketResponseDTO {
     private List<CommentaireResponseDTO> commentaireList;
     private List<DocumentJointesResponseDTO> documentJointesList;
     private Boolean actif;
+    private LocalDateTime dateCloture;
+    public LocalDateTime getDateCloture() {
+        return dateCloture;
+    }
+    public void setDateCloture(LocalDateTime dateCloture) {
+        this.dateCloture = dateCloture;
+    }
 
     // Getters and Setters
 

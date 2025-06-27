@@ -18,7 +18,6 @@ public class ClientResponseDTO {
     private Boolean actif;
     
     // This will be a list of "light" TicketResponseDTOs
-    @JsonIgnore
     private List<TicketResponseDTO> ticketList; 
 
     // Getters and Setters

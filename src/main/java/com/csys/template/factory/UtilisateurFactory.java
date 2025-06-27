@@ -50,6 +50,7 @@ public class UtilisateurFactory {
         dto.setNom(utilisateur.getNom());
         dto.setPrenom(utilisateur.getPrenom());
         dto.setLogin(utilisateur.getLogin());
+        dto.setPhoto(utilisateur.getPhoto());
         return dto;
     }
 

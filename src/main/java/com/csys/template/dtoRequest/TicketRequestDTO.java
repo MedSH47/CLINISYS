@@ -30,6 +30,16 @@ public class TicketRequestDTO {
     private Boolean actif;
 
     private LocalDateTime date_echeance;
+    
+    private LocalDateTime dateCloture;
+
+    public LocalDateTime getDateCloture() {
+        return dateCloture;
+    }
+
+    public void setDateCloture(LocalDateTime dateCloture) {
+        this.dateCloture = dateCloture;
+    }
 
     // Getters and Setters
 

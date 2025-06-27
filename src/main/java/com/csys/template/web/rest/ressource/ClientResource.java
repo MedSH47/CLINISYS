@@ -1,19 +1,28 @@
 package com.csys.template.web.rest.ressource;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.csys.template.dtoRequest.ClientRequestDTO;
 import com.csys.template.dtoResponse.ClientResponseDTO;
 import com.csys.template.service.ClientService;
 import com.csys.template.util.RestPreconditions;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import javax.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -63,6 +72,17 @@ public class ClientResource {
     @GetMapping("/clients/names")
     public List<String> getAllNames() {
         return clientService.getAllNames();
+    }
+    @GetMapping("/clients/stats/new-clients-by-hour")
+    public ResponseEntity<List<Map<String, Object>>> getHourlyNewClientStats() {
+        List<Map<String, Object>> data = clientService.getHourlyNewClientStats();
+        return ResponseEntity.ok(data);
+    }
+    @GetMapping("/clients/stats/by-region")
+    public ResponseEntity<List<Map<String, Object>>> getClientStatsByRegion() {
+        log.debug("REST request to get client statistics by region");
+        List<Map<String, Object>> data = clientService.getClientStatsByRegion();
+        return ResponseEntity.ok(data);
     }
     
 }

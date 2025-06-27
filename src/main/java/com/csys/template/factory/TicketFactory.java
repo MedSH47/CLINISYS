@@ -4,6 +4,7 @@ import com.csys.template.domain.Client;
 import com.csys.template.domain.Module;
 import com.csys.template.domain.Ticket;
 import com.csys.template.domain.Utilisateur;
+import com.csys.template.domain.enum_identifier.Status;
 import com.csys.template.dtoRequest.TicketRequestDTO;
 import com.csys.template.dtoResponse.TicketResponseDTO;
 import com.csys.template.util.Helper;
@@ -39,12 +40,14 @@ public class TicketFactory {
         dto.setPriorite(ticket.getPriorite());
         dto.setStatue(ticket.getStatue());
         dto.setDate_echeance(ticket.getDate_echeance());
+        dto.setDateCloture(ticket.getDateCloture());
         dto.setChildTickets(TicketFactory.toDTOsLight(ticket.getChildTickets()));
         dto.setDocumentJointesList(DocumentJointesFactory.toResponseDTOs(ticket.getDocumentJointesList()));
         dto.setIdUtilisateur(UtilisateurFactory.toDTOLight(ticket.getIdUtilisateur()));
         dto.setCommentaireList(CommentaireFactory.toResponseDTOs(ticket.getCommentaireList()));
         dto.setIdClient(ClientFactory.toDTOLight(ticket.getIdClient()));
         dto.setIdModule(ModuleFactory.toDTOLight(ticket.getModule()));
+        
         if (ticket.getParentTicket() != null) {
             dto.setParentTicket(TicketFactory.toDTOLight(ticket.getParentTicket()));
         }
@@ -60,6 +63,8 @@ public class TicketFactory {
         dto.setTitre(ticket.getTitre());
         dto.setStatue(ticket.getStatue());
         dto.setDescription(ticket.getDescription());
+        dto.setIdModule(ModuleFactory.toDTOLight(ticket.getModule()));
+        dto.setIdUtilisateur(UtilisateurFactory.toDTOLight(ticket.getIdUtilisateur()));
         dto.setPriorite(ticket.getPriorite());
         dto.setDateCreation(ticket.getDateCreation());
         dto.setDate_echeance(ticket.getDate_echeance());
@@ -141,6 +146,10 @@ public class TicketFactory {
 
     if (dto.getStatue() != null) {
         entity.setStatue(dto.getStatue());
+    }
+     
+    if (dto.getStatue() == Status.Termine && entity.getStatue() != Status.Termine) {
+        entity.setDateCloture(LocalDateTime.now());
     }
 
     if (dto.getIdModule() != null) {

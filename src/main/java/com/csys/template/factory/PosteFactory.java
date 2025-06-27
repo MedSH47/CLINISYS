@@ -1,13 +1,14 @@
 package com.csys.template.factory;
 
-import com.csys.template.domain.Poste;
-import com.csys.template.dtoRequest.PosteRequestDTO;
-import com.csys.template.dtoResponse.PosteResponseDTO;
-import com.csys.template.util.Helper;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.csys.template.domain.Poste;
+import com.csys.template.dtoRequest.PosteRequestDTO;
+import com.csys.template.dtoResponse.PosteResponseDTO;
+import com.csys.template.util.Helper;
 
 public class PosteFactory {
 
@@ -27,6 +28,9 @@ public class PosteFactory {
         PosteResponseDTO dto = new PosteResponseDTO();
         dto.setId(poste.getId());
         dto.setDesignation(poste.getDesignation());
+        dto.setDateCreation(poste.getDateCreation());
+        dto.setUserCreation(poste.getUserCreation());
+        dto.setActif(poste.isActif());
         return dto;
     }
 

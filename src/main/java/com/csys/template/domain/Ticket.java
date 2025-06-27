@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 
@@ -91,6 +93,19 @@ public class Ticket implements Serializable {
 
     @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY)
     private List<DocumentJointes> documentJointesList;
+
+    @Column(name = "date_cloture") // Nom de la colonne dans votre DB
+    private LocalDateTime dateCloture;
+
+    // ... (autres champs et getters/setters) ...
+
+    public LocalDateTime getDateCloture() {
+        return dateCloture;
+    }
+
+    public void setDateCloture(LocalDateTime dateCloture) {
+        this.dateCloture = dateCloture;
+    }
 
     public List<Commentaire> getCommentaireList() {
         return commentaireList;
