@@ -19,7 +19,8 @@ public class ClientFactory {
         dto.setNomComplet(client.getNomComplet());
         dto.setAdress(client.getAdress());
         dto.setEmail(client.getEmail());
-        dto.setRegion(client.getRegion());
+        dto.setCountryCode(client.getCountryCode());
+        dto.setRegionName(client.getRegionName());
         dto.setDateCreation(client.getDateCreation());
         dto.setUserCreation(client.getUserCreation());
         dto.setActif(client.getActif());
@@ -34,6 +35,11 @@ public class ClientFactory {
         dto.setId(client.getId());
         dto.setNomComplet(client.getNomComplet());
         dto.setEmail(client.getEmail());
+        dto.setCountryCode(client.getCountryCode());
+        dto.setRegionName(client.getRegionName());
+        dto.setActif(client.getActif());
+        dto.setDateCreation(client.getDateCreation());
+        dto.setUserCreation(client.getUserCreation());
         return dto;
     }
 
@@ -43,7 +49,8 @@ public class ClientFactory {
         entity.setNomComplet(dto.getNomComplet());
         entity.setAdress(dto.getAdress());
         entity.setEmail(dto.getEmail());
-        entity.setRegion(dto.getRegion());
+        entity.setCountryCode(dto.getCountryCode());
+        entity.setRegionName(dto.getRegionName());
         entity.setActif(dto.getActif());
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated());

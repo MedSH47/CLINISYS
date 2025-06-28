@@ -40,9 +40,28 @@ public class Client implements Serializable {
     @Column(name = "email")
     private String email;
     
-    @Size(max = 50)
-    @Column(name = "region")
-    private String region;
+    @Size(max = 10)
+    @Column(name = "country_code", length = 10)
+    private String countryCode;
+    @Size(max = 100)
+    @Column(name = "region_name", length = 100)
+    private String regionName;
+    
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
     
     @Column(name = "date_creation")
     private LocalDateTime dateCreation;
@@ -104,13 +123,7 @@ public class Client implements Serializable {
         this.email = email;
     }
 
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
+    
 
     public LocalDateTime getDateCreation() {
         return dateCreation;

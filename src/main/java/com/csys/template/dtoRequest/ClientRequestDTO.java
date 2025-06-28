@@ -6,21 +6,26 @@ import javax.validation.constraints.Size;
 
 public class ClientRequestDTO {
 
-    @NotNull(message = "Client name cannot be null")
-    @Size(min = 1, max = 100, message = "Client name must be between 1 and 100 characters")
+    @NotNull(message = "Le nom du client ne peut pas être nul")
+    @Size(min = 1, max = 100, message = "Le nom du client doit contenir entre 1 et 100 caractères")
     private String nomComplet;
 
-    @Size(max = 200, message = "Address cannot exceed 200 characters")
+    @Size(max = 200, message = "L'adresse ne peut pas dépasser 200 caractères")
     private String adress;
 
-    @Email(message = "Please provide a valid email address")
-    @Size(max = 100, message = "Email cannot exceed 100 characters")
+    @Email(message = "Veuillez fournir une adresse email valide")
+    @Size(max = 100, message = "L'email ne peut pas dépasser 100 caractères")
     private String email;
 
-    @Size(max = 50, message = "Region cannot exceed 50 characters")
-    private String region;
+    // REMPLACÉ : private String region;
+    // PAR :
+    @Size(max = 10, message = "Le code pays ne peut pas dépasser 10 caractères")
+    private String countryCode; // Ex: "TN", "FR", "US"
 
-    @NotNull(message = "Actif status cannot be null")
+    @Size(max = 100, message = "Le nom de la région ne peut pas dépasser 100 caractères")
+    private String regionName; // Ex: "Sfax", "Île-de-France", "California"
+
+    @NotNull(message = "Le statut Actif ne peut pas être nul")
     private Boolean actif;
 
     // Getters and Setters
@@ -48,13 +53,24 @@ public class ClientRequestDTO {
         this.email = email;
     }
 
-    public String getRegion() {
-        return region;
+    // AJOUTÉ : Getters et Setters pour les nouveaux champs
+    public String getCountryCode() {
+        return countryCode;
     }
 
-    public void setRegion(String region) {
-        this.region = region;
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
+    
+    // SUPPRIMÉ : Getters et Setters pour 'region'
 
     public Boolean getActif() {
         return actif;

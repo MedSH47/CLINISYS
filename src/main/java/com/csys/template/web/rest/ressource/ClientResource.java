@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.csys.template.dtoRequest.ClientRequestDTO;
@@ -79,10 +80,9 @@ public class ClientResource {
         return ResponseEntity.ok(data);
     }
     @GetMapping("/clients/stats/by-region")
-    public ResponseEntity<List<Map<String, Object>>> getClientStatsByRegion() {
-        log.debug("REST request to get client statistics by region");
-        List<Map<String, Object>> data = clientService.getClientStatsByRegion();
+    public ResponseEntity<List<Map<String, Object>>> getClientStatsByRegion(@RequestParam(defaultValue = "world") String mapType) {
+        log.debug("REST request to get client statistics for map type: {}", mapType);
+        List<Map<String, Object>> data = clientService.getClientMapStats(mapType);
         return ResponseEntity.ok(data);
     }
-    
 }

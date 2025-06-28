@@ -30,15 +30,6 @@
     ]
   },
   {
-    "code": "US",
-    "name": "United States",
-    "regions": [
-      { "code": "US-AL", "name": "Alabama" },
-      { "code": "US-CA", "name": "California" },
-      { "code": "US-NY", "name": "New York" }
-    ]
-  },
-  {
     "code": "FR",
     "name": "France",
     "regions": [

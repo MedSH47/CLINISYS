@@ -42,7 +42,7 @@ public class ClientService {
         existingClient.setNomComplet(clientRequestDTO.getNomComplet());
         existingClient.setAdress(clientRequestDTO.getAdress());
         existingClient.setEmail(clientRequestDTO.getEmail());
-        existingClient.setRegion(clientRequestDTO.getRegion());
+        existingClient.setRegionName(clientRequestDTO.getRegionName());
         existingClient.setActif(clientRequestDTO.getActif());
 
         Client saved = clientRepository.save(existingClient);
@@ -98,47 +98,24 @@ public class ClientService {
         return hourlyData;
     }
     @Transactional(readOnly = true)
-    public List<Map<String, Object>> getClientStatsByRegion() {
-        log.debug("Request to get client statistics by region");
+    public List<Map<String, Object>> getClientMapStats(String mapType) {
+        log.debug("Request to get client map statistics for type: {}", mapType);
 
-        List<Client> allClients = clientRepository.findAll();
+        if ("world".equalsIgnoreCase(mapType)) {
+            // Pour la carte du monde, nous devons faire correspondre le code du pays (TN, US) au nom du pays ("Tunisia", "United States")
+            // que le fichier GeoJSON attend.
+            List<Map<String, Object>> statsByCountryCode = clientRepository.getStatsByCountry();
+            // Vous devrez peut-être transformer les codes (ex: "US") en noms complets ("United States")
+            // si votre GeoJSON de la carte du monde utilise des noms complets.
+            // Pour cet exemple, nous supposons que le frontend peut gérer la correspondance ou que le GeoJSON utilise des codes.
+            // Idéalement, le GeoJSON utiliserait des codes ISO standard.
+            return statsByCountryCode;
 
-        // Grouper les clients par région
-        // Pour chaque région, on compte les clients et on agrège d'autres métriques si besoin.
-        Map<String, Map<String, Object>> statsByRegion = allClients.stream()
-            .filter(client -> client.getRegion() != null && !client.getRegion().trim().isEmpty())
-            .collect(Collectors.groupingBy(
-                Client::getRegion,
-                Collectors.collectingAndThen(
-                    Collectors.toList(), // Collecte tous les clients pour cette région
-                    clientsInRegion -> {
-                        Map<String, Object> regionData = new HashMap<>();
-                        long totalClients = clientsInRegion.size();
-                        long activeClients = clientsInRegion.stream().filter(Client::getActif).count();
-                        long inactiveClients = totalClients - activeClients;
+        } else if ("tunisia".equalsIgnoreCase(mapType)) {
+            return clientRepository.getStatsByRegionNameForCountry("TN");
+        }
 
-                        // Pour les statistiques de tickets par statut par région :
-                        // C'est un peu plus complexe et peut nécessiter une requête plus optimisée dans un vrai scénario.
-                        // Ici, on va itérer sur les tickets de chaque client dans cette région.
-                        Map<String, Long> ticketsByStatus = clientsInRegion.stream()
-                            .flatMap(client -> client.getTicketList().stream()) // Parcourir tous les tickets de tous les clients de la région
-                            .collect(Collectors.groupingBy(
-                                ticket -> ticket.getStatue().toString(), // Regrouper par statut de ticket
-                                Collectors.counting()
-                            ));
-
-                        regionData.put("regionName", clientsInRegion.get(0).getRegion()); // Nom de la région
-                        regionData.put("totalClients", totalClients);
-                        regionData.put("activeClients", activeClients);
-                        regionData.put("inactiveClients", inactiveClients);
-                        regionData.put("ticketsByStatus", ticketsByStatus); // Inclure les stats de tickets
-
-                        return regionData;
-                    }
-                )
-            ));
-        
-        // Convertir la Map en List pour la réponse JSON
-        return new ArrayList<>(statsByRegion.values());
+        return new ArrayList<>();
     }
+   
 }

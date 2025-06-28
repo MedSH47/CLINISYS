@@ -174,6 +174,10 @@ public class TicketService {
             return Collections.emptyList();
         }
 
+        
+
+
+
         @Transactional(readOnly = true)
         public Map<Status, Long> getCountsByStatus() {
             log.debug("Request to get ticket counts by status");
@@ -181,7 +185,6 @@ public class TicketService {
             return allTickets.stream()
                     .collect(Collectors.groupingBy(Ticket::getStatue, Collectors.counting()));
         }
-
         public List<Map<String, Object>> getCalendarEvents() {
         log.debug("Request to get calendar events from tickets"); // Ajout du log pour confirmation
         List<Ticket> tickets = ticketRepository.findAll(); // Peut être optimisé avec des critères de date si trop de tickets

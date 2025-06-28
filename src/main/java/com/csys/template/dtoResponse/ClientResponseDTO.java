@@ -1,6 +1,5 @@
 package com.csys.template.dtoResponse;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,12 +11,16 @@ public class ClientResponseDTO {
     private String nomComplet;
     private String adress;
     private String email;
-    private String region;
+    
+    // REMPLACÉ : private String region;
+    // PAR :
+    private String countryCode;
+    private String regionName;
+    
     private LocalDateTime dateCreation;
     private String userCreation;
     private Boolean actif;
     
-    // This will be a list of "light" TicketResponseDTOs
     private List<TicketResponseDTO> ticketList; 
 
     // Getters and Setters
@@ -45,12 +48,26 @@ public class ClientResponseDTO {
     public void setEmail(String email) {
         this.email = email;
     }
-    public String getRegion() {
-        return region;
+
+    // AJOUTÉ : Getters et Setters pour les nouveaux champs
+    public String getCountryCode() {
+        return countryCode;
     }
-    public void setRegion(String region) {
-        this.region = region;
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
+
+    // SUPPRIMÉ : Getters et Setters pour 'region'
+
     public LocalDateTime getDateCreation() {
         return dateCreation;
     }
