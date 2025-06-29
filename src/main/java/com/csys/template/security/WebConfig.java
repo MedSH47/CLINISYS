@@ -1,5 +1,5 @@
+// Fichier : giminnn/CLINISYS/src/main/java/com/csys/template/security/WebConfig.java (Version Corrigée)
 package com.csys.template.security;
-
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,13 +14,13 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173","http://localhost:8081","http://localhost:5001")
+                        // Utiliser allowedOriginPatterns("*") est plus flexible et recommandé
+                        // par rapport à allowedOrigins("*") avec allowCredentials(true).
+                        .allowedOriginPatterns("*") 
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
         };
     }
-    
 }
-

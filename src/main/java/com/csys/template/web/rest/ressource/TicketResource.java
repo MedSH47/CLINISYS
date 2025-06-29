@@ -52,21 +52,10 @@ public class TicketResource {
     }
 
     @PutMapping("tickets/{id}")
-    public ResponseEntity<?> updateTicket(@PathVariable Integer id, @RequestBody TicketRequestDTO ticketRequestDTO,
-            HttpServletRequest request) {
-        try {
-            TicketResponseDTO result = ticketService.update(id, ticketRequestDTO);
-            return ResponseEntity.ok(result);
-        } catch (IllegalArgumentException e) {
-            
-            ErrorResponse errorResponse = new ErrorResponse(
-                    HttpStatus.BAD_REQUEST.value(),
-                    "Validation Error",
-                    e.getMessage(), 
-                    request.getRequestURI());
-            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-        }
-    }
+    public ResponseEntity<TicketResponseDTO> updateTicket(@PathVariable Integer id, @RequestBody TicketRequestDTO ticketRequestDTO) {
+    TicketResponseDTO result = ticketService.update(id, ticketRequestDTO);
+    return ResponseEntity.ok(result);
+}
 
     @GetMapping("/tickets/{id}")
     public ResponseEntity<TicketResponseDTO> getTicket(@PathVariable Integer id) {
