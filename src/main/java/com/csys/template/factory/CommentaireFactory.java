@@ -1,16 +1,16 @@
 package com.csys.template.factory;
 
-import com.csys.template.domain.Commentaire;
-import com.csys.template.domain.Ticket;
-import com.csys.template.domain.Utilisateur;
-import com.csys.template.dtoRequest.CommentaireRequestDTO;
-import com.csys.template.dtoResponse.CommentaireResponseDTO;
-import com.csys.template.util.Helper;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.csys.template.domain.Commentaire;
+import com.csys.template.domain.Ticket;
+import com.csys.template.domain.Utilisateur;
+import com.csys.template.dtoRequest.CommentaireRequestDTO;
+import com.csys.template.dtoResponse.CommentaireResponseDTO;
 
 public class CommentaireFactory {
 
@@ -22,7 +22,6 @@ public class CommentaireFactory {
         dto.setCommentaire(commentaire.getCommentaire());
         dto.setDateCommentaire(commentaire.getDateCommentaire());
         dto.setUtilisateur(UtilisateurFactory.toDTOLight(commentaire.getUtilisateur()));
-        dto.setTicket(TicketFactory.toDTOLight(commentaire.getTicket()));
 
         return dto;
     }
