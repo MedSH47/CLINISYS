@@ -1,8 +1,6 @@
 package com.csys.template.dtoResponse;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EquipePosteutilisateurResponseDTO {
 
     // Using "light" DTOs for the nested objects

@@ -25,7 +25,7 @@
 
     </properties>
     <dependencies>
-    <dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
@@ -65,11 +65,11 @@
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-       <!-- JWT Dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- JWT Dependencies -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -95,17 +95,17 @@
             <scope>provided</scope>
         </dependency>
         
-		<dependency>
-			<groupId>org.thymeleaf.extras</groupId>
-			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
-			<!-- Temporary explicit version to fix Thymeleaf bug -->
-			<version>3.1.1.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+            <!-- Temporary explicit version to fix Thymeleaf bug -->
+            <version>3.1.1.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
@@ -134,6 +134,14 @@
             <version>2.13.4</version>
             <type>jar</type>
         </dependency>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+
+        
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -217,7 +225,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
         </dependency>
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>com.github.ulisesbocchio</groupId>
             <artifactId>jasypt-spring-boot</artifactId>
             <version>2.0.0</version>
@@ -245,16 +253,16 @@
             <version>1.3.26</version>
         </dependency>
         <dependency>
-    <groupId>org.apache.poi</groupId>
-    <artifactId>poi</artifactId>
-    <version>5.1.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.poi</groupId>
-    <artifactId>poi-ooxml</artifactId>
-    <version>5.1.0</version>
-    <type>jar</type>
-</dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.1.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -304,46 +312,46 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-    <groupId>org.liquibase</groupId>
-    <artifactId>liquibase-maven-plugin</artifactId>
-    <version>3.8.0</version> <!-- Consider upgrading this too -->
-    <dependencies>
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.21.0-GA</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-    </dependencies>
-    <configuration>
-        <changeLogFile>src/main/resources/config/liquibase/master.xml</changeLogFile>
-        <diffChangeLogFile>
-            src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml
-        </diffChangeLogFile>
-        <driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
-        <url>jdbc:sqlserver://192.168.0.117:1415;databaseName=gclinique_egypte;</url>
-        <defaultSchemaName>Recept</defaultSchemaName>
-        <username>sa</username>
-        <password>123</password>
-        <referenceUrl>
-            hibernate:spring:com.csys.reception.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl&amp;hibernate.implicit_naming_strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
-        </referenceUrl>
-        <verbose>true</verbose>
-        <logging>debug</logging>
-    </configuration>
-</plugin>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-maven-plugin</artifactId>
+                    <version>3.8.0</version> <!-- Consider upgrading this too -->
+                    <dependencies>
+                        <dependency>
+                            <groupId>jakarta.validation</groupId>
+                            <artifactId>jakarta.validation-api</artifactId>
+                            <version>3.0.2</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.javassist</groupId>
+                            <artifactId>javassist</artifactId>
+                            <version>3.21.0-GA</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter-data-jpa</artifactId>
+                            <version>${project.parent.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <changeLogFile>src/main/resources/config/liquibase/master.xml</changeLogFile>
+                        <diffChangeLogFile>
+                            src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml
+                        </diffChangeLogFile>
+                        <driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver>
+                        <url>jdbc:sqlserver://192.168.0.117:1415;databaseName=gclinique_egypte;</url>
+                        <defaultSchemaName>Recept</defaultSchemaName>
+                        <username>sa</username>
+                        <password>123</password>
+                        <referenceUrl>
+                            hibernate:spring:com.csys.reception.domain?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl&amp;hibernate.implicit_naming_strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+                        </referenceUrl>
+                        <verbose>true</verbose>
+                        <logging>debug</logging>
+                    </configuration>
+                </plugin>
 
 
-<!--                <plugin>
+                <!--                <plugin>
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>
                 </plugin>-->
@@ -419,7 +427,7 @@
                             <skipTests>true</skipTests>
                         </configuration>
                     </plugin>
-<!--                    <plugin>
+                    <!--                    <plugin>
                         <groupId>pl.project13.maven</groupId>
                         <artifactId>git-commit-id-plugin</artifactId>
                         <configuration>
@@ -491,7 +499,7 @@
                             <spring.profiles.active>prod</spring.profiles.active>
                         </configuration>
                     </plugin>
-<!--                    <plugin>
+                    <!--                    <plugin>
                         <groupId>pl.project13.maven</groupId>
                         <artifactId>git-commit-id-plugin</artifactId>
                         <configuration>

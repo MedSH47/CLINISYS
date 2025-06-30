@@ -1,14 +1,12 @@
 package com.csys.template.dtoResponse;
 
-import com.csys.template.domain.enum_identifier.Priorite;
-import com.csys.template.domain.enum_identifier.Status;
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.csys.template.domain.enum_identifier.Priorite;
+import com.csys.template.domain.enum_identifier.Status;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class TicketResponseDTO {
 
     private Integer id;
@@ -29,6 +27,8 @@ public class TicketResponseDTO {
     private List<DocumentJointesResponseDTO> documentJointesList;
     private Boolean actif;
     private LocalDateTime dateCloture;
+
+    
     public LocalDateTime getDateCloture() {
         return dateCloture;
     }

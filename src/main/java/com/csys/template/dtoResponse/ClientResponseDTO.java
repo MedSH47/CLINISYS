@@ -1,10 +1,8 @@
 package com.csys.template.dtoResponse;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClientResponseDTO {
 
     private Integer id;
@@ -12,8 +10,6 @@ public class ClientResponseDTO {
     private String adress;
     private String email;
     
-    // REMPLACÉ : private String region;
-    // PAR :
     private String countryCode;
     private String regionName;
     

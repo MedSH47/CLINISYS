@@ -34,7 +34,111 @@
     "name": "France",
     "regions": [
       { "code": "FR-IDF", "name": "Île-de-France" },
-      { "code": "FR-PAC", "name": "Provence-Alpes-Côte d'Azur" }
+      { "code": "FR-PAC", "name": "Provence-Alpes-Côte d'Azur" },
+      { "code": "FR-OCC", "name": "Occitanie" },
+      { "code": "FR-NAQ", "name": "Nouvelle-Aquitaine" },
+      { "code": "FR-ARA", "name": "Auvergne-Rhône-Alpes" },
+      { "code": "FR-GES", "name": "Grand Est" },
+      { "code": "FR-NOR", "name": "Normandie" },
+      { "code": "FR-BRE", "name": "Bretagne" },
+      { "code": "FR-PDL", "name": "Pays de la Loire" },
+      { "code": "FR-HDF", "name": "Hauts-de-France" },
+      { "code": "FR-BFC", "name": "Bourgogne-Franche-Comté" },
+      { "code": "FR-CVL", "name": "Centre-Val de Loire" },
+      { "code": "FR-COR", "name": "Corse" }
+    ]
+  },
+  {
+    "code": "LY",
+    "name": "Libye",
+    "regions": [
+      { "code": "LY-SH", "name": "Tripoli (Tarabulus)" },
+      { "code": "LY-BN", "name": "Benghazi" },
+      { "code": "LY-MI", "name": "Misrata" },
+      { "code": "LY-ZA", "name": "Zawiya" },
+      { "code": "LY-GH", "name": "Gharyan" },
+      { "code": "LY-JU", "name": "Jabal al Gharbi" },
+      { "code": "LY-KU", "name": "Al Kufrah" },
+      { "code": "LY-MA", "name": "Marj" },
+      { "code": "LY-NB", "name": "Nalut" },
+      { "code": "LY-SR", "name": "Surt" },
+      { "code": "LY-WB", "name": "Wadi al Hayaa" },
+      { "code": "LY-WS", "name": "Wadi al Shatii" }
+    ]
+  },
+  {
+    "code": "EG",
+    "name": "Egypte",
+    "regions": [
+      { "code": "EG-CAI", "name": "Le Caire" },
+      { "code": "EG-ALX", "name": "Alexandrie" },
+      { "code": "EG-GIZ", "name": "Gizeh" },
+      { "code": "EG-LUX", "name": "Louxor" },
+      { "code": "EG-ASW", "name": "Assouan" },
+      { "code": "EG-ASY", "name": "Assiout" },
+      { "code": "EG-BH", "name": "Beheira" },
+      { "code": "EG-BNS", "name": "Beni Souef" },
+      { "code": "EG-DK", "name": "Dakahlia" },
+      { "code": "EG-DT", "name": "Damietta" },
+      { "code": "EG-FYM", "name": "Fayoum" },
+      { "code": "EG-GH", "name": "Gharbia" },
+      { "code": "EG-IS", "name": "Ismaïlia" },
+      { "code": "EG-KB", "name": "Kafr el-Cheikh" },
+      { "code": "EG-MT", "name": "Marsa Matrouh" },
+      { "code": "EG-MNF", "name": "Monufia" },
+      { "code": "EG-MN", "name": "Minya" },
+      { "code": "EG-PTS", "name": "Port-Saïd" },
+      { "code": "EG-KB", "name": "Qalyubia" },
+      { "code": "EG-KN", "name": "Qena" },
+      { "code": "EG-SHG", "name": "Sharqia" },
+      { "code": "EG-SN", "name": "Sinaï Nord" },
+      { "code": "EG-SS", "name": "Sinaï Sud" },
+      { "code": "EG-SUZ", "name": "Suez" },
+      { "code": "EG-SV", "name": "Souhag" }
+    ]
+  },
+  {
+    "code": "MA",
+    "name": "Maroc",
+    "regions": [
+      { "code": "MA-CAS", "name": "Casablanca-Settat" },
+      { "code": "MA-RAB", "name": "Rabat-Salé-Kénitra" },
+      { "code": "MA-MAR", "name": "Marrakech-Safi" },
+      { "code": "MA-FES", "name": "Fès-Meknès" },
+      { "code": "MA-TNG", "name": "Tanger-Tétouan-Al Hoceïma" },
+      { "code": "MA-ORI", "name": "Oriental" },
+      { "code": "MA-DRS", "name": "Drâa-Tafilalet" },
+      { "code": "MA-SMS", "name": "Souss-Massa" },
+      { "code": "MA-GEL", "name": "Guelmim-Oued Noun" },
+      { "code": "MA-LAA", "name": "Laâyoune-Sakia El Hamra" },
+      { "code": "MA-DAK", "name": "Dakhla-Oued Ed-Dahab" },
+      { "code": "MA-BEN", "name": "Béni Mellal-Khénifra" }
+    ]
+  },
+  {
+    "code": "DZ",
+    "name": "Algérie",
+    "regions": [
+      { "code": "DZ-ALG", "name": "Alger" },
+      { "code": "DZ-ORA", "name": "Oran" },
+      { "code": "DZ-CTS", "name": "Constantine" },
+      { "code": "DZ-ANN", "name": "Annaba" },
+      { "code": "DZ-BAT", "name": "Batna" },
+      { "code": "DZ-BLI", "name": "Blida" },
+      { "code": "DZ-SET", "name": "Sétif" },
+      { "code": "DZ-TLE", "name": "Tlemcen" },
+      { "code": "DZ-BJA", "name": "Béjaïa" },
+      { "code": "DZ-TIA", "name": "Tiaret" },
+      { "code": "DZ-ADR", "name": "Adrar" },
+      { "code": "DZ-BSK", "name": "Biskra" },
+      { "code": "DZ-CHD", "name": "Chlef" },
+      { "code": "DZ-GHA", "name": "Ghardaïa" },
+      { "code": "DZ-MSC", "name": "Mascara" },
+      { "code": "DZ-OUA", "name": "Ouargla" },
+      { "code": "DZ-SBA", "name": "Sidi Bel Abbès" },
+      { "code": "DZ-TMN", "name": "Tamanrasset" },
+      { "code": "DZ-TIP", "name": "Tipaza" },
+      { "code": "DZ-TIS", "name": "Tizi Ouzou" }
     ]
   }
 ]

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.csys.template.dtoRequest.ClientRequestDTO;
+import com.csys.template.dtoResponse.ClientLocationDTO;
 import com.csys.template.dtoResponse.ClientResponseDTO;
 import com.csys.template.service.ClientService;
 import com.csys.template.util.RestPreconditions;
@@ -84,5 +85,11 @@ public class ClientResource {
         log.debug("REST request to get client statistics for map type: {}", mapType);
         List<Map<String, Object>> data = clientService.getClientMapStats(mapType);
         return ResponseEntity.ok(data);
+    }
+    @GetMapping("/clients/locations")
+    public ResponseEntity<List<ClientLocationDTO>> getAllClientLocations() {
+        log.debug("REST request to get all client locations");
+        List<ClientLocationDTO> locations = clientService.findAllClientLocations();
+        return ResponseEntity.ok(locations);
     }
 }

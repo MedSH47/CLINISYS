@@ -27,26 +27,47 @@ public class Client implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    
+
     @Size(max = 100)
     @Column(name = "nom_complet")
     private String nomComplet;
-    
+
     @Size(max = 200)
     @Column(name = "adress")
     private String adress;
-    
+
     @Size(max = 100)
     @Column(name = "email")
     private String email;
-    
+
     @Size(max = 10)
     @Column(name = "country_code", length = 10)
     private String countryCode;
     @Size(max = 100)
     @Column(name = "region_name", length = 100)
     private String regionName;
-    
+
+    @Column(name = "date_creation")
+    private LocalDateTime dateCreation;
+
+    @Size(max = 50)
+    @Column(name = "user_creation")
+    private String userCreation;
+
+    @Column(name = "actif")
+    private Boolean actif;
+
+    @OneToMany(mappedBy = "idClient", fetch = FetchType.LAZY)
+    private List<Ticket> ticketList;
+
+    public List<Ticket> getTicketList() {
+        return ticketList;
+    }
+
+    public void setTicketList(List<Ticket> ticketList) {
+        this.ticketList = ticketList;
+    }
+
     public String getCountryCode() {
         return countryCode;
     }
@@ -62,28 +83,8 @@ public class Client implements Serializable {
     public void setRegionName(String regionName) {
         this.regionName = regionName;
     }
-    
-    @Column(name = "date_creation")
-    private LocalDateTime dateCreation;
-    
-    @Size(max = 50)
-    @Column(name = "user_creation")
-    private String userCreation;
-    
-    @Column(name = "actif")
-    private Boolean actif;
-    
-    @OneToMany(mappedBy = "idClient", fetch = FetchType.LAZY)
-    private List<Ticket> ticketList;
 
-    public List<Ticket> getTicketList() {
-        return ticketList;
-    }
-
-    public void setTicketList(List<Ticket> ticketList) {
-        this.ticketList = ticketList;
-    }
-
+    
     public Client() {
     }
 
@@ -122,8 +123,6 @@ public class Client implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    
 
     public LocalDateTime getDateCreation() {
         return dateCreation;

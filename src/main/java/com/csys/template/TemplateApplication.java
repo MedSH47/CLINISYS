@@ -1,9 +1,8 @@
 package com.csys.template;
 
-import com.csys.template.config.ApplicationProperties;
-//import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +17,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.web.client.RestTemplate;
 
+import com.csys.template.config.ApplicationProperties;
+
 //@EnableEncryptableProperties
 @SpringBootApplication(exclude = {SessionAutoConfiguration.class})
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
@@ -31,6 +32,7 @@ public class TemplateApplication {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+   
     
     
 

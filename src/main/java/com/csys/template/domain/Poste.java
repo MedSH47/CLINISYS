@@ -2,6 +2,7 @@ package com.csys.template.domain;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+
 import com.csys.template.log.listener.EntityLogger;
 
 @Entity
