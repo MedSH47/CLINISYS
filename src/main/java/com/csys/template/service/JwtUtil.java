@@ -6,11 +6,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import com.csys.template.domain.Utilisateur;
-import com.csys.template.repository.UtilisateurRepository;
 
 import java.security.Key;
 import java.util.Date;
@@ -21,11 +18,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtUtil {
-
+    
     private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
-    @Autowired
-    private UtilisateurRepository utilisateurRepository;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -49,19 +43,8 @@ public class JwtUtil {
     }
 
     public String generateToken(UserDetails userDetails) {
-        // Récupérer l'utilisateur complet pour obtenir le rôle
-        Utilisateur utilisateur = utilisateurRepository.findByLogin(userDetails.getUsername());
-        
         Map<String, Object> claims = new HashMap<>();
-        
-        if (utilisateur != null) {
-            // Ajouter le rôle au format court (A, C, E)
-            claims.put("role", utilisateur.getRole().toString());
-        }
-        
-        // Les autorités (ROLES_...) de Spring Security sont toujours utiles pour la sécurité côté backend
-        claims.put("authorities", userDetails.getAuthorities());
-
+        claims.put("roles", userDetails.getAuthorities());
         return createToken(claims, userDetails.getUsername());
     }
 
@@ -70,7 +53,7 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 heures
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -79,4 +62,5 @@ public class JwtUtil {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+   
 }
