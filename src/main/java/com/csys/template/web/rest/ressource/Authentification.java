@@ -60,10 +60,10 @@ public class Authentification {
             return ResponseEntity.ok(Collections.singletonMap("token", jwt));
 
         } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            return ResponseEntity.status(HttpStatus.ACCEPTED)
                     .body(Collections.singletonMap("message", "Utilisateur non trouvé"));
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
                     .body(Collections.singletonMap("message", "Identifiants incorrects"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
