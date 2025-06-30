@@ -1,5 +1,11 @@
 package com.csys.template.factory;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.csys.template.domain.Client;
 import com.csys.template.domain.Module;
 import com.csys.template.domain.Ticket;
@@ -8,11 +14,6 @@ import com.csys.template.domain.enum_identifier.Status;
 import com.csys.template.dtoRequest.TicketRequestDTO;
 import com.csys.template.dtoResponse.TicketResponseDTO;
 import com.csys.template.util.Helper;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 public class TicketFactory {
 
     public static List<TicketResponseDTO> toResponseDTOsParents(Collection<Ticket> tickets) {
@@ -68,6 +69,7 @@ public class TicketFactory {
         dto.setPriorite(ticket.getPriorite());
         dto.setDateCreation(ticket.getDateCreation());
         dto.setDate_echeance(ticket.getDate_echeance());
+        dto.setCommentaireList(CommentaireFactory.toResponseDTOs(ticket.getCommentaireList()));
         return dto;
     }
 

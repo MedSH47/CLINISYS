@@ -34,8 +34,6 @@ public class TemplateApplication {
     }
    
     
-    
-
     private static final Logger log = LoggerFactory.getLogger(TemplateApplication.class);
 
     public static void main(String[] args) throws UnknownHostException {
