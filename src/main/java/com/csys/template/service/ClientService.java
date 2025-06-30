@@ -19,7 +19,6 @@ import com.csys.template.dtoResponse.ClientResponseDTO;
 import com.csys.template.factory.ClientFactory;
 import com.csys.template.repository.ClientLocationRepository; // NOUVEAU
 import com.csys.template.repository.ClientRepository;
-import com.csys.template.service.GeocodingService; // NOUVEAU
 
 
 
@@ -37,88 +36,80 @@ public class ClientService {
         this.geocodingService = geocodingService;
     }
 
-    public ClientResponseDTO save(ClientRequestDTO clientRequestDTO) {
-        log.debug("Request to save Client : {}", clientRequestDTO);
-        Client client = ClientFactory.toEntity(clientRequestDTO);
-        client = clientRepository.save(client);
+public ClientResponseDTO save(ClientRequestDTO clientRequestDTO) {
+    log.debug("Request to save Client : {}", clientRequestDTO);
 
-        // NOUVEAU: Géocoder et enregistrer la localisation après sauvegarde du client
-        if (client.getAdress() != null && !client.getAdress().isEmpty()) {
-            try {
-                Map<String, Double> coords = geocodingService.geocodeAddress(
-                    client.getAdress(),
-                    client.getCountryCode(), // Utilisez les champs existants du client
-                    client.getRegionName()
+    Client client = ClientFactory.toEntity(clientRequestDTO);
+    client = clientRepository.save(client);
+
+    if (client.getCountryCode() != null && client.getRegionName() != null) {
+        try {
+            Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
+                client.getCountryCode(),
+                client.getRegionName()
+            );
+            if (coords != null) {
+                ClientLocation clientLocation = new ClientLocation(
+                    client.getId(),
+                    coords.get("latitude"),
+                    coords.get("longitude")
                 );
-                if (coords != null) {
-                    ClientLocation clientLocation = new ClientLocation(client.getId(), coords.get("latitude"), coords.get("longitude"));
-                    clientLocationRepository.save(clientLocation);
-                }
-            } catch (Exception e) {
-                log.error("Erreur lors du géocodage et de la sauvegarde de la localisation du client {}: {}", client.getId(), e.getMessage());
-                // Ne pas bloquer la sauvegarde du client si le géocodage échoue
+                clientLocationRepository.save(clientLocation);
             }
+        } catch (Exception e) {
+            log.error("Erreur géocodage pour client {}: {}", client.getId(), e.getMessage());
         }
-        return ClientFactory.toResponseDTO(client);
     }
 
-    public ClientResponseDTO update(Integer clientId, ClientRequestDTO clientRequestDTO) {
-        log.debug("Request to update Client : {}", clientId);
-        Client existingClient = clientRepository.findById(clientId)
-                .orElseThrow(() -> new IllegalArgumentException("client.NotFound"));
+    return ClientFactory.toResponseDTO(client);
+}
 
-        // Conserver l'ancienne adresse pour vérifier si le géocodage est nécessaire
-        String oldAddress = existingClient.getAdress();
+public ClientResponseDTO update(Integer clientId, ClientRequestDTO clientRequestDTO) {
+    log.debug("Request to update Client : {}", clientId);
 
-        existingClient.setNomComplet(clientRequestDTO.getNomComplet());
-        existingClient.setAdress(clientRequestDTO.getAdress());
-        existingClient.setEmail(clientRequestDTO.getEmail());
-        existingClient.setRegionName(clientRequestDTO.getRegionName());
-        existingClient.setCountryCode(clientRequestDTO.getCountryCode()); // Assurez-vous de mettre à jour le countryCode
-        existingClient.setActif(clientRequestDTO.getActif());
+    Client existingClient = clientRepository.findById(clientId)
+            .orElseThrow(() -> new IllegalArgumentException("client.NotFound"));
 
-        Client saved = clientRepository.save(existingClient);
+    String oldRegion = existingClient.getRegionName();
+    String oldCountry = existingClient.getCountryCode();
 
-        // NOUVEAU: Mettre à jour la localisation si l'adresse a changé ou si elle n'existe pas encore
-        if (clientRequestDTO.getAdress() != null && !clientRequestDTO.getAdress().isEmpty() && !clientRequestDTO.getAdress().equals(oldAddress)) {
-            try {
-                Map<String, Double> coords = geocodingService.geocodeAddress(
-                    clientRequestDTO.getAdress(),
-                    clientRequestDTO.getCountryCode(),
-                    clientRequestDTO.getRegionName()
-                );
-                if (coords != null) {
-                    // Cherche l'entrée existante ou crée-en une nouvelle
-                    ClientLocation clientLocation = clientLocationRepository.findById(saved.getId())
-                                                    .orElse(new ClientLocation(saved.getId(), null, null));
-                    clientLocation.setLatitude(coords.get("latitude"));
-                    clientLocation.setLongitude(coords.get("longitude"));
-                    clientLocationRepository.save(clientLocation);
-                }
-            } catch (Exception e) {
-                log.error("Erreur lors du géocodage et de la mise à jour de la localisation du client {}: {}", saved.getId(), e.getMessage());
+    // Update fields
+    existingClient.setNomComplet(clientRequestDTO.getNomComplet());
+    existingClient.setAdress(clientRequestDTO.getAdress());
+    existingClient.setEmail(clientRequestDTO.getEmail());
+    existingClient.setRegionName(clientRequestDTO.getRegionName());
+    existingClient.setCountryCode(clientRequestDTO.getCountryCode());
+    existingClient.setActif(clientRequestDTO.getActif());
+
+    Client saved = clientRepository.save(existingClient);
+
+    boolean regionChanged = clientRequestDTO.getRegionName() != null &&
+                            !clientRequestDTO.getRegionName().equals(oldRegion);
+    boolean countryChanged = clientRequestDTO.getCountryCode() != null &&
+                             !clientRequestDTO.getCountryCode().equals(oldCountry);
+
+    boolean locationMissing = !clientLocationRepository.existsById(saved.getId());
+
+    if ((regionChanged || countryChanged) || locationMissing) {
+        try {
+            Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
+                saved.getCountryCode(),
+                saved.getRegionName()
+            );
+            if (coords != null) {
+                ClientLocation clientLocation = clientLocationRepository.findById(saved.getId())
+                        .orElse(new ClientLocation(saved.getId(), null, null));
+                clientLocation.setLatitude(coords.get("latitude"));
+                clientLocation.setLongitude(coords.get("longitude"));
+                clientLocationRepository.save(clientLocation);
             }
-        } else if (clientRequestDTO.getAdress() != null && !clientRequestDTO.getAdress().isEmpty()) {
-            // Cas où l'adresse n'a pas changé mais on veut s'assurer que les coordonnées existent
-            // (Utile pour les clients existants avant cette fonctionnalité sans coordonnées)
-            if (!clientLocationRepository.existsById(saved.getId())) {
-                 try {
-                    Map<String, Double> coords = geocodingService.geocodeAddress(
-                        clientRequestDTO.getAdress(),
-                        clientRequestDTO.getCountryCode(),
-                        clientRequestDTO.getRegionName()
-                    );
-                    if (coords != null) {
-                        ClientLocation clientLocation = new ClientLocation(saved.getId(), coords.get("latitude"), coords.get("longitude"));
-                        clientLocationRepository.save(clientLocation);
-                    }
-                } catch (Exception e) {
-                    log.error("Erreur lors du géocodage pour un client existant sans localisation {}: {}", saved.getId(), e.getMessage());
-                }
-            }
+        } catch (Exception e) {
+            log.error("Erreur géocodage pour mise à jour client {}: {}", saved.getId(), e.getMessage());
         }
-        return ClientFactory.toResponseDTO(saved);
     }
+
+    return ClientFactory.toResponseDTO(saved);
+}
 
     @Transactional(readOnly = true)
     public ClientResponseDTO findOne(Integer id) {

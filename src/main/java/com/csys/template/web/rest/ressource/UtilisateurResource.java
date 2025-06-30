@@ -87,6 +87,7 @@ public CompletableFuture<ResponseEntity<UtilisateurResponseDTO>> createUtilisate
     public Collection<UtilisateurResponseDTO> getAllUtilisateurs(@RequestParam(required = false) Boolean[] actifs ,
                                                                 @RequestParam(required = false) Role role) {
         log.debug("Request to get all Utilisateurs");
+        
         return utilisateurService.findAll(role, actifs);
     }
     
