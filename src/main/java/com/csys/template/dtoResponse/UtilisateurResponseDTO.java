@@ -12,7 +12,7 @@ public class UtilisateurResponseDTO {
     private String login;
     private String email;
     private String numTelephone;
-    private String role;
+    private Role role;
     private Boolean actif;
     private LocalDateTime dateCreation;
     private String userCreation;
@@ -74,11 +74,11 @@ public class UtilisateurResponseDTO {
         this.numTelephone = numTelephone;
     }
     
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

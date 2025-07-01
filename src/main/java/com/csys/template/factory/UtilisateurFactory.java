@@ -23,7 +23,7 @@ public class UtilisateurFactory {
         dto.setLogin(utilisateur.getLogin());
         dto.setEmail(utilisateur.getEmail());
         dto.setNumTelephone(utilisateur.getNumTelephone());
-        dto.setRole(utilisateur.getRole().getName());
+        dto.setRole(utilisateur.getRole());
         dto.setActif(utilisateur.getActif());
         dto.setDateCreation(utilisateur.getDateCreation());
         dto.setUserCreation(utilisateur.getUserCreation());
@@ -50,7 +50,8 @@ public class UtilisateurFactory {
         dto.setNom(utilisateur.getNom());
         dto.setPrenom(utilisateur.getPrenom());
         dto.setLogin(utilisateur.getLogin());
-        dto.setPhoto(utilisateur.getPhoto());
+        dto.setRole(utilisateur.getRole());
+        dto.setActif(utilisateur.getActif());
         return dto;
     }
 

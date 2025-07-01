@@ -1,5 +1,17 @@
 package com.csys.template.service;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.csys.template.domain.QUtilisateur;
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.domain.enum_identifier.Role;
@@ -9,14 +21,6 @@ import com.csys.template.dtoResponse.UtilisateurResponseDTO;
 import com.csys.template.factory.UtilisateurFactory;
 import com.csys.template.repository.UtilisateurRepository;
 import com.csys.template.util.WhereClauseBuilder;
-import java.util.Collection;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -120,4 +124,14 @@ public class UtilisateurService {
         .map(Utilisateur::getLogin)
         .collect(Collectors.toList());
   }
+
+  public Set<Utilisateur> findAllById(List<Integer> ListChat){
+
+    return (Set<Utilisateur>) utilisateurRepository.findAllById(ListChat);
+  }
+
+  public Optional<Utilisateur> findById(Integer senderId) {
+    return utilisateurRepository.findById(senderId);
+  }
+  
 }

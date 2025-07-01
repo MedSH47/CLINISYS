@@ -25,7 +25,7 @@ public class TicketRequestDTO {
 
     private Integer idModule;
 
-    private Integer idUtilisateur;
+    private Integer idUtilisateur;      
 
     private Boolean actif;
 
