@@ -49,17 +49,15 @@ public class TicketService {
     private final RestTemplate restTemplate;
     private final ModuleRepository moduleRepository;
     private final UtilisateurRepository utilisateurRepository;
-    private final NotificationService notificationService;
 
     public TicketService(TicketRepository ticketRepository, LogService logService, RestTemplate restTemplate,
-                         ModuleRepository moduleRepository, UtilisateurRepository utilisateurRepository,
-                         NotificationService notificationService) {
+                         ModuleRepository moduleRepository, UtilisateurRepository utilisateurRepository
+                          ) {
         this.ticketRepository = ticketRepository;
         this.logService = logService;
         this.restTemplate = restTemplate;
         this.moduleRepository = moduleRepository;
         this.utilisateurRepository = utilisateurRepository;
-        this.notificationService = notificationService;
     }
 
     public TicketResponseDTO save(TicketRequestDTO ticketRequestDTO) {
@@ -87,7 +85,6 @@ public class TicketService {
                         existingTicket.getTitre(),
                         assignedModule.getDesignation()
                 );
-                notificationService.notifyUser(chefEquipe.getId(), message);
             }
         }
 
@@ -102,7 +99,6 @@ public class TicketService {
                         existingTicket.getId(),
                         existingTicket.getTitre()
                 );
-                notificationService.notifyUser(assignedUser.getId(), message);
             }
 
             TicketFactory.updateFromDTO(existingTicket, ticketRequestDTO);

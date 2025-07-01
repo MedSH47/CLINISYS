@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.csys.template.domain.Utilisateur;
 import com.csys.template.service.CustomUserDetailsService;
-import com.csys.template.service.JwtUtil;
 import com.csys.template.service.UtilisateurService;
 import com.csys.template.util.Helper;
+import com.csys.template.util.JwtUtil;
+
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,33 +1,18 @@
-package com.csys.template.service;
+package com.csys.template.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import com.csys.template.domain.Utilisateur;
-import com.csys.template.repository.UtilisateurRepository;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import com.csys.template.domain.Utilisateur;
-import com.csys.template.repository.UtilisateurRepository;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtUtil {
@@ -43,14 +28,13 @@ public class JwtUtil {
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-    return Jwts.builder()
-            .setSubject(userDetails.getUsername())
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000)) // 7 jours
-            .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
-            .compact();
-}
-
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000)) // 7 jours
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .compact();
+    }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -76,7 +60,7 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) //⏰ 1 heure
+                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // ⏰ 1 heure
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }

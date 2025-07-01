@@ -52,6 +52,7 @@ public class UtilisateurFactory {
         dto.setLogin(utilisateur.getLogin());
         dto.setRole(utilisateur.getRole());
         dto.setActif(utilisateur.getActif());
+        dto.setEmail(utilisateur.getEmail());
         return dto;
     }
 
