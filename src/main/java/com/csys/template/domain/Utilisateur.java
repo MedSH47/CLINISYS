@@ -22,8 +22,6 @@ import javax.validation.constraints.Size;
 import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.log.listener.EntityLogger;
 
-import liquibase.pro.packaged.C;
-
 @Entity
 @Table(name = "Utilisateur", catalog = "Gestion_Tickets", schema = "dbo")
 @EntityListeners(EntityLogger.class)
