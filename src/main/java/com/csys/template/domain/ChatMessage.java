@@ -1,9 +1,13 @@
 package com.csys.template.domain;
 
 
+import java.time.LocalDateTime;
+
 import javax.persistence.*;
 
 import com.csys.template.domain.enum_identifier.MessageType;
+import com.csys.template.dtoResponse.UtilisateurResponseDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +37,26 @@ public class ChatMessage {
     @Column(name="type")
     @Enumerated(EnumType.STRING)
     private MessageType type;
+
+    @Column(name = "receiver_id")
+    private Integer receiver;
+
+    @Column(name = "timestamp", nullable = false)
+    private LocalDateTime timestamp;
+
+    // CHANGE annee fields to use the DTO
+    @Transient
+    @JsonProperty("senderDetails")
+    private UtilisateurResponseDTO senderDetails;
+
+    @Transient
+    @JsonProperty("receiverDetails")
+    private UtilisateurResponseDTO receiverDetails;
+    
+    @PrePersist
+    protected void onCreate() {
+        this.timestamp = LocalDateTime.now();
+    }
     
     
 }

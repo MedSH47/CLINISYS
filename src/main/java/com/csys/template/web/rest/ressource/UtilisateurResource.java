@@ -71,6 +71,7 @@ public CompletableFuture<ResponseEntity<UtilisateurResponseDTO>> createUtilisate
         log.debug("REST request to update Utilisateur ID: {}", id);
 
         byte[] photoBytes = (photoFile != null && !photoFile.isEmpty()) ? photoFile.getBytes() : null;
+        log.debug(null, photoBytes);
 
         UtilisateurResponseDTO result = utilisateurService.update(id, utilisateurRequestDTO, photoBytes);
         return ResponseEntity.ok().body(result);

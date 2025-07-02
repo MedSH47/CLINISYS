@@ -14,6 +14,7 @@ import com.csys.template.domain.enum_identifier.Status;
 import com.csys.template.dtoRequest.TicketRequestDTO;
 import com.csys.template.dtoResponse.TicketResponseDTO;
 import com.csys.template.util.Helper;
+
 public class TicketFactory {
 
     public static List<TicketResponseDTO> toResponseDTOsParents(Collection<Ticket> tickets) {
@@ -48,7 +49,7 @@ public class TicketFactory {
         dto.setCommentaireList(CommentaireFactory.toResponseDTOs(ticket.getCommentaireList()));
         dto.setIdClient(ClientFactory.toDTOLight(ticket.getIdClient()));
         dto.setIdModule(ModuleFactory.toDTOLight(ticket.getModule()));
-        
+
         if (ticket.getParentTicket() != null) {
             dto.setParentTicket(TicketFactory.toDTOLight(ticket.getParentTicket()));
         }
@@ -122,64 +123,66 @@ public class TicketFactory {
     }
 
     public static void updateFromDTO(Ticket entity, TicketRequestDTO dto) {
-    if (dto == null || entity == null) {
-        return;
-    }
+        if (dto == null || entity == null) {
+            return;
+        }
 
-    if (dto.getDate_echeance() != null) {
-        entity.setDate_echeance(dto.getDate_echeance());
-    }
+        if (dto.getDate_echeance() != null) {
+            entity.setDate_echeance(dto.getDate_echeance());
+        }
 
-    if (dto.getTitre() != null) {
-        entity.setTitre(dto.getTitre());
-    }
+        if (dto.getTitre() != null) {
+            entity.setTitre(dto.getTitre());
+        }
 
-    if (dto.getDescription() != null) {
-        entity.setDescription(dto.getDescription());
-    }
+        if (dto.getDescription() != null) {
+            entity.setDescription(dto.getDescription());
+        }
 
-    if (dto.getPriorite() != null) {
-        entity.setPriorite(dto.getPriorite());
-    }
+        if (dto.getPriorite() != null) {
+            entity.setPriorite(dto.getPriorite());
+        }
 
-    if (dto.getActif() != null) {
-        entity.setActif(dto.getActif());
-    }
+        if (dto.getActif() != null) {
+            entity.setActif(dto.getActif());
+        }
 
-    if (dto.getStatue() != null) {
-        entity.setStatue(dto.getStatue());
-    }
-     
-    if (dto.getStatue() == Status.Termine && entity.getStatue() != Status.Termine) {
-        entity.setDateCloture(LocalDateTime.now());
-    }
+        if (dto.getStatue() != null) {
+            if (dto.getStatue() == Status.Termine && entity.getStatue() != Status.Termine) {
+                entity.setDateCloture(LocalDateTime.now());
+            }
+            entity.setStatue(dto.getStatue());
+        }
 
-    if (dto.getIdModule() != null) {
-        Module module = new Module();
-        module.setId(dto.getIdModule());
-        entity.setModule(module);
-    }
-    else{
-        entity.setModule(null);
-    }
+        if (dto.getIdModule() != null) {
+            if (dto.getIdModule() != 0) {
+                Module module = new Module();
+                module.setId(dto.getIdModule());
+                entity.setModule(module);
+            } else {
+                entity.setModule(null);
+            }
+        }
 
-    if (dto.getIdUtilisateur() != null) {
-        Utilisateur user = new Utilisateur();
-        user.setId(dto.getIdUtilisateur());
-        entity.setIdUtilisateur(user);
-    }
+        if (dto.getIdUtilisateur() != null && dto.getIdUtilisateur() != 0) {
+            Utilisateur user = new Utilisateur();
+            user.setId(dto.getIdUtilisateur());
+            entity.setIdUtilisateur(user);
+        } else {
+            entity.setIdUtilisateur(null);
+        }
 
-    if (dto.getIdParentTicket() != null) {
-        Ticket parent = new Ticket();
-        parent.setId(dto.getIdParentTicket());
-        entity.setParentTicket(parent);
-    }
+        if (dto.getIdParentTicket() != null) {
+            Ticket parent = new Ticket();
+            parent.setId(dto.getIdParentTicket());
+            entity.setParentTicket(parent);
+        }
 
-    if (dto.getIdClient() != null) {
-        Client client = new Client();
-        client.setId(dto.getIdClient());
-        entity.setIdClient(client);
+        if (dto.getIdClient() != null) {
+            Client client = new Client();
+            client.setId(dto.getIdClient());
+            entity.setIdClient(client);
+        }
     }
-}
 
 }

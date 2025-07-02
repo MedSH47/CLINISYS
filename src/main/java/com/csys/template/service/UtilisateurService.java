@@ -38,36 +38,39 @@ public class UtilisateurService {
     // saving it to cloud storage, etc.
     // For this example, we just set the bytes.
 
-    dto.setPhoto(photoBytes);
     Utilisateur utilisateur = UtilisateurFactory.toEntity(dto);
+    if (photoBytes != null) {
+      utilisateur.setPhoto(photoBytes);
+    }
     utilisateur = utilisateurRepository.save(utilisateur);
 
     return CompletableFuture.completedFuture(utilisateur);
-  }
+   }
   // ... other methods
 
-  public UtilisateurResponseDTO save(UtilisateurRequestDTO utilisateurRequestDTO) {
-    log.debug("Service: Request to save Utilisateur: {}", utilisateurRequestDTO);
-    if (utilisateurRepository.findByLogin(utilisateurRequestDTO.getLogin()) != null) {
-      throw new IllegalArgumentException("Login already exists: " + utilisateurRequestDTO.getLogin());
-
-    }
-    Utilisateur utilisateur = UtilisateurFactory.toEntity(utilisateurRequestDTO);
-    utilisateur = utilisateurRepository.save(utilisateur);
-    return UtilisateurFactory.toResponseDTO(utilisateur);
-  }
-
-  public UtilisateurResponseDTO update(Integer userId, UtilisateurRequestDTO userRequestDTO, byte[] photo) {
+ 
+public UtilisateurResponseDTO update(Integer userId, UtilisateurRequestDTO userRequestDTO, byte[] photo) {
     log.debug("Service: Request to update Utilisateur ID: {}", userId);
-    Utilisateur existing = utilisateurRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException("Utilisateur not found with id: " + userId));
+
+    // 1. Find the existing user from the database
+    Utilisateur existingUser = utilisateurRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("Utilisateur not found with id: " + userId));
+
+    // 2. If a new photo was uploaded, set it on the DTO so the factory can process it
     if (photo != null) {
-      userRequestDTO.setPhoto(photo);
+        existingUser.setPhoto(photo);
     }
-    UtilisateurFactory.updateFromDTO(existing, userRequestDTO);
-    utilisateurRepository.save(existing);
-    return UtilisateurFactory.toResponseDTO(existing);
+    
+    // 3. Use your factory to update the properties of the EXISTING user
+    UtilisateurFactory.updateFromDTO(existingUser, userRequestDTO);
+
+    // 4. Save the now-modified user entity to the database
+    Utilisateur updatedUser = utilisateurRepository.save(existingUser);
+
+    // 5. Return a DTO based on the successfully updated user
+    return UtilisateurFactory.toResponseDTO(updatedUser);
   }
+
 
   @Transactional(readOnly = true)
   public UtilisateurResponseDTO findOne(Integer id) {

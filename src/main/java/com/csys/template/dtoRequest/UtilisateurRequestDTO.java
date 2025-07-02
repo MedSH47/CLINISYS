@@ -2,9 +2,7 @@ package com.csys.template.dtoRequest;
 
 import com.csys.template.domain.enum_identifier.Role;
 
-import javax.persistence.Lob;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class UtilisateurRequestDTO {
@@ -18,15 +16,11 @@ public class UtilisateurRequestDTO {
     @Size(min = 1, max = 50)
     private String login;
 
-    @Lob
-    private byte[] photo;
-
     @Email(message = "A valid email is required")
 
     @Size(min = 5, max = 100)
     private String email;
 
-    @NotNull(message = "Password cannot be null")
     @Size(min = 1, max = 100, message = "Password must be at least 1 character")
     private String motDePasse;
 
@@ -44,14 +38,6 @@ public class UtilisateurRequestDTO {
 
     public void setNom(String nom) {
         this.nom = nom;
-    }
-
-    public byte[] getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
     }
 
     public String getPrenom() {

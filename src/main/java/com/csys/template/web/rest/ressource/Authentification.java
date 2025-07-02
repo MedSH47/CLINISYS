@@ -74,12 +74,6 @@ public class Authentification {
         }
     }
 
-    @GetMapping("/getuserauth")
-    public String getMethodName() {
-        String username = Helper.getUserAuthenticated();
-        return username;
-    }
-
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
         String refreshToken = request.get("refreshToken");

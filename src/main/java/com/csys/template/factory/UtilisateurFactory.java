@@ -70,7 +70,6 @@ public class UtilisateurFactory {
         entity.setActif(dto.getActif());
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated()); 
-        entity.setPhoto(dto.getPhoto());
         return entity;
     }
 
@@ -98,9 +97,6 @@ public class UtilisateurFactory {
     if (dto.getMotDePasse() != null) {
         entity.setMotDePasse(dto.getMotDePasse());
     }
-    if (dto.getPhoto() != null) {
-        entity.setPhoto(dto.getPhoto());
-    }
 
     // Enums and Booleans
     if (dto.getRole() != null) {
@@ -110,8 +106,6 @@ public class UtilisateurFactory {
         entity.setActif(dto.getActif());
     }
 
-    // NOTE: we generally do NOT update dateCreation/userCreation here,
-    // since those are set on creation and should remain immutable.
 }
 
 

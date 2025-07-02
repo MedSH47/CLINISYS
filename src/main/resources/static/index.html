@@ -1,65 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebSocket Chat</title>
-  <link rel="stylesheet" href="./main.css" />
+  <meta charset="UTF-8">
+  <title>1–1 Private Chat</title>
+  <link rel="stylesheet" href="/template-core/main.css" />
 </head>
 <body>
+
   <noscript>
-    <h2>Your browser doesn’t support JavaScript!</h2>
+    <h2>Sorry! Your browser doesn't support JavaScript</h2>
   </noscript>
 
-  <div id="username-page">
+  <div id="login-page" class="username-page-container">
+    <h1 class="title">Login to Chat</h1>
     <div class="username-page-container">
-      <h1 class="title">Enter your User ID to join</h1>
-      <form id="usernameForm">
-        <div class="form-group">
-          <input
-            type="number"
-            id="userId"
-            placeholder="User ID (integer)"
-            autocomplete="off"
-            class="form-control"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <button type="submit" class="accent username-submit">
-            Start Chatting
-          </button>
-        </div>
-      </form>
+        <form id="loginForm" name="loginForm">
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Username" autocomplete="off" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Password" autocomplete="off" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="number" id="partnerId" placeholder="Partner ID" autocomplete="off" class="form-control" />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="accent-button">Login</button>
+            </div>
+        </form>
     </div>
   </div>
 
   <div id="chat-page" class="hidden">
     <div class="chat-container">
-      <div class="chat-header">
-        <h2>Spring WebSocket Chat</h2>
-      </div>
-      <div class="connecting">Connecting...</div>
-      <ul id="messageArea"></ul>
-      <form id="messageForm">
-        <div class="form-group">
-          <div class="input-group clearfix">
-            <input
-              type="text"
-              id="message"
-              placeholder="Type a message..."
-              autocomplete="off"
-              class="form-control"
-              required
-            />
-            <button type="submit" class="primary">Send</button>
-          </div>
+        <div class="chat-header">
+            <h2>Chat with <span id="partnerLabel"></span></h2>
         </div>
-      </form>
+        <div class="connecting">Connecting...</div>
+        <ul id="messageArea"></ul>
+        <form id="messageForm" name="messageForm">
+            <div class="form-group">
+                <div class="input-group clearfix">
+                    <input type="text" id="message" placeholder="Type a message..." autocomplete="off" class="form-control"/>
+                    <button type="submit" class="primary">Send</button>
+                </div>
+            </div>
+        </form>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-  <script src="./main.js"></script>
+  <script src="/template-core/main.js"></script>
+
 </body>
 </html>
