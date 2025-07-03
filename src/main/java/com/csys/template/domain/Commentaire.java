@@ -13,10 +13,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import com.csys.template.log.listener.EntityLogger;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "Commentaire", catalog = "Gestion_Tickets", schema = "dbo")
 @EntityListeners(EntityLogger.class)
+@JsonIdentityInfo(
+  generator = ObjectIdGenerators.PropertyGenerator.class, 
+  property = "id")
 public class Commentaire implements Serializable {
 
     private static final long serialVersionUID = 1L;

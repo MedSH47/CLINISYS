@@ -1,114 +1,131 @@
 management:
-    security:
+  security:
+    enabled: false
+  metrics:
+    binders:
+      hystrix:
         enabled: false
-    metrics.binders.hystrix.enabled: false
+
 security:
-    basic:
-        enabled: false
+  basic:
+    enabled: false
+
 logging:
   level:
     org:
-        hibernate:
-            sql:
-            basicbinding:
-                log-level: trace
+      hibernate:
+        sql: DEBUG
+        basicbinding:
+          log-level: trace
+
 spring:
-    servlet:
-        multipart:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
-            max-file-size: 10MB
-            max-request-size: 10MB
-    main:
-        allow-circular-references: true
-    application:
-        name: template-core
-    mvc:
-        pathmatch:
-            matching-strategy: ant-path-matcher 
-    jackson:
-        serialization:
-            write-dates-as-timestamps: true
-    liquibase:
-        default-schema: dbo
-        enabled: false
-        change-log: classpath:data/changelog-master.xml
-    output:
-        ansi:
-            enabled: ALWAYS
-  
-    devtools:
-        restart:
-            enabled: true
-        livereload:
-            enabled: true
-          
-    datasource:
-        url: jdbc:sqlserver://localhost:1433;databaseName=Gestion_Tickets;encrypt=false;trustServerCertificate=true
-        username: SA
-        password: 123
-        
-    jpa:
-        database-platform: org.hibernate.dialect.SQLServer2012Dialect
-        database: SQL_SERVER
-        open-in-view: false
-        show-sql: true
+  main:
+    allow-circular-references: true
+
+  application:
+    name: template-core
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+
+  liquibase:
+    default-schema: dbo
+    enabled: false
+    change-log: classpath:data/changelog-master.xml
+
+  output:
+    ansi:
+      enabled: ALWAYS
+
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=Gestion_Tickets;encrypt=false;trustServerCertificate=true
+    username: SA
+    password: 123
+
+  jpa:
+    database-platform: org.hibernate.dialect.SQLServer2012Dialect
+    database: SQL_SERVER
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        formatsql: true
+        sql:
+          debug: true
+        default_schema: dbo
+        id:
+          new_generator_mappings: true
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+          use_minimal_puts: true
+          region:
+            factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
+          hazelcast:
+            instance_name: hazelcast
+            use_lite_member: true
+        generate_statistics: true
+      org:
         hibernate:
-            ddl-auto: none
-            #            ddl-auto: create
-            naming:
-                implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
-                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        properties:
-            hibernate:
-                formatsql: true
-                sql:
-                    debug: true
-            hibernate.default_schema: dbo
-            hibernate.id.new_generator_mappings: true
-            hibernate.cache.use_second_level_cache: false
-            hibernate.cache.use_query_cache: false
-            hibernate.generate_statistics: true
-            hibernate.cache.region.factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
-            hibernate.cache.hazelcast.instance_name: hazelcast
-            hibernate.cache.use_minimal_puts: true
-            hibernate.cache.hazelcast.use_lite_member: true
-            org.hibernate.envers.store_data_at_delete: true
-    mail:
-        username: 
-        password: 
-        host: 
-        port: 465
-        properties:
-            mail:
-                smtp:
-                    connectiontimeout: 3000
-                    auth: false
-                    starttls:
-                        enable: true
+          envers:
+            store_data_at_delete: true
 
-    # profiles:
-    #     include: no-liquibase
-    config:
-        use-legacy-processing: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: harrabimohamedsaleh71@gmail.com
+    password: vyqe cewo rdbe hqfv
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 3000
+
+  config:
+    use-legacy-processing: true
+
 lang:
-    secondary: ar
+  secondary: ar
 
 server:
-    servlet:
-        contextPath: /template-core
-    port: 9010
-    compression:
-        enabled: true
-        mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json
-        min-response-size: 1024
-
+  servlet:
+    contextPath: /template-core
+  port: 9010
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,application/javascript,application/json
+    min-response-size: 1024
 
 hystrix:
-    command.default.execution.isolation.strategy: THREAD
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: THREAD
 
 email:
-    from: marwen.hadrich@csys.com.tn
-    to: marwen.hadrich@csys.com.tn
-
-
-
+  from: harrabimohamedsaleh71@gmail.com
+  to: harrabimohamedsaleh71@gmail.com

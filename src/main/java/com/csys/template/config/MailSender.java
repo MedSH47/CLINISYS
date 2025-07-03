@@ -1,13 +1,11 @@
 package com.csys.template.config;
 
 import com.csys.template.log.service.LogService;
-import java.util.logging.Level;
 import javax.mail.MessagingException;
-import javax.mail.SendFailedException;
 import javax.mail.internet.MimeMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,15 +16,18 @@ import org.springframework.stereotype.Component;
 @Component("MailSender")
 public class MailSender {
 
-    @Autowired
-    JavaMailSender javaMailSender;
-
-    @Autowired
-    private LogService logService;
+    private final JavaMailSender javaMailSender;
+    private final LogService logService;
 
     private static String from;
-
     private static String[] to;
+
+    private final Logger log = LoggerFactory.getLogger(MailSender.class);
+
+    public MailSender(JavaMailSender javaMailSender, LogService logService) {
+        this.javaMailSender = javaMailSender;
+        this.logService = logService;
+    }
 
     @Value("${email.from}")
     public void setFrom(String fromMail) {
@@ -38,73 +39,62 @@ public class MailSender {
         to = toMail;
     }
 
-    private final Logger log = LoggerFactory.getLogger(MailSender.class);
+   /**
+    * Envoie un e-mail en texte brut.
+    */
+   public String sendMail(String to, String subject, String body) {
+    SimpleMailMessage mail = new SimpleMailMessage();
+    mail.setFrom(from);
+    mail.setTo(to);
+    mail.setSubject(subject);
+    mail.setText(body);
 
-    public String sendMail(String subject, String body) {
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setFrom(from);
-        mail.setTo(to);
-        mail.setSubject(subject);
-        mail.setText(body);
+    log.info("Sending simple text mail...");
+    javaMailSender.send(mail);
+    log.info("Done!");
+    logService.logNotification(to, subject, body);
+    return "Mail Sent Successfully";
+}
 
-        log.info("Sending...");
-        javaMailSender.send(mail);
+   /**
+    * Envoie un e-mail au format HTML.
+    */
+   public String sendHtmlMail(String to, String subject, String htmlBody) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        // Le constructeur MimeMessageHelper permet de spécifier l'encodage, crucial pour les caractères français.
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        
+        helper.setFrom(from);
+        helper.setTo(to);
+        helper.setSubject(subject);
+        // Le 'true' ici est essentiel, il indique à MimeMessageHelper que le corps du message est du HTML.
+        helper.setText(htmlBody, true);
+
+        log.info("Sending HTML mail...");
+        javaMailSender.send(mimeMessage);
         log.info("Done!");
-        logService.logNotification(String.join(", ", to), subject, body);
-        return "Mail Sended Successfully";
-    }
+        logService.logNotification(to, subject, "HTML email sent."); // On évite de logger tout le HTML
+        return "HTML Mail Sent Successfully";
+   }
 
-    public String sendMail(String[] to, String subject, String body) {
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setFrom("nihel.turki@csys.com.tn");
-        mail.setTo(to);
-        mail.setSubject(subject);
-        mail.setText(body);
-
-        log.info("Sending...");
-        javaMailSender.send(mail);
-        log.info("Done!");
-        logService.logNotification(String.join(", ", to), subject, body);
-        return "Mail Sended Successfully";
-    }
-
-    public String sendMail(String from, String to, String subject, String body) {
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setFrom(from);
-        mail.setTo(to);
-        mail.setSubject(subject);
-        mail.setText(body);
-
-        log.info("Sending...");
-        javaMailSender.send(mail);
-        log.info("Done!");
-        logService.logNotification(to, subject, body);
-        return "Mail Sended Successfully";
-    }
 
     public String sendMessageWithAttachment(String from, String to, String subject, String text, byte[] file) throws MessagingException {
-        try {
-            MimeMessage message = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper;
-            if (file != null) {
-                helper = new MimeMessageHelper(message, true);
-                helper.addAttachment("demandePEC.pdf", new ByteArrayResource(file));
-            } else {
-                helper = new MimeMessageHelper(message, false);
-            }
-            log.debug("from  : {}", from);
-            helper.setFrom(from);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(text);
-            log.info("Sending...");
-            javaMailSender.send(message);
-            log.info("Done!");
-            logService.logNotification(to, subject, text);
-            return "Mail Sended Successfully";
-        } catch (SendFailedException ex) {
-            java.util.logging.Logger.getLogger(MailSender.class.getName()).log(Level.SEVERE, null, ex);
-            return ex.getMessage();
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper;
+        if (file != null) {
+            helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.addAttachment("attachment.pdf", new ByteArrayResource(file));
+        } else {
+            helper = new MimeMessageHelper(message, false, "UTF-8");
         }
+
+        helper.setFrom(from);
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(text);
+
+        javaMailSender.send(message);
+        logService.logNotification(to, subject, text);
+        return "Mail with attachment sent successfully!";
     }
 }

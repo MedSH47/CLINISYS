@@ -9,6 +9,9 @@ import javax.validation.constraints.Size;
 
 import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.log.listener.EntityLogger;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import lombok.*;
 
 @Entity
@@ -20,6 +23,9 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
+@JsonIdentityInfo(
+  generator = ObjectIdGenerators.PropertyGenerator.class, 
+  property = "id")
 public class Utilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;

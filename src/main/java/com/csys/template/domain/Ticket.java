@@ -25,9 +25,14 @@ import javax.validation.constraints.Size;
 
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "Ticket", catalog = "Gestion_Tickets", schema = "dbo")
+@JsonIdentityInfo(
+  generator = ObjectIdGenerators.PropertyGenerator.class, 
+  property = "id")
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;

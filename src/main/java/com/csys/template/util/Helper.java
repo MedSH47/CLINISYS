@@ -43,6 +43,24 @@ public class Helper {
         return array;
     }
 
+    public static String generateCode() {
+        int codeLength = 3;
+
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < codeLength; i++) {
+            int randomIndex = (int) (Math.random() * chars.length());
+            sb.append(chars.charAt(randomIndex));
+        }
+
+        // Add a suffix based on the current timestamp (last 3 digits for uniqueness)
+        long timestamp = System.currentTimeMillis();
+        String suffix = String.valueOf(timestamp).substring(String.valueOf(timestamp).length() - 3);
+
+        return sb.toString() + "-" + suffix;
+    }
+
     public static String incrementString(String suffix) {
 
         Integer suffixint = Integer.valueOf(suffix);
@@ -266,9 +284,12 @@ public class Helper {
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
+
     private static final Logger log = LoggerFactory.getLogger(Helper.class);
+
     public static void mergeNonNullFields(Object source, Object target) {
-        if (source == null || target == null) return;
+        if (source == null || target == null)
+            return;
 
         Class<?> clazz = source.getClass();
         while (clazz != null) {
@@ -292,6 +313,7 @@ public class Helper {
             clazz = clazz.getSuperclass();
         }
     }
+
     public static int getWeeksBetween(Date a, Date b) {
         Date aa;
         Date bb;
@@ -480,9 +502,7 @@ public class Helper {
         return true;
     }
 
-    @Transactional(
-            readOnly = true
-    )
+    @Transactional(readOnly = true)
     public static String diffDate(LocalDateTime dateDebut, LocalDateTime dateFin) {
         LocalDateTime tempDateTime = LocalDateTime.from(dateFin);
 
@@ -510,17 +530,17 @@ public class Helper {
         String minute = minutes == 1 ? minutes + " minute" : minutes > 1 ? minutes + " minutes" : "";
         String second = seconds == 1 ? seconds + " seconde" : seconds > 1 ? seconds + " secondes" : "";
         String diff = "";
-        if (!annees.equals( "")) {
+        if (!annees.equals("")) {
             diff = annees;
-        } else if (!moi.equals( "")) {
+        } else if (!moi.equals("")) {
             diff = moi;
-        } else if (!jour.equals( "")) {
+        } else if (!jour.equals("")) {
             diff = jour;
-        } else if (!heure.equals( "")) {
+        } else if (!heure.equals("")) {
             diff = heure;
-        } else if (!minute.equals( "")) {
+        } else if (!minute.equals("")) {
             diff = minute;
-        } else if (!second.equals( "")) {
+        } else if (!second.equals("")) {
             diff = second;
         }
 
