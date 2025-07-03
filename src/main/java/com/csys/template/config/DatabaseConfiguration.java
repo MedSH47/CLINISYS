@@ -1,6 +1,7 @@
 package com.csys.template.config;
 
 
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.core.env.Profiles;
@@ -26,6 +28,10 @@ public class DatabaseConfiguration {
 
     public DatabaseConfiguration(Environment env) {
         this.env = env;
+    }
+     @Bean
+    public JPAQueryFactory jpaQueryFactory(EntityManager entityManager) {
+        return new JPAQueryFactory(entityManager);
     }
 
     @Bean
