@@ -15,16 +15,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import com.csys.template.log.listener.EntityLogger;
+import org.hibernate.envers.Audited;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "Client", catalog = "Gestion_Tickets", schema = "dbo")
-@EntityListeners(EntityLogger.class)
 @JsonIdentityInfo(
   generator = ObjectIdGenerators.PropertyGenerator.class, 
   property = "id")
+@Audited 
 public class Client implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,6 +63,12 @@ public class Client implements Serializable {
     @Column(name = "actif")
     private Boolean actif;
 
+    @Column(name="longitude")
+    private Double longitude;
+
+    @Column(name="latitude")
+    private Double latitude;
+
     @OneToMany(mappedBy = "idClient", fetch = FetchType.LAZY)
     private List<Ticket> ticketList;
 
@@ -72,6 +79,22 @@ public class Client implements Serializable {
     public void setTicketList(List<Ticket> ticketList) {
         this.ticketList = ticketList;
     }
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
 
     public String getCountryCode() {
         return countryCode;

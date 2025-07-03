@@ -1,149 +1,126 @@
 package com.csys.template.service;
+
+import com.csys.template.domain.Client;
+import com.csys.template.dtoRequest.ClientRequestDTO;
+import com.csys.template.dtoResponse.ClientResponseDTO;
+import com.csys.template.factory.ClientFactory;
+import com.csys.template.repository.ClientRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional; // NOUVEAU
+import java.util.Objects;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.csys.template.domain.Client;
-import com.csys.template.domain.ClientLocation; // NOUVEAU
-import com.csys.template.dtoRequest.ClientRequestDTO;
-import com.csys.template.dtoResponse.ClientLocationDTO; // NOUVEAU
-import com.csys.template.dtoResponse.ClientResponseDTO;
-import com.csys.template.factory.ClientFactory;
-import com.csys.template.repository.ClientLocationRepository; // NOUVEAU
-import com.csys.template.repository.ClientRepository;
-
-
 
 @Service
 @Transactional
 public class ClientService {
     private final Logger log = LoggerFactory.getLogger(ClientService.class);
     private final ClientRepository clientRepository;
-    private final ClientLocationRepository clientLocationRepository; // NOUVEAU
-    private final GeocodingService geocodingService; // NOUVEAU
+    private final GeocodingService geocodingService;
 
-    public ClientService(ClientRepository clientRepository, ClientLocationRepository clientLocationRepository, GeocodingService geocodingService) {
+    public ClientService(ClientRepository clientRepository, GeocodingService geocodingService) {
         this.clientRepository = clientRepository;
-        this.clientLocationRepository = clientLocationRepository;
         this.geocodingService = geocodingService;
     }
 
-public ClientResponseDTO save(ClientRequestDTO clientRequestDTO) {
-    log.debug("Request to save Client : {}", clientRequestDTO);
+    public ClientResponseDTO save(ClientRequestDTO clientRequestDTO) {
+        log.debug("Request to save Client : {}", clientRequestDTO);
+        Client client = ClientFactory.toEntity(clientRequestDTO);
 
-    Client client = ClientFactory.toEntity(clientRequestDTO);
-    client = clientRepository.save(client);
-
-    if (client.getCountryCode() != null && client.getRegionName() != null) {
-        try {
-            Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
-                client.getCountryCode(),
-                client.getRegionName()
-            );
-            if (coords != null) {
-                ClientLocation clientLocation = new ClientLocation(
-                    client.getId(),
-                    coords.get("latitude"),
-                    coords.get("longitude")
+        if (client.getCountryCode() != null && client.getRegionName() != null) {
+            try {
+                Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
+                    client.getCountryCode(),
+                    client.getRegionName()
                 );
-                clientLocationRepository.save(clientLocation);
+                if (coords != null) {
+                    client.setLatitude(coords.get("latitude"));
+                    client.setLongitude(coords.get("longitude"));
+                }
+            } catch (Exception e) {
+                log.error("Geocoding failed for new client {}: {}", client.getNomComplet(), e.getMessage());
             }
-        } catch (Exception e) {
-            log.error("Erreur géocodage pour client {}: {}", client.getId(), e.getMessage());
         }
+        
+        client = clientRepository.save(client);
+        return ClientFactory.toResponseDTO(client);
     }
 
-    return ClientFactory.toResponseDTO(client);
-}
+    public ClientResponseDTO update(Integer clientId, ClientRequestDTO clientRequestDTO) {
+        log.debug("Request to update Client : {}", clientId);
+        Client existingClient = clientRepository.findById(clientId)
+                .orElseThrow(() -> new IllegalArgumentException("client.NotFound"));
 
-public ClientResponseDTO update(Integer clientId, ClientRequestDTO clientRequestDTO) {
-    log.debug("Request to update Client : {}", clientId);
+        String oldRegion = existingClient.getRegionName();
+        String oldCountry = existingClient.getCountryCode();
 
-    Client existingClient = clientRepository.findById(clientId)
-            .orElseThrow(() -> new IllegalArgumentException("client.NotFound"));
+        existingClient.setNomComplet(clientRequestDTO.getNomComplet());
+        existingClient.setAdress(clientRequestDTO.getAdress());
+        existingClient.setEmail(clientRequestDTO.getEmail());
+        existingClient.setRegionName(clientRequestDTO.getRegionName());
+        existingClient.setCountryCode(clientRequestDTO.getCountryCode());
+        existingClient.setActif(clientRequestDTO.getActif());
 
-    String oldRegion = existingClient.getRegionName();
-    String oldCountry = existingClient.getCountryCode();
+        boolean addressChanged = !Objects.equals(clientRequestDTO.getRegionName(), oldRegion) ||
+                                 !Objects.equals(clientRequestDTO.getCountryCode(), oldCountry);
 
-    // Update fields
-    existingClient.setNomComplet(clientRequestDTO.getNomComplet());
-    existingClient.setAdress(clientRequestDTO.getAdress());
-    existingClient.setEmail(clientRequestDTO.getEmail());
-    existingClient.setRegionName(clientRequestDTO.getRegionName());
-    existingClient.setCountryCode(clientRequestDTO.getCountryCode());
-    existingClient.setActif(clientRequestDTO.getActif());
-
-    Client saved = clientRepository.save(existingClient);
-
-    boolean regionChanged = clientRequestDTO.getRegionName() != null &&
-                            !clientRequestDTO.getRegionName().equals(oldRegion);
-    boolean countryChanged = clientRequestDTO.getCountryCode() != null &&
-                             !clientRequestDTO.getCountryCode().equals(oldCountry);
-
-    boolean locationMissing = !clientLocationRepository.existsById(saved.getId());
-
-    if ((regionChanged || countryChanged) || locationMissing) {
-        try {
-            Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
-                saved.getCountryCode(),
-                saved.getRegionName()
-            );
-            if (coords != null) {
-                ClientLocation clientLocation = clientLocationRepository.findById(saved.getId())
-                        .orElse(new ClientLocation(saved.getId(), null, null));
-                clientLocation.setLatitude(coords.get("latitude"));
-                clientLocation.setLongitude(coords.get("longitude"));
-                clientLocationRepository.save(clientLocation);
+        if (addressChanged) {
+            try {
+                Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
+                    existingClient.getCountryCode(),
+                    existingClient.getRegionName()
+                );
+                if (coords != null) {
+                    existingClient.setLatitude(coords.get("latitude"));
+                    existingClient.setLongitude(coords.get("longitude"));
+                }
+            } catch (Exception e) {
+                log.error("Geocoding failed for updated client {}: {}", existingClient.getId(), e.getMessage());
             }
-        } catch (Exception e) {
-            log.error("Erreur géocodage pour mise à jour client {}: {}", saved.getId(), e.getMessage());
         }
+        
+        Client saved = clientRepository.save(existingClient);
+        return ClientFactory.toResponseDTO(saved);
     }
-
-    return ClientFactory.toResponseDTO(saved);
-}
 
     @Transactional(readOnly = true)
     public ClientResponseDTO findOne(Integer id) {
-        log.debug("Request to get Client : {}", id);
         Client client = clientRepository.findById(id).orElse(null);
         return ClientFactory.toResponseDTO(client);
     }
 
     @Transactional(readOnly = true)
     public List<ClientResponseDTO> findAll() {
-        log.debug("Request to get All Clients");
-        List<Client> result = clientRepository.findAll();
-        return ClientFactory.toResponseDTOs(result);
+        return ClientFactory.toResponseDTOs(clientRepository.findAll());
     }
 
     public void delete(Integer id) {
         log.debug("Request to delete Client: {}", id);
-        // NOUVEAU: Supprimer aussi la localisation associée si elle existe
-        clientLocationRepository.deleteById(id); // clientId est la clé primaire dans ClientLocation
         clientRepository.deleteById(id);
     }
     
     public List<String> getAllNames(){
-        log.debug("Request to get all names of clients: {}");
-        List<Client> clients = clientRepository.findAll();
-        return clients.stream()
-                      .map(Client::getNomComplet)
-                      .collect(Collectors.toList());
+        return clientRepository.findAll().stream()
+                .map(Client::getNomComplet)
+                .collect(Collectors.toList());
     }
-    // Exemple dans ClientService.java
-    // N'oubliez pas les imports et annotations
+
+    /**
+     * NOUVELLE MÉTHODE : Calcule le nombre de nouveaux clients créés par heure.
+     * @return Une liste de maps, chaque map représentant une heure avec les statistiques associées.
+     */
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getHourlyNewClientStats() {
-        List<Client> clients = clientRepository.findAll(); // Ou filter par date récente
-        Map<Integer, Long> newClientsByHour = clients.stream()
+        log.debug("Request to get hourly new client statistics");
+        
+        // Regroupe les clients par leur heure de création
+        Map<Integer, Long> newClientsByHour = clientRepository.findAll().stream()
             .filter(c -> c.getDateCreation() != null)
             .collect(Collectors.groupingBy(
                 c -> c.getDateCreation().getHour(),
@@ -151,66 +128,45 @@ public ClientResponseDTO update(Integer clientId, ClientRequestDTO clientRequest
             ));
 
         List<Map<String, Object>> hourlyData = new ArrayList<>();
+        long totalClients = clientRepository.count();
+
+        // Construit la liste de résultats pour chaque heure de la journée (0 à 23)
         for (int i = 0; i < 24; i++) {
-            int hour = i;
-            long count = newClientsByHour.getOrDefault(hour, 0L);
-            hourlyData.add(Map.of(
-                "hour", String.format("%02d:00", hour),
-                "newClients", count,
-                "totalClients", clientRepository.count() // Simpler, can be optimized
-            ));
+            Map<String, Object> hourStats = new HashMap<>();
+            hourStats.put("hour", String.format("%02d:00", i)); // Format "HH:00"
+            hourStats.put("newClients", newClientsByHour.getOrDefault(i, 0L));
+            hourStats.put("totalClients", totalClients); // Le total est le même pour chaque heure
+            hourlyData.add(hourStats);
         }
+        
         return hourlyData;
     }
+
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getClientMapStats(String mapType) {
         log.debug("Request to get client map statistics for type: {}", mapType);
-
         if ("world".equalsIgnoreCase(mapType)) {
-            List<Map<String, Object>> statsByCountryCode = clientRepository.getStatsByCountry();
-            return statsByCountryCode;
-
+            return clientRepository.getStatsByCountry();
         } else if ("tunisia".equalsIgnoreCase(mapType)) {
             return clientRepository.getStatsByRegionNameForCountry("TN");
         }
-
         return new ArrayList<>();
     }
 
-    /**
-     * NOUVEAU: Récupère la liste de tous les clients avec leurs coordonnées depuis la table séparée.
-     * C'est cette méthode qui sera appelée par le frontend pour afficher les marqueurs.
-     * @return Une liste de ClientLocationDTOs.
-     */
     @Transactional(readOnly = true)
-    public List<ClientLocationDTO> findAllClientLocations() {
-        log.debug("Request to get all client locations for map markers from separate table");
-        
-        // Récupère tous les clients et leurs localisations (s'ils existent)
-        // Note: Cela pourrait être optimisé avec une jointure dans un Repository personnalisé
-        // ou en récupérant les ClientLocation séparément puis en les mappant.
-        // Pour l'instant, on fait une boucle sur tous les clients et on cherche leur localisation.
-        List<Client> clients = clientRepository.findAll();
-        List<ClientLocation> clientLocations = clientLocationRepository.findAll(); // Récupère toutes les localisations
-
-        Map<Integer, ClientLocation> locationsMap = clientLocations.stream()
-            .collect(Collectors.toMap(ClientLocation::getClientId, location -> location));
-
-        return clients.stream()
+    public List<Map<String, Object>> findAllClientLocations() {
+        log.debug("Request to get all client locations for map markers");
+        return clientRepository.findAll().stream()
+                .filter(client -> client.getLatitude() != null && client.getLongitude() != null)
                 .map(client -> {
-                    ClientLocation loc = locationsMap.get(client.getId());
-                    if (loc != null && loc.getLatitude() != null && loc.getLongitude() != null) {
-                        return new ClientLocationDTO(
-                            client.getId(),
-                            client.getNomComplet(),
-                            loc.getLatitude(),
-                            loc.getLongitude(),
-                            client.getActif()
-                        );
-                    }
-                    return null; // Si pas de localisation trouvée ou coordonnées manquantes
+                    Map<String, Object> locationData = new HashMap<>();
+                    locationData.put("id", client.getId());
+                    locationData.put("nomComplet", client.getNomComplet());
+                    locationData.put("lat", client.getLatitude());
+                    locationData.put("lng", client.getLongitude());
+                    locationData.put("status", client.getActif());
+                    return locationData;
                 })
-                .filter(java.util.Objects::nonNull) // Filtre les clients sans localisation
                 .collect(Collectors.toList());
     }
 }

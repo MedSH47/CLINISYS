@@ -24,7 +24,11 @@ public class ClientFactory {
         dto.setDateCreation(client.getDateCreation());
         dto.setUserCreation(client.getUserCreation());
         dto.setActif(client.getActif());
-        // Use the light factory for nested tickets
+        
+        // MAPPING ADDED for the new fields
+        dto.setLatitude(client.getLatitude());
+        dto.setLongitude(client.getLongitude());
+        
         dto.setTicketList(TicketFactory.toDTOsLight(client.getTicketList()));
         return dto;
     }
@@ -40,6 +44,9 @@ public class ClientFactory {
         dto.setActif(client.getActif());
         dto.setDateCreation(client.getDateCreation());
         dto.setUserCreation(client.getUserCreation());
+        // Also add the new fields to the light DTO
+        dto.setLatitude(client.getLatitude());
+        dto.setLongitude(client.getLongitude());
         return dto;
     }
 
@@ -54,6 +61,8 @@ public class ClientFactory {
         entity.setActif(dto.getActif());
         entity.setDateCreation(LocalDateTime.now());
         entity.setUserCreation(Helper.getUserAuthenticated());
+        // Note: latitude and longitude are not set here, 
+        // they will be set in the service after geocoding.
         return entity;
     }
 

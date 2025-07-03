@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.*;
 
+import org.hibernate.envers.Audited;
+
 import com.csys.template.domain.enum_identifier.MessageType;
 import com.csys.template.dtoResponse.UtilisateurResponseDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -27,6 +29,8 @@ import lombok.Setter;
 @JsonIdentityInfo(
   generator = ObjectIdGenerators.PropertyGenerator.class, 
   property = "id")
+  @Audited 
+
 public class ChatMessage {
 
     @Id

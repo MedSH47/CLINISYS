@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.csys.template.dtoRequest.ClientRequestDTO;
-import com.csys.template.dtoResponse.ClientLocationDTO;
 import com.csys.template.dtoResponse.ClientResponseDTO;
 import com.csys.template.service.ClientService;
 import com.csys.template.util.RestPreconditions;
@@ -87,9 +86,9 @@ public class ClientResource {
         return ResponseEntity.ok(data);
     }
     @GetMapping("/clients/locations")
-    public ResponseEntity<List<ClientLocationDTO>> getAllClientLocations() {
+    public ResponseEntity<?> getAllClientLocations() {
         log.debug("REST request to get all client locations");
-        List<ClientLocationDTO> locations = clientService.findAllClientLocations();
+        List<?> locations = clientService.findAllClientLocations();
         return ResponseEntity.ok(locations);
     }
 }

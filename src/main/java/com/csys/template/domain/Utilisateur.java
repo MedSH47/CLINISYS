@@ -7,8 +7,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.envers.Audited;
+
 import com.csys.template.domain.enum_identifier.Role;
-import com.csys.template.log.listener.EntityLogger;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -16,7 +17,6 @@ import lombok.*;
 
 @Entity
 @Table(name = "Utilisateur", catalog = "Gestion_Tickets", schema = "dbo")
-@EntityListeners(EntityLogger.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,6 +26,8 @@ import lombok.*;
 @JsonIdentityInfo(
   generator = ObjectIdGenerators.PropertyGenerator.class, 
   property = "id")
+  @Audited 
+
 public class Utilisateur implements Serializable {
 
     private static final long serialVersionUID = 1L;

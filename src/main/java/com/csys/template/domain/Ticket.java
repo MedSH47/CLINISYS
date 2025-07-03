@@ -23,6 +23,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.envers.Audited;
+
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -33,6 +35,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @JsonIdentityInfo(
   generator = ObjectIdGenerators.PropertyGenerator.class, 
   property = "id")
+  @Audited 
+
 public class Ticket implements Serializable {
 
     private static final long serialVersionUID = 1L;

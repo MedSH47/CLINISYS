@@ -1,6 +1,5 @@
 package com.csys.template.config;
 
-import com.csys.template.log.service.LogService;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -17,16 +16,14 @@ import org.springframework.stereotype.Component;
 public class MailSender {
 
     private final JavaMailSender javaMailSender;
-    private final LogService logService;
 
     private static String from;
     private static String[] to;
 
     private final Logger log = LoggerFactory.getLogger(MailSender.class);
 
-    public MailSender(JavaMailSender javaMailSender, LogService logService) {
+    public MailSender(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
-        this.logService = logService;
     }
 
     @Value("${email.from}")
@@ -52,7 +49,6 @@ public class MailSender {
     log.info("Sending simple text mail...");
     javaMailSender.send(mail);
     log.info("Done!");
-    logService.logNotification(to, subject, body);
     return "Mail Sent Successfully";
 }
 
@@ -73,7 +69,6 @@ public class MailSender {
         log.info("Sending HTML mail...");
         javaMailSender.send(mimeMessage);
         log.info("Done!");
-        logService.logNotification(to, subject, "HTML email sent."); // On évite de logger tout le HTML
         return "HTML Mail Sent Successfully";
    }
 
@@ -94,7 +89,6 @@ public class MailSender {
         helper.setText(text);
 
         javaMailSender.send(message);
-        logService.logNotification(to, subject, text);
         return "Mail with attachment sent successfully!";
     }
 }

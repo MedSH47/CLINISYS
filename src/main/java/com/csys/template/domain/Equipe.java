@@ -3,7 +3,6 @@ package com.csys.template.domain;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -16,16 +15,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import com.csys.template.log.listener.EntityLogger;
+
+import org.hibernate.envers.Audited;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "Equipe", catalog = "Gestion_Tickets", schema = "dbo")
-@EntityListeners(EntityLogger.class)
 @JsonIdentityInfo(
   generator = ObjectIdGenerators.PropertyGenerator.class, 
   property = "id")
+  @Audited 
+
 public class Equipe implements Serializable {
 
     private static final long serialVersionUID = 1L;

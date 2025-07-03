@@ -1,3 +1,8 @@
+# ===================================================================
+# Fichier de Configuration pour l'Environnement de Développement (DEV)
+# ===================================================================
+
+# Configuration de la gestion et des métriques Spring Boot
 management:
   security:
     enabled: false
@@ -6,110 +11,131 @@ management:
       hystrix:
         enabled: false
 
+# Désactivation de la sécurité de base de Spring (non nécessaire avec JWT)
 security:
   basic:
     enabled: false
 
+# Configuration des logs pour un débogage détaillé en développement
 logging:
   level:
     org:
       hibernate:
-        sql: DEBUG
-        basicbinding:
-          log-level: trace
+        # Affiche les requêtes SQL formatées dans la console
+        sql: DEBUG 
+        # Affiche les valeurs des paramètres bindés dans les requêtes
+        type:
+          descriptor:
+            sql: trace 
 
+# Configuration générale de l'application Spring
 spring:
+  # Permet les références circulaires entre beans (utile dans certains cas complexes)
+  main:
+    allow-circular-references: true
+  
+  # Nom de l'application
+  application:
+    name: template-core
+
+  # Stratégie de correspondance des URL pour la compatibilité
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
+  # Configuration du multipart pour les uploads de fichiers
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
 
-  main:
-    allow-circular-references: true
-
-  application:
-    name: template-core
-
-  mvc:
-    pathmatch:
-      matching-strategy: ant-path-matcher
-
+  # Configuration du format des dates pour la sérialisation JSON
   jackson:
     serialization:
-      write-dates-as-timestamps: true
+      # Préférer le format texte (ex: "2025-07-03T15:30:00") aux timestamps numériques
+      write-dates-as-timestamps: false
 
+  # Désactivation de Liquibase en dev pour un contrôle manuel ou un démarrage plus rapide
   liquibase:
     default-schema: dbo
     enabled: false
     change-log: classpath:data/changelog-master.xml
 
+  # Activation des couleurs dans la console de logs
   output:
     ansi:
       enabled: ALWAYS
 
+  # Activation du redémarrage automatique en cas de changement de fichier
   devtools:
     restart:
       enabled: true
     livereload:
       enabled: true
 
+  # ===============================================================
+  # Connexion à la Base de Données (DataSource)
+  # ===============================================================
   datasource:
     url: jdbc:sqlserver://localhost:1433;databaseName=Gestion_Tickets;encrypt=false;trustServerCertificate=true
     username: SA
-    password: 123
+    password: 123 # Remplacez par votre mot de passe
 
+  # ===============================================================
+  # Configuration de JPA et Hibernate
+  # ===============================================================
   jpa:
     database-platform: org.hibernate.dialect.SQLServer2012Dialect
     database: SQL_SERVER
     open-in-view: false
-    show-sql: true
+    show-sql: true # redondant avec logging.level mais ne nuit pas
     hibernate:
-      ddl-auto: none
+      # IMPORTANT : 'update' va créer ou mettre à jour les tables d'audit automatiquement
+      ddl-auto: update
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
-        formatsql: true
-        sql:
-          debug: true
         default_schema: dbo
         id:
           new_generator_mappings: true
         cache:
           use_second_level_cache: false
           use_query_cache: false
-          use_minimal_puts: true
-          region:
-            factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
-          hazelcast:
-            instance_name: hazelcast
-            use_lite_member: true
-        generate_statistics: true
-      org:
-        hibernate:
-          envers:
-            store_data_at_delete: true
-
+        generate_statistics: false
+        # --- NOUVEAU : Configuration Hibernate Envers ---
+        org.hibernate.envers:
+          # Suffixe pour les tables d'audit (ex: TICKET_AUD)
+          audit_table_suffix: _AUD 
+          # Nom de la colonne pour le numéro de révision
+          revision_field_name: REV 
+          # Nom de la colonne pour le type de révision (0=ADD, 1=MOD, 2=DEL)
+          revision_type_field_name: REVTYPE 
+          # Crucial : enregistre les données d'une entité juste avant sa suppression
+          store_data_at_delete: true 
+          
+  # ===============================================================
+  # Configuration du Serveur Mail (pour Gmail en développement)
+  # ===============================================================
   mail:
     host: smtp.gmail.com
     port: 587
-    username: harrabimohamedsaleh71@gmail.com
-    password: vyqe cewo rdbe hqfv
+    username: harrabimohamedsaleh71@gmail.com # Remplacez par votre e-mail
+    password: vyqe cewo rdbe hqfv # Remplacez par votre mot de passe d'application Gmail
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-          connectiontimeout: 3000
+          connectiontimeout: 5000 # Augmenté pour éviter les timeouts
 
-  config:
-    use-legacy-processing: true
-
+# Configuration de l'internationalisation (i18n)
 lang:
   secondary: ar
 
+# Configuration du serveur web embarqué
 server:
   servlet:
     contextPath: /template-core
@@ -119,13 +145,7 @@ server:
     mime-types: text/html,text/xml,text/plain,text/css,application/javascript,application/json
     min-response-size: 1024
 
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          strategy: THREAD
-
+# Configuration des e-mails par défaut de l'application
 email:
-  from: harrabimohamedsaleh71@gmail.com
-  to: harrabimohamedsaleh71@gmail.com
+  from: harrabimohamedsaleh71@gmail.com # E-mail d'envoi
+  to: harrabimohamedsaleh71@gmail.com   # E-mail de destination par défaut (pour tests)

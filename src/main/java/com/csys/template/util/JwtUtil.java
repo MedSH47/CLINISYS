@@ -5,21 +5,22 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
+import org.springframework.security.core.GrantedAuthority; // Import nécessaire
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List; // Import nécessaire
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors; // Import nécessaire
 
 @Service
 public class JwtUtil {
 
     private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
-    // ... (vos méthodes existantes : extractUsername, extractExpiration, etc.)
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -42,20 +43,33 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
+    /**
+     * CORRECTION : Cette méthode inclut désormais les rôles de l'utilisateur dans le JWT.
+     */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        // Vous pouvez ajouter d'autres informations sur l'utilisateur dans les claims si nécessaire
-        return createToken(claims, userDetails.getUsername(), 60 * 60 * 1000); // 1 heure pour un token de session normal
+        
+        // --- C'est la ligne clé qui a été ajoutée ---
+        // On récupère les autorités (rôles) de l'objet UserDetails,
+        // on les transforme en une liste de chaînes de caractères (ex: ["ROLE_A", "ROLE_E"]),
+        // et on les ajoute au JWT sous la clé "roles".
+        List<String> roles = userDetails.getAuthorities().stream()
+                                        .map(GrantedAuthority::getAuthority)
+                                        .collect(Collectors.toList());
+        claims.put("roles", roles);
+        
+        // Durée de vie du token de session : 1 heure
+        long sessionExpirationInMillis = 60 * 60 * 1000; 
+        return createToken(claims, userDetails.getUsername(), sessionExpirationInMillis);
     }
 
     /**
-     * NOUVELLE MÉTHODE : Génère un jeton à courte durée de vie pour la réinitialisation de mot de passe.
-     * @param email L'e-mail de l'utilisateur, qui sera le "subject" du jeton.
-     * @return Un JWT valide pour 10 minutes.
+     * Génère un jeton à courte durée de vie pour la réinitialisation de mot de passe.
      */
     public String generatePasswordResetToken(String email) {
-        // Pas besoin de claims supplémentaires pour ce jeton, l'e-mail dans le sujet suffit.
-        return createToken(new HashMap<>(), email, 10 * 60 * 1000); // 10 minutes
+        // Durée de vie du token de réinitialisation : 10 minutes
+        long resetExpirationInMillis = 10 * 60 * 1000; 
+        return createToken(new HashMap<>(), email, resetExpirationInMillis);
     }
 
     private String createToken(Map<String, Object> claims, String subject, long expirationTimeInMillis) {
@@ -73,10 +87,6 @@ public class JwtUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
     
-    /**
-     * NOUVEAU : Valide un jeton sans avoir besoin d'un objet UserDetails.
-     * Utile pour valider le jeton de réinitialisation.
-     */
     public Boolean validateToken(String token) {
         return !isTokenExpired(token);
     }

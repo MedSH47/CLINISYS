@@ -12,6 +12,10 @@ public class ClientResponseDTO {
     
     private String countryCode;
     private String regionName;
+
+    // FIELDS ADDED
+    private Double latitude;
+    private Double longitude;
     
     private LocalDateTime dateCreation;
     private String userCreation;
@@ -19,7 +23,8 @@ public class ClientResponseDTO {
     
     private List<TicketResponseDTO> ticketList; 
 
-    // Getters and Setters
+    // --- Getters and Setters ---
+    
     public Integer getId() {
         return id;
     }
@@ -44,26 +49,30 @@ public class ClientResponseDTO {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    // AJOUTÉ : Getters et Setters pour les nouveaux champs
     public String getCountryCode() {
         return countryCode;
     }
-
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
-
     public String getRegionName() {
         return regionName;
     }
-
     public void setRegionName(String regionName) {
         this.regionName = regionName;
     }
-
-    // SUPPRIMÉ : Getters et Setters pour 'region'
-
+    public Double getLatitude() {
+        return latitude;
+    }
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+    public Double getLongitude() {
+        return longitude;
+    }
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
     public LocalDateTime getDateCreation() {
         return dateCreation;
     }
