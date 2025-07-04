@@ -27,8 +27,16 @@ public class TicketResponseDTO {
     private List<DocumentJointesResponseDTO> documentJointesList;
     private Boolean actif;
     private LocalDateTime dateCloture;
+    private LocalDateTime dateTraitement;
 
-    
+    public LocalDateTime getDateTraitement() {
+        return dateTraitement;
+    }
+
+    public void setDateTraitement(LocalDateTime dateTraitement) {
+        this.dateTraitement = dateTraitement;
+    }
+
     public LocalDateTime getDateCloture() {
         return dateCloture;
     }

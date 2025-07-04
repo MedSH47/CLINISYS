@@ -35,6 +35,7 @@ public class TicketFactory {
         TicketResponseDTO dto = new TicketResponseDTO();
         dto.setId(ticket.getId());
         dto.setTitre(ticket.getTitre());
+        dto.setDateTraitement(ticket.getDateTraitement());
         dto.setDescription(ticket.getDescription());
         dto.setDateCreation(ticket.getDateCreation());
         dto.setUserCreation(ticket.getUserCreation());
@@ -63,6 +64,7 @@ public class TicketFactory {
         dto.setActif(ticket.getActif());
         dto.setId(ticket.getId());
         dto.setTitre(ticket.getTitre());
+        dto.setDateTraitement(ticket.getDateTraitement());
         dto.setStatue(ticket.getStatue());
         dto.setDescription(ticket.getDescription());
         dto.setIdModule(ModuleFactory.toDTOLight(ticket.getModule()));
@@ -86,6 +88,7 @@ public class TicketFactory {
         entity.setUserCreation(Helper.getUserAuthenticated());
         entity.setActif(dto.getActif());
         entity.setDate_echeance(dto.getDate_echeance());
+        entity.setDateTraitement(dto.getDateTraitement());
 
         if (dto.getIdParentTicket() != null) {
             Ticket parent = new Ticket();
@@ -143,6 +146,9 @@ public class TicketFactory {
             entity.setPriorite(dto.getPriorite());
         }
 
+        if (dto.getDateTraitement() != null) {
+            entity.setDateTraitement(dto.getDateTraitement());
+        }
         if (dto.getActif() != null) {
             entity.setActif(dto.getActif());
         }
