@@ -70,28 +70,32 @@ public class DashboardService {
     /**
      * CORRIGÉ : Récupère les tickets par statut et transforme le résultat en une liste de maps.
      */
-    public List<Map<String, Object>> getTicketsByStatus(String period, String startDate, String endDate) {
-        log.debug("Request to get tickets by status for period: {}", period);
-        DateRange dateRange = calculateDateRange(period, startDate, endDate);
-        QTicket ticket = QTicket.ticket;
+   // In template/service/DashboardService.java
 
-        List<Tuple> results = queryFactory
-                .select(ticket.statue, ticket.id.count())
-                .from(ticket)
-                .where(ticket.dateCreation.between(dateRange.start, dateRange.end))
-                .groupBy(ticket.statue)
-                .fetch();
-        
-        // Transformation manuelle du résultat en List<Map<String, Object>>
-        return results.stream()
-                .map(tuple -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("status", tuple.get(ticket.statue));
-                    map.put("count", tuple.get(ticket.id.count()));
-                    return map;
-                })
-                .collect(Collectors.toList());
-    }
+public List<Map<String, Object>> getTicketsByStatus(String period, String startDate, String endDate) {
+    log.debug("Request to get tickets by status for period: {}", period);
+    DateRange dateRange = calculateDateRange(period, startDate, endDate);
+    QTicket ticket = QTicket.ticket;
+
+    List<Tuple> results = queryFactory
+            .select(ticket.statue, ticket.id.count())
+            .from(ticket)
+            .where(ticket.dateCreation.between(dateRange.start, dateRange.end))
+            .groupBy(ticket.statue)
+            .fetch();
+    
+    // ADD THIS LINE TO DEBUG
+    log.info("Tickets by status query results: {}", results);
+
+    return results.stream()
+            .map(tuple -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("status", tuple.get(ticket.statue));
+                map.put("count", tuple.get(ticket.id.count()));
+                return map;
+            })
+            .collect(Collectors.toList());
+}
     
     /**
      * CORRIGÉ : Récupère les données d'activité et transforme le résultat.
