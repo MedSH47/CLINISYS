@@ -4,10 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.java.Log;
 
 import org.springframework.security.core.GrantedAuthority; // Import nécessaire
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.csys.template.service.UtilisateurService;
 
 import java.security.Key;
 import java.util.Date;
@@ -18,9 +21,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors; // Import nécessaire
 
 @Service
+@Log
 public class JwtUtil {
 
     private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    private final UtilisateurService utilisateurService;
+
+    public JwtUtil(UtilisateurService utilisateurService) {
+        this.utilisateurService = utilisateurService;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -57,7 +67,11 @@ public class JwtUtil {
                                         .map(GrantedAuthority::getAuthority)
                                         .collect(Collectors.toList());
         claims.put("roles", roles);
+        // --- Fin de la ligne clé ajoutée ---
+        // ajout id in claims
+        claims.put("id", utilisateurService.getIdBylogin(userDetails.getUsername()));
         
+        log.info("Generating JWT for user: " + userDetails.getUsername());
         // Durée de vie du token de session : 1 heure
         long sessionExpirationInMillis = 60 * 60 * 1000; 
         return createToken(claims, userDetails.getUsername(), sessionExpirationInMillis);

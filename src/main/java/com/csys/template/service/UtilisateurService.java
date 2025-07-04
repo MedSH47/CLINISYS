@@ -181,4 +181,9 @@ public class UtilisateurService {
     // La transaction se chargera de sauvegarder l'entité modifiée.
     log.info("Le mot de passe pour l'utilisateur {} a été mis à jour avec succès.", utilisateur.getLogin());
   }
+
+  public Object getIdBylogin(String username) {
+    Utilisateur utilisateur = utilisateurRepository.findByLogin(username);
+    return utilisateur != null ? utilisateur.getId() : null;
+  }
 }
