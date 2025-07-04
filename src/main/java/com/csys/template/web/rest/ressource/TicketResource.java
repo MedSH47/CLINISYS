@@ -29,14 +29,16 @@ public class TicketResource {
 
     // --- Les endpoints POST, PUT, GET par ID, etc. ne changent pas ---
     @PostMapping("/tickets")
-    public ResponseEntity<TicketResponseDTO> createTicket(@Valid @RequestBody TicketRequestDTO ticketRequestDTO) throws URISyntaxException {
+    public ResponseEntity<TicketResponseDTO> createTicket(@Valid @RequestBody TicketRequestDTO ticketRequestDTO)
+            throws URISyntaxException {
         log.debug("REST request to save Ticket : {}", ticketRequestDTO);
         TicketResponseDTO result = ticketService.save(ticketRequestDTO);
         return ResponseEntity.created(new URI("/api/tickets/" + result.getId())).body(result);
     }
 
     @PutMapping("/tickets/{id}")
-    public ResponseEntity<TicketResponseDTO> updateTicket(@PathVariable Integer id, @RequestBody TicketRequestDTO ticketRequestDTO) {
+    public ResponseEntity<TicketResponseDTO> updateTicket(@PathVariable Integer id,
+            @RequestBody TicketRequestDTO ticketRequestDTO) {
         TicketResponseDTO result = ticketService.update(id, ticketRequestDTO);
         return ResponseEntity.ok(result);
     }
@@ -48,16 +50,16 @@ public class TicketResource {
         RestPreconditions.checkFound(dto, "ticket.NotFound");
         return ResponseEntity.ok().body(dto);
     }
-    
+
     @GetMapping("/tickets")
     public List<TicketResponseDTO> getAllTickets(@RequestParam(required = false) Status statue,
-                                                 @RequestParam(required = false) Integer idModule,
-                                                 @RequestParam(required = false) Priorite priorite,
-                                                 @RequestParam(required = false) Boolean[] actifs) {
+            @RequestParam(required = false) Integer idModule,
+            @RequestParam(required = false) Priorite priorite,
+            @RequestParam(required = false) Boolean[] actifs) {
         log.debug("Request to get all Tickets with filters");
         return ticketService.findAll(statue, idModule, priorite, actifs);
     }
-    
+
     @DeleteMapping("/tickets/{id}")
     public ResponseEntity<?> deleteTicket(@PathVariable Integer id) {
         log.debug("Request to delete Ticket: {}", id);
@@ -68,7 +70,6 @@ public class TicketResource {
     public List<TicketResponseDTO> getAllParentsTickets() {
         return ticketService.findAllParents();
     }
-
 
     // --- Endpoints de statistiques refactorisés ---
 
@@ -91,7 +92,7 @@ public class TicketResource {
         List<TicketCalendarEventDTO> data = ticketService.getCalendarEvents();
         return ResponseEntity.ok(data);
     }
-    
+
     /**
      * CORRIGÉ : Retourne maintenant un objet GlobalTicketCountDTO.
      */
@@ -124,11 +125,18 @@ public class TicketResource {
         List<PerformanceStatDTO> data = ticketService.getPerformanceStats(groupBy, period);
         return ResponseEntity.ok(data);
     }
-    
+
     @GetMapping("/tickets/overdue")
     public ResponseEntity<List<TicketResponseDTO>> getOverdueTickets() {
         log.debug("REST request to get overdue tickets");
         List<TicketResponseDTO> data = ticketService.getOverdueTickets();
         return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/tickets/by-user/{userId}")
+    public ResponseEntity<List<TicketResponseDTO>> getTicketsByUserId(@PathVariable Integer userId) {
+        log.debug("REST request to get all Tickets for user ID: {}", userId);
+        List<TicketResponseDTO> tickets = ticketService.findByUtilisateurId(userId);
+        return ResponseEntity.ok(tickets);
     }
 }

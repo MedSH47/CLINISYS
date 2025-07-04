@@ -39,23 +39,25 @@ public class TicketService {
     private final UtilisateurRepository utilisateurRepository;
 
     public TicketService(TicketRepository ticketRepository, JPAQueryFactory queryFactory,
-                         ModuleRepository moduleRepository, UtilisateurRepository utilisateurRepository) {
+            ModuleRepository moduleRepository, UtilisateurRepository utilisateurRepository) {
         this.ticketRepository = ticketRepository;
         this.queryFactory = queryFactory;
         this.moduleRepository = moduleRepository;
         this.utilisateurRepository = utilisateurRepository;
     }
 
-    // --- Les méthodes d'écriture (save, update, delete) restent majoritairement les mêmes ---
-    // Elles contiennent une logique métier qui ne peut pas être simplifiée par des requêtes.
-    
+    // --- Les méthodes d'écriture (save, update, delete) restent majoritairement
+    // les mêmes ---
+    // Elles contiennent une logique métier qui ne peut pas être simplifiée par des
+    // requêtes.
+
     public TicketResponseDTO save(TicketRequestDTO ticketRequestDTO) {
         log.debug("Request to save Ticket: {}", ticketRequestDTO);
         Ticket ticket = TicketFactory.toEntity(ticketRequestDTO);
         ticket = ticketRepository.save(ticket);
         return TicketFactory.toResponseDTO(ticket);
     }
-    
+
     public TicketResponseDTO update(Integer ticketId, TicketRequestDTO ticketRequestDTO) {
         log.debug("Request to update Ticket: {}", ticketId);
         Ticket existingTicket = ticketRepository.findById(ticketId)
@@ -65,18 +67,19 @@ public class TicketService {
         ticketRepository.save(existingTicket);
         return TicketFactory.toResponseDTO(existingTicket);
     }
-    
+
     public ResponseEntity<?> delete(Integer id) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
         // La logique métier de vérification est préservée
         if (ticket.getModule() != null || ticket.getIdUtilisateur() != null || !ticket.getChildTickets().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.LOCKED).body("Le ticket ne peut être supprimé car il a des dépendances.");
+            return ResponseEntity.status(HttpStatus.LOCKED)
+                    .body("Le ticket ne peut être supprimé car il a des dépendances.");
         }
         ticketRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
-    
+
     // --- Méthodes de lecture refactorisées ---
 
     @Transactional(readOnly = true)
@@ -86,7 +89,8 @@ public class TicketService {
     }
 
     /**
-     * REFACTORISÉ : Utilise QueryDSL (BooleanBuilder) pour un filtrage dynamique et propre.
+     * REFACTORISÉ : Utilise QueryDSL (BooleanBuilder) pour un filtrage dynamique et
+     * propre.
      * AVANT : Utilisait un WhereClauseBuilder personnalisé.
      */
     @Transactional(readOnly = true)
@@ -107,14 +111,15 @@ public class TicketService {
         if (actifs != null && actifs.length > 0) {
             predicate.and(ticket.actif.in(actifs));
         }
-        
+
         List<Ticket> result = (List<Ticket>) ticketRepository.findAll(predicate);
         return TicketFactory.toResponseDTOs(result);
     }
 
     /**
      * REFACTORISÉ : Le filtre se fait maintenant dans la base de données.
-     * AVANT : Récupérait TOUS les tickets puis filtrait en mémoire. Très inefficace.
+     * AVANT : Récupérait TOUS les tickets puis filtrait en mémoire. Très
+     * inefficace.
      */
     @Transactional(readOnly = true)
     public List<TicketResponseDTO> findAllParents() {
@@ -124,8 +129,10 @@ public class TicketService {
     }
 
     /**
-     * REFACTORISÉ : Utilise une requête d'agrégation SQL (via QueryDSL) et une projection DTO.
-     * AVANT : Récupérait TOUS les tickets, puis utilisait un stream pour grouper en mémoire.
+     * REFACTORISÉ : Utilise une requête d'agrégation SQL (via QueryDSL) et une
+     * projection DTO.
+     * AVANT : Récupérait TOUS les tickets, puis utilisait un stream pour grouper en
+     * mémoire.
      */
     @Transactional(readOnly = true)
     public List<StatusCountDTO> getCountsByStatus() {
@@ -139,10 +146,12 @@ public class TicketService {
                 .groupBy(ticket.statue)
                 .fetch();
     }
-    
+
     /**
-     * REFACTORISÉ : Utilise une projection DTO pour ne sélectionner que les champs nécessaires.
-     * AVANT : Récupérait les entités Ticket complètes, puis mappait manuellement vers une Map.
+     * REFACTORISÉ : Utilise une projection DTO pour ne sélectionner que les champs
+     * nécessaires.
+     * AVANT : Récupérait les entités Ticket complètes, puis mappait manuellement
+     * vers une Map.
      */
     @Transactional(readOnly = true)
     public List<TicketCalendarEventDTO> getCalendarEvents() {
@@ -155,16 +164,17 @@ public class TicketService {
                         ticket.date_echeance,
                         ticket.priorite,
                         ticket.statue,
-                        ticket.idUtilisateur.nom
-                ))
+                        ticket.idUtilisateur.nom))
                 .from(ticket)
                 .where(ticket.date_echeance.isNotNull())
                 .fetch();
     }
-    
+
     /**
-     * REFACTORISÉ : Utilise des requêtes de comptage ciblées, beaucoup plus rapides.
-     * AVANT : Récupérait TOUS les tickets puis les parcourait plusieurs fois en mémoire.
+     * REFACTORISÉ : Utilise des requêtes de comptage ciblées, beaucoup plus
+     * rapides.
+     * AVANT : Récupérait TOUS les tickets puis les parcourait plusieurs fois en
+     * mémoire.
      */
     @Transactional(readOnly = true)
     public GlobalTicketCountDTO getGlobalTicketCounts() {
@@ -178,14 +188,18 @@ public class TicketService {
         long refuse = ticketRepository.count(ticket.statue.eq(Status.Refuse));
 
         LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
-        LocalDateTime startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY)).atStartOfDay();
-        
-        long terminesToday = ticketRepository.count(ticket.statue.eq(Status.Termine).and(ticket.dateCloture.goe(startOfToday)));
-        long terminesThisWeek = ticketRepository.count(ticket.statue.eq(Status.Termine).and(ticket.dateCloture.goe(startOfWeek)));
+        LocalDateTime startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
+                .atStartOfDay();
 
-        return new GlobalTicketCountDTO(totalTickets, enAttente, enCours, accepte, refuse, terminesToday, terminesThisWeek);
+        long terminesToday = ticketRepository
+                .count(ticket.statue.eq(Status.Termine).and(ticket.dateCloture.goe(startOfToday)));
+        long terminesThisWeek = ticketRepository
+                .count(ticket.statue.eq(Status.Termine).and(ticket.dateCloture.goe(startOfWeek)));
+
+        return new GlobalTicketCountDTO(totalTickets, enAttente, enCours, accepte, refuse, terminesToday,
+                terminesThisWeek);
     }
-    
+
     /**
      * REFACTORISÉ : Le groupement est fait par la base de données.
      * AVANT : Récupérait tous les tickets actifs puis groupait en mémoire.
@@ -194,29 +208,29 @@ public class TicketService {
     public List<ActiveTicketCountDTO> getActiveTicketsByAssigneeOrModule(String groupBy) {
         log.debug("Request to get active tickets grouped by: {}", groupBy);
         QTicket ticket = QTicket.ticket;
-        
+
         BooleanBuilder predicate = new BooleanBuilder(ticket.statue.notIn(Status.Termine, Status.Refuse));
-        
+
         if ("employee".equalsIgnoreCase(groupBy)) {
             return queryFactory
-                .select(Projections.constructor(ActiveTicketCountDTO.class, 
-                    ticket.idUtilisateur.nom.concat(" ").concat(ticket.idUtilisateur.prenom), 
-                    ticket.id.count()))
-                .from(ticket)
-                .where(predicate.and(ticket.idUtilisateur.isNotNull()))
-                .groupBy(ticket.idUtilisateur.nom, ticket.idUtilisateur.prenom)
-                .orderBy(ticket.id.count().desc())
-                .fetch();
+                    .select(Projections.constructor(ActiveTicketCountDTO.class,
+                            ticket.idUtilisateur.nom.concat(" ").concat(ticket.idUtilisateur.prenom),
+                            ticket.id.count()))
+                    .from(ticket)
+                    .where(predicate.and(ticket.idUtilisateur.isNotNull()))
+                    .groupBy(ticket.idUtilisateur.nom, ticket.idUtilisateur.prenom)
+                    .orderBy(ticket.id.count().desc())
+                    .fetch();
         } else if ("module".equalsIgnoreCase(groupBy)) {
             return queryFactory
-                .select(Projections.constructor(ActiveTicketCountDTO.class,
-                    ticket.module.designation,
-                    ticket.id.count()))
-                .from(ticket)
-                .where(predicate.and(ticket.module.isNotNull()))
-                .groupBy(ticket.module.designation)
-                .orderBy(ticket.id.count().desc())
-                .fetch();
+                    .select(Projections.constructor(ActiveTicketCountDTO.class,
+                            ticket.module.designation,
+                            ticket.id.count()))
+                    .from(ticket)
+                    .where(predicate.and(ticket.module.isNotNull()))
+                    .groupBy(ticket.module.designation)
+                    .orderBy(ticket.id.count().desc())
+                    .fetch();
         } else {
             throw new IllegalArgumentException("Invalid groupBy parameter. Must be 'employee' or 'module'.");
         }
@@ -230,35 +244,35 @@ public class TicketService {
     public List<PerformanceStatDTO> getPerformanceStats(String groupBy, String period) {
         log.debug("Request to get performance stats by {} for period: {}", groupBy, period);
         QTicket ticket = QTicket.ticket;
-        
-        LocalDateTime startDate = "last_7_days".equalsIgnoreCase(period) 
-            ? LocalDateTime.now().minusDays(7).with(LocalTime.MIN)
-            : LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN);
+
+        LocalDateTime startDate = "last_7_days".equalsIgnoreCase(period)
+                ? LocalDateTime.now().minusDays(7).with(LocalTime.MIN)
+                : LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN);
 
         BooleanBuilder predicate = new BooleanBuilder(ticket.statue.eq(Status.Termine)
-            .and(ticket.dateCloture.isNotNull())
-            .and(ticket.dateCloture.goe(startDate)));
+                .and(ticket.dateCloture.isNotNull())
+                .and(ticket.dateCloture.goe(startDate)));
 
         if ("employee".equalsIgnoreCase(groupBy)) {
             return queryFactory
-                .select(Projections.constructor(PerformanceStatDTO.class,
-                    ticket.idUtilisateur.nom.concat(" ").concat(ticket.idUtilisateur.prenom),
-                    ticket.id.count()))
-                .from(ticket)
-                .where(predicate.and(ticket.idUtilisateur.isNotNull()))
-                .groupBy(ticket.idUtilisateur.nom, ticket.idUtilisateur.prenom)
-                .orderBy(ticket.id.count().desc())
-                .fetch();
+                    .select(Projections.constructor(PerformanceStatDTO.class,
+                            ticket.idUtilisateur.nom.concat(" ").concat(ticket.idUtilisateur.prenom),
+                            ticket.id.count()))
+                    .from(ticket)
+                    .where(predicate.and(ticket.idUtilisateur.isNotNull()))
+                    .groupBy(ticket.idUtilisateur.nom, ticket.idUtilisateur.prenom)
+                    .orderBy(ticket.id.count().desc())
+                    .fetch();
         } else if ("team".equalsIgnoreCase(groupBy)) {
             return queryFactory
-                .select(Projections.constructor(PerformanceStatDTO.class,
-                    ticket.module.equipe.designation,
-                    ticket.id.count()))
-                .from(ticket)
-                .where(predicate.and(ticket.module.isNotNull()).and(ticket.module.equipe.isNotNull()))
-                .groupBy(ticket.module.equipe.designation)
-                .orderBy(ticket.id.count().desc())
-                .fetch();
+                    .select(Projections.constructor(PerformanceStatDTO.class,
+                            ticket.module.equipe.designation,
+                            ticket.id.count()))
+                    .from(ticket)
+                    .where(predicate.and(ticket.module.isNotNull()).and(ticket.module.equipe.isNotNull()))
+                    .groupBy(ticket.module.equipe.designation)
+                    .orderBy(ticket.id.count().desc())
+                    .fetch();
         } else {
             throw new IllegalArgumentException("Invalid groupBy parameter. Must be 'employee' or 'team'.");
         }
@@ -272,12 +286,25 @@ public class TicketService {
     public List<TicketResponseDTO> getOverdueTickets() {
         log.debug("Request to get overdue tickets");
         QTicket ticket = QTicket.ticket;
-        
+
         BooleanBuilder predicate = new BooleanBuilder(ticket.statue.notIn(Status.Termine, Status.Refuse))
-            .and(ticket.date_echeance.isNotNull())
-            .and(ticket.date_echeance.before(LocalDateTime.now()));
-            
+                .and(ticket.date_echeance.isNotNull())
+                .and(ticket.date_echeance.before(LocalDateTime.now()));
+
         List<Ticket> overdueTickets = (List<Ticket>) ticketRepository.findAll(predicate);
         return TicketFactory.toDTOsLight(overdueTickets);
+    }
+
+    public List<TicketResponseDTO> findByUtilisateurId(Integer userId) {
+        log.debug("Request to get all Tickets for user ID: {}", userId);
+        QTicket ticket = QTicket.ticket;
+        // Utilise QueryDSL pour trouver tous les tickets où l'ID de l'utilisateur
+        // correspond.
+        List<Ticket> tickets = (List<Ticket>) ticketRepository.findAll(ticket.idUtilisateur.id.eq(userId));
+
+        // Utilise la factory "complète" car le point d'entrée est le ticket, pas
+        // l'utilisateur.
+        // Il n'y a donc aucun risque de boucle de récursion.
+        return TicketFactory.toResponseDTOs(tickets);
     }
 }
