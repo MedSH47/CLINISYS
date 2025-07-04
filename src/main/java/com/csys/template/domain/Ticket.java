@@ -79,7 +79,7 @@ public class Ticket implements Serializable {
     private Priorite priorite;
 
     @Column(name = "statue")
-    @Enumerated(EnumType.STRING)
+           @Enumerated(EnumType.STRING)
     private Status statue;
 
     @Column(name = "date_traitement")

@@ -170,12 +170,14 @@ public class TicketFactory {
             }
         }
 
-        if (dto.getIdUtilisateur() != null && dto.getIdUtilisateur() != 0) {
-            Utilisateur user = new Utilisateur();
-            user.setId(dto.getIdUtilisateur());
-            entity.setIdUtilisateur(user);
-        } else {
-            entity.setIdUtilisateur(null);
+        if (dto.getIdUtilisateur() != null ) {
+            if (dto.getIdUtilisateur() != 0) {  
+                Utilisateur user = new Utilisateur();
+                user.setId(dto.getIdUtilisateur());
+                entity.setIdUtilisateur(user);
+            } else {
+                entity.setIdUtilisateur(null);
+            }   
         }
 
         if (dto.getIdParentTicket() != null) {
