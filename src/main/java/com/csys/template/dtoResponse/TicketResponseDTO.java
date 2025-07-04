@@ -27,14 +27,14 @@ public class TicketResponseDTO {
     private List<DocumentJointesResponseDTO> documentJointesList;
     private Boolean actif;
     private LocalDateTime dateCloture;
-    private LocalDateTime dateTraitement;
+    private LocalDateTime debutTraitement;
 
-    public LocalDateTime getDateTraitement() {
-        return dateTraitement;
+    public LocalDateTime getDebutTraitement() {
+        return debutTraitement;
     }
 
-    public void setDateTraitement(LocalDateTime dateTraitement) {
-        this.dateTraitement = dateTraitement;
+    public void setDebutTraitement(LocalDateTime debutTraitement) {
+        this.debutTraitement = debutTraitement;
     }
 
     public LocalDateTime getDateCloture() {

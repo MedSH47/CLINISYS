@@ -3,7 +3,6 @@ package com.csys.template.dtoRequest;
 import com.csys.template.domain.enum_identifier.Priorite;
 import com.csys.template.domain.enum_identifier.Status;
 
-import liquibase.pro.packaged.L;
 
 import java.time.LocalDateTime;
 
@@ -25,7 +24,7 @@ public class TicketRequestDTO {
 
     private Integer idClient;
 
-    private LocalDateTime dateTraitement;
+    private LocalDateTime debutTraitement;
 
     private Integer idModule;
 
@@ -44,11 +43,11 @@ public class TicketRequestDTO {
     public void setDateCloture(LocalDateTime dateCloture) {
         this.dateCloture = dateCloture;
     }
-    public LocalDateTime getDateTraitement() {
-        return dateTraitement;
+    public LocalDateTime getDebutTraitement() {
+        return debutTraitement;
     }
-    public void setDateTraitement(LocalDateTime dateTraitement) {
-        this.dateTraitement = dateTraitement;
+    public void setDebutTraitement(LocalDateTime debutTraitement) {
+        this.debutTraitement = debutTraitement;
     }
 
     // Getters and Setters

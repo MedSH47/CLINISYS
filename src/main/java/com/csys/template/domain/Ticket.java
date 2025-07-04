@@ -82,8 +82,8 @@ public class Ticket implements Serializable {
     @Enumerated(EnumType.STRING)
     private Status statue;
 
-    @Column(name = "date_traitement")
-    private LocalDateTime dateTraitement;
+    @Column(name = "debut_traitement")
+    private LocalDateTime debutTraitement;
 
     // @Column(name = "id_module")
     // private Integer idModule;
@@ -118,11 +118,11 @@ public class Ticket implements Serializable {
     public void setDateCloture(LocalDateTime dateCloture) {
         this.dateCloture = dateCloture;
     }
-    public LocalDateTime getDateTraitement() {
-        return dateTraitement;
+    public LocalDateTime getDebutTraitement() {
+        return debutTraitement;
     }
-    public void setDateTraitement(LocalDateTime dateTraitement) {
-        this.dateTraitement = dateTraitement;
+    public void setDebutTraitement(LocalDateTime debutTraitement) {
+        this.debutTraitement = debutTraitement;
     }
 
     public List<Commentaire> getCommentaireList() {
