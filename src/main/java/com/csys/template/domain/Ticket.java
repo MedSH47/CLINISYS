@@ -84,7 +84,7 @@ public class Ticket implements Serializable {
 
     @Column(name = "debut_traitement")
     private LocalDateTime debutTraitement;
-
+    
     // @Column(name = "id_module")
     // private Integer idModule;
 

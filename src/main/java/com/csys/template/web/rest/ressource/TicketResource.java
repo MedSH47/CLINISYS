@@ -10,6 +10,8 @@ import com.csys.template.util.RestPreconditions;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +74,6 @@ public class TicketResource {
     }
 
     // --- Endpoints de statistiques refactorisés ---
-
     /**
      * CORRIGÉ : Retourne maintenant une liste de StatusCountDTO.
      */
@@ -117,15 +118,14 @@ public class TicketResource {
     /**
      * CORRIGÉ : Retourne maintenant une liste de PerformanceStatDTO.
      */
-    @GetMapping("/tickets/stats/performance")
-    public ResponseEntity<List<PerformanceStatDTO>> getPerformanceStats(
-            @RequestParam(name = "groupBy", defaultValue = "employee") String groupBy,
-            @RequestParam(name = "period", defaultValue = "current_month") String period) {
-        log.debug("REST request to get performance stats by {} for period: {}", groupBy, period);
-        List<PerformanceStatDTO> data = ticketService.getPerformanceStats(groupBy, period);
-        return ResponseEntity.ok(data);
-    }
-
+    // @GetMapping("/tickets/stats/performance")
+    // public ResponseEntity<List<PerformanceStatDTO>> getPerformanceStats(
+    //         @RequestParam(name = "groupBy", defaultValue = "employee") String groupBy,
+    //         @RequestParam(name = "period", defaultValue = "current_month") String period) {
+    //     log.debug("REST request to get performance stats by {} for period: {}", groupBy, period);
+    //     List<PerformanceStatDTO> data = ticketService.getPerformanceStats(groupBy, period);
+    //     return ResponseEntity.ok(data);
+    // }
     @GetMapping("/tickets/overdue")
     public ResponseEntity<List<TicketResponseDTO>> getOverdueTickets() {
         log.debug("REST request to get overdue tickets");
@@ -138,5 +138,25 @@ public class TicketResource {
         log.debug("REST request to get all Tickets for user ID: {}", userId);
         List<TicketResponseDTO> tickets = ticketService.findByUtilisateurId(userId);
         return ResponseEntity.ok(tickets);
+    }
+
+    @GetMapping("/notifications/unread")
+    public List<NotificationDTO> getUnreadNotifications(@RequestParam Integer userId) {
+            System.out.println("getUnreadNotifications appelé avec userId: " + userId);
+
+        // Récupérer les tickets liés à l'utilisateur (par exemple non terminés ou non lus)
+        List<TicketResponseDTO> tickets = ticketService.findByUtilisateurId(userId);
+            System.out.println("Nombre de tickets trouvés: " + tickets.size());
+
+
+        // Construire des notifications simples à partir des tickets
+        List<NotificationDTO> notifications = tickets.stream()
+                .map(t -> new NotificationDTO(
+                "Ticket #" + t.getId() + " : " + t.getTitre(),
+                "TICKET"
+        ))
+                .collect(Collectors.toList());
+
+        return notifications;
     }
 }

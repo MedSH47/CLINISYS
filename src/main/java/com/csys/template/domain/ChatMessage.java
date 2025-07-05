@@ -66,6 +66,8 @@ public class ChatMessage {
     protected void onCreate() {
         this.timestamp = LocalDateTime.now();
     }
+
+   
     
     
 }

@@ -85,7 +85,8 @@ spring:
   # Configuration de JPA et Hibernate
   # ===============================================================
   jpa:
-    database-platform: org.hibernate.dialect.SQLServer2012Dialect
+    database-platform: com.csys.template.config.CustomSQLServerDialect
+
     database: SQL_SERVER
     open-in-view: false
     show-sql: true # redondant avec logging.level mais ne nuit pas

@@ -2,7 +2,9 @@ package com.csys.template.service;
 
 import com.csys.template.domain.QTicket;
 import com.csys.template.domain.Ticket;
+import com.csys.template.domain.Utilisateur;
 import com.csys.template.domain.enum_identifier.Priorite;
+import com.csys.template.domain.enum_identifier.Role;
 import com.csys.template.domain.enum_identifier.Status;
 import com.csys.template.dtoProjection.*;
 import com.csys.template.dtoRequest.TicketRequestDTO;
@@ -18,11 +20,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,28 +39,27 @@ public class TicketService {
     private final Logger log = LoggerFactory.getLogger(TicketService.class);
     private final TicketRepository ticketRepository;
     private final JPAQueryFactory queryFactory; // Injection de JPAQueryFactory
+    private final SimpMessagingTemplate messagingTemplate; // <-- **2. DÉCLARATION DU CHAMP**
 
     // Le reste des dépendances pour les opérations d'écriture
     private final ModuleRepository moduleRepository;
     private final UtilisateurRepository utilisateurRepository;
 
     public TicketService(TicketRepository ticketRepository, JPAQueryFactory queryFactory,
-            ModuleRepository moduleRepository, UtilisateurRepository utilisateurRepository) {
+            ModuleRepository moduleRepository, UtilisateurRepository utilisateurRepository, SimpMessagingTemplate messagingTemplate) {
         this.ticketRepository = ticketRepository;
         this.queryFactory = queryFactory;
         this.moduleRepository = moduleRepository;
         this.utilisateurRepository = utilisateurRepository;
+        this.messagingTemplate = messagingTemplate;
     }
-
-    // --- Les méthodes d'écriture (save, update, delete) restent majoritairement
-    // les mêmes ---
-    // Elles contiennent une logique métier qui ne peut pas être simplifiée par des
-    // requêtes.
 
     public TicketResponseDTO save(TicketRequestDTO ticketRequestDTO) {
         log.debug("Request to save Ticket: {}", ticketRequestDTO);
         Ticket ticket = TicketFactory.toEntity(ticketRequestDTO);
         ticket = ticketRepository.save(ticket);
+        sendTargetedNotification(ticket, "TICKET_CREATED", "Nouveau ticket créé : #" + ticket.getId());
+
         return TicketFactory.toResponseDTO(ticket);
     }
 
@@ -65,6 +70,8 @@ public class TicketService {
         // La logique métier de notification, etc. est préservée
         TicketFactory.updateFromDTO(existingTicket, ticketRequestDTO);
         ticketRepository.save(existingTicket);
+        sendTargetedNotification(existingTicket, "TICKET_UPDATED", "Le ticket #" + ticketId + " a été mis à jour.");
+
         return TicketFactory.toResponseDTO(existingTicket);
     }
 
@@ -77,11 +84,27 @@ public class TicketService {
                     .body("Le ticket ne peut être supprimé car il a des dépendances.");
         }
         ticketRepository.deleteById(id);
+        sendTargetedNotification(ticket, "TICKET_DELETED", "Le ticket #" + id + " a été supprimé.");
+
         return ResponseEntity.ok().build();
     }
 
-    // --- Méthodes de lecture refactorisées ---
+    private void sendTargetedNotification(Ticket ticket, String type, String message) {
+        NotificationDTO notification = new NotificationDTO(message, type);
+        Set<Utilisateur> recipients = new HashSet<>();
+        if (ticket.getIdUtilisateur() != null) {
+            recipients.add(ticket.getIdUtilisateur());
+        }
+        if (ticket.getModule() != null && ticket.getModule().getEquipe() != null && ticket.getModule().getEquipe().getChefEquipe() != null) {
+            recipients.add(ticket.getModule().getEquipe().getChefEquipe());
+        }
+        List<Utilisateur> admins = utilisateurRepository.findByRole(Role.A);
+        recipients.addAll(admins);
+        log.info("Sending targeted notifications to {} recipients for ticket #{}", recipients.size(), ticket.getId());
+        recipients.forEach(user -> messagingTemplate.convertAndSendToUser(user.getLogin(), "/queue/notifications", notification));
+    }
 
+    // --- Méthodes de lecture refactorisées ---
     @Transactional(readOnly = true)
     public TicketResponseDTO findOne(Integer id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
@@ -89,9 +112,9 @@ public class TicketService {
     }
 
     /**
-     * REFACTORISÉ : Utilise QueryDSL (BooleanBuilder) pour un filtrage dynamique et
-     * propre.
-     * AVANT : Utilisait un WhereClauseBuilder personnalisé.
+     * REFACTORISÉ : Utilise QueryDSL (BooleanBuilder) pour un filtrage
+     * dynamique et propre. AVANT : Utilisait un WhereClauseBuilder
+     * personnalisé.
      */
     @Transactional(readOnly = true)
     public List<TicketResponseDTO> findAll(Status statue, Integer idModule, Priorite priorite, Boolean[] actifs) {
@@ -117,9 +140,8 @@ public class TicketService {
     }
 
     /**
-     * REFACTORISÉ : Le filtre se fait maintenant dans la base de données.
-     * AVANT : Récupérait TOUS les tickets puis filtrait en mémoire. Très
-     * inefficace.
+     * REFACTORISÉ : Le filtre se fait maintenant dans la base de données. AVANT
+     * : Récupérait TOUS les tickets puis filtrait en mémoire. Très inefficace.
      */
     @Transactional(readOnly = true)
     public List<TicketResponseDTO> findAllParents() {
@@ -130,9 +152,8 @@ public class TicketService {
 
     /**
      * REFACTORISÉ : Utilise une requête d'agrégation SQL (via QueryDSL) et une
-     * projection DTO.
-     * AVANT : Récupérait TOUS les tickets, puis utilisait un stream pour grouper en
-     * mémoire.
+     * projection DTO. AVANT : Récupérait TOUS les tickets, puis utilisait un
+     * stream pour grouper en mémoire.
      */
     @Transactional(readOnly = true)
     public List<StatusCountDTO> getCountsByStatus() {
@@ -148,10 +169,9 @@ public class TicketService {
     }
 
     /**
-     * REFACTORISÉ : Utilise une projection DTO pour ne sélectionner que les champs
-     * nécessaires.
-     * AVANT : Récupérait les entités Ticket complètes, puis mappait manuellement
-     * vers une Map.
+     * REFACTORISÉ : Utilise une projection DTO pour ne sélectionner que les
+     * champs nécessaires. AVANT : Récupérait les entités Ticket complètes, puis
+     * mappait manuellement vers une Map.
      */
     @Transactional(readOnly = true)
     public List<TicketCalendarEventDTO> getCalendarEvents() {
@@ -172,9 +192,8 @@ public class TicketService {
 
     /**
      * REFACTORISÉ : Utilise des requêtes de comptage ciblées, beaucoup plus
-     * rapides.
-     * AVANT : Récupérait TOUS les tickets puis les parcourait plusieurs fois en
-     * mémoire.
+     * rapides. AVANT : Récupérait TOUS les tickets puis les parcourait
+     * plusieurs fois en mémoire.
      */
     @Transactional(readOnly = true)
     public GlobalTicketCountDTO getGlobalTicketCounts() {
@@ -201,8 +220,8 @@ public class TicketService {
     }
 
     /**
-     * REFACTORISÉ : Le groupement est fait par la base de données.
-     * AVANT : Récupérait tous les tickets actifs puis groupait en mémoire.
+     * REFACTORISÉ : Le groupement est fait par la base de données. AVANT :
+     * Récupérait tous les tickets actifs puis groupait en mémoire.
      */
     @Transactional(readOnly = true)
     public List<ActiveTicketCountDTO> getActiveTicketsByAssigneeOrModule(String groupBy) {
@@ -237,50 +256,45 @@ public class TicketService {
     }
 
     /**
-     * REFACTORISÉ : Filtrage par date et groupement faits par la BDD.
-     * AVANT : Filtrait et groupait tout en mémoire.
+     * REFACTORISÉ : Filtrage par date et groupement faits par la BDD. AVANT :
+     * Filtrait et groupait tout en mémoire.
      */
-    @Transactional(readOnly = true)
-    public List<PerformanceStatDTO> getPerformanceStats(String groupBy, String period) {
-        log.debug("Request to get performance stats by {} for period: {}", groupBy, period);
-        QTicket ticket = QTicket.ticket;
-
-        LocalDateTime startDate = "last_7_days".equalsIgnoreCase(period)
-                ? LocalDateTime.now().minusDays(7).with(LocalTime.MIN)
-                : LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN);
-
-        BooleanBuilder predicate = new BooleanBuilder(ticket.statue.eq(Status.Termine)
-                .and(ticket.dateCloture.isNotNull())
-                .and(ticket.dateCloture.goe(startDate)));
-
-        if ("employee".equalsIgnoreCase(groupBy)) {
-            return queryFactory
-                    .select(Projections.constructor(PerformanceStatDTO.class,
-                            ticket.idUtilisateur.nom.concat(" ").concat(ticket.idUtilisateur.prenom),
-                            ticket.id.count()))
-                    .from(ticket)
-                    .where(predicate.and(ticket.idUtilisateur.isNotNull()))
-                    .groupBy(ticket.idUtilisateur.nom, ticket.idUtilisateur.prenom)
-                    .orderBy(ticket.id.count().desc())
-                    .fetch();
-        } else if ("team".equalsIgnoreCase(groupBy)) {
-            return queryFactory
-                    .select(Projections.constructor(PerformanceStatDTO.class,
-                            ticket.module.equipe.designation,
-                            ticket.id.count()))
-                    .from(ticket)
-                    .where(predicate.and(ticket.module.isNotNull()).and(ticket.module.equipe.isNotNull()))
-                    .groupBy(ticket.module.equipe.designation)
-                    .orderBy(ticket.id.count().desc())
-                    .fetch();
-        } else {
-            throw new IllegalArgumentException("Invalid groupBy parameter. Must be 'employee' or 'team'.");
-        }
-    }
-
+    // @Transactional(readOnly = true)
+    // public List<PerformanceStatDTO> getPerformanceStats(String groupBy, String period) {
+    //     log.debug("Request to get performance stats by {} for period: {}", groupBy, period);
+    //     QTicket ticket = QTicket.ticket;
+    //     LocalDateTime startDate = "last_7_days".equalsIgnoreCase(period)
+    //             ? LocalDateTime.now().minusDays(7).with(LocalTime.MIN)
+    //             : LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN);
+    //     BooleanBuilder predicate = new BooleanBuilder(ticket.statue.eq(Status.Termine)
+    //             .and(ticket.dateCloture.isNotNull())
+    //             .and(ticket.dateCloture.goe(startDate)));
+    //     if ("employee".equalsIgnoreCase(groupBy)) {
+    //         return queryFactory
+    //                 .select(Projections.constructor(PerformanceStatDTO.class,
+    //                         ticket.idUtilisateur.nom.concat(" ").concat(ticket.idUtilisateur.prenom),
+    //                         ticket.id.count()))
+    //                 .from(ticket)
+    //                 .where(predicate.and(ticket.idUtilisateur.isNotNull()))
+    //                 .groupBy(ticket.idUtilisateur.nom, ticket.idUtilisateur.prenom)
+    //                 .orderBy(ticket.id.count().desc())
+    //                 .fetch();
+    //     } else if ("team".equalsIgnoreCase(groupBy)) {
+    //         return queryFactory
+    //                 .select(Projections.constructor(PerformanceStatDTO.class,
+    //                         ticket.module.equipe.designation,
+    //                         ticket.id.count()))
+    //                 .from(ticket)
+    //                 .where(predicate.and(ticket.module.isNotNull()).and(ticket.module.equipe.isNotNull()))
+    //                 .groupBy(ticket.module.equipe.designation)
+    //                 .orderBy(ticket.id.count().desc())
+    //                 .fetch();
+    //     } else {
+    //         throw new IllegalArgumentException("Invalid groupBy parameter. Must be 'employee' or 'team'.");
+    //     }
+    // }
     /**
-     * REFACTORISÉ : Filtrage en BDD.
-     * AVANT : Filtrait en mémoire.
+     * REFACTORISÉ : Filtrage en BDD. AVANT : Filtrait en mémoire.
      */
     @Transactional(readOnly = true)
     public List<TicketResponseDTO> getOverdueTickets() {

@@ -112,7 +112,7 @@ public class UtilisateurService {
     }
     List<Utilisateur> result = (List<Utilisateur>) utilisateurRepository.findAll(builder);
     return UtilisateurFactory.toResponseDTOs(result);
-  }
+  } 
 
   public void delete(Integer id) {
     log.debug("Request to delete Utilisateur: {}", id);
