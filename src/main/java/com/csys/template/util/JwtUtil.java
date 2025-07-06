@@ -6,7 +6,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.java.Log;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority; // Import nécessaire
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -103,5 +106,22 @@ public class JwtUtil {
     
     public Boolean validateToken(String token) {
         return !isTokenExpired(token);
+    }
+
+       public Authentication getAuthentication(String token) {
+        Claims claims = extractAllClaims(token);
+        String username = claims.getSubject();
+        
+        // Extrait la liste des rôles depuis les claims.
+        @SuppressWarnings("unchecked") // L'avertissement est normal ici
+        List<String> roles = claims.get("roles", List.class);
+        
+        // Transforme la liste de String en une collection de GrantedAuthority.
+        List<GrantedAuthority> authorities = roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+        
+        // Crée l'objet Authentication que Spring Security utilisera.
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
 }
