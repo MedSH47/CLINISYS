@@ -30,41 +30,46 @@ import org.springframework.web.multipart.MultipartFile;
 public class ChatMessageService {
 
     private static final Logger log = LoggerFactory.getLogger(ChatMessageService.class);
-    
+
     private final ChatMessageRepository chatMessageRepository;
     private final UtilisateurRepository utilisateurRepository;
     private final SimpMessageSendingOperations messagingTemplate;
 
     @Autowired
-    public ChatMessageService(ChatMessageRepository chatMessageRepository, 
-                              UtilisateurRepository utilisateurRepository, 
-                              SimpMessageSendingOperations messagingTemplate) {
+    public ChatMessageService(ChatMessageRepository chatMessageRepository,
+            UtilisateurRepository utilisateurRepository,
+            SimpMessageSendingOperations messagingTemplate) {
         this.chatMessageRepository = chatMessageRepository;
         this.utilisateurRepository = utilisateurRepository;
         this.messagingTemplate = messagingTemplate;
     }
 
     /**
-     * Traite et sauvegarde un message texte privé, puis le diffuse aux participants.
+     * Traite et sauvegarde un message texte privé, puis le diffuse aux
+     * participants.
+     * 
      * @param messagePayload Le message reçu du client WebSocket.
-     * @param principal L'objet représentant l'utilisateur authentifié (l'expéditeur).
+     * @param principal      L'objet représentant l'utilisateur authentifié
+     *                       (l'expéditeur).
      * @return Le message sauvegardé et enrichi avec les détails des utilisateurs.
      */
     public ChatMessage processAndSavePrivateMessage(ChatMessage messagePayload, Principal principal) {
-        log.info("SERVICE: Traitement du message texte de {} vers l'utilisateur ID {}", principal.getName(), messagePayload.getReceiver());
+        log.info("SERVICE: Traitement du message texte de {} vers l'utilisateur ID {}", principal.getName(),
+                messagePayload.getReceiver());
 
         Utilisateur senderUser = utilisateurRepository.findByLogin(principal.getName());
         if (senderUser == null) {
             throw new IllegalArgumentException("L'utilisateur expéditeur n'existe pas : " + principal.getName());
         }
-        
+
         Utilisateur receiverUser = utilisateurRepository.findById(messagePayload.getReceiver())
-                .orElseThrow(() -> new IllegalArgumentException("Le destinataire avec l'ID " + messagePayload.getReceiver() + " n'existe pas."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Le destinataire avec l'ID " + messagePayload.getReceiver() + " n'existe pas."));
 
         messagePayload.setSender(senderUser.getId());
-        
+
         ChatMessage savedMessage = chatMessageRepository.save(messagePayload);
-        
+
         // Enrichir pour la notification WebSocket
         savedMessage.setSenderDetails(UtilisateurFactory.toDTOLight(senderUser));
         savedMessage.setReceiverDetails(UtilisateurFactory.toDTOLight(receiverUser));
@@ -72,14 +77,51 @@ public class ChatMessageService {
         // Notifier l'expéditeur et le destinataire
         messagingTemplate.convertAndSendToUser(senderUser.getLogin(), "/queue/private", savedMessage);
         messagingTemplate.convertAndSendToUser(receiverUser.getLogin(), "/queue/private", savedMessage);
-        
+
         return savedMessage;
     }
-    
+
+    @Transactional
+    public void deleteMessage(Integer messageId, Principal principal) {
+        log.debug("Requête pour supprimer le message ID: {} par l'utilisateur: {}", messageId, principal.getName());
+
+        // Récupère le message à supprimer
+        ChatMessage message = chatMessageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message non trouvé avec l'ID: " + messageId));
+
+        // Récupère l'utilisateur qui fait la demande
+        Utilisateur requestingUser = utilisateurRepository.findByLogin(principal.getName());
+
+        // ✅ Vérification de sécurité cruciale : seul l'expéditeur peut supprimer son
+        // propre message.
+        if (!message.getSender().equals(requestingUser.getId())) {
+            throw new SecurityException("Action non autorisée : vous ne pouvez pas supprimer les messages des autres.");
+        }
+
+        // Récupère le destinataire avant de supprimer le message
+        Utilisateur receiverUser = utilisateurRepository.findById(message.getReceiver()).orElse(null);
+
+        // Suppression du message de la base de données
+        chatMessageRepository.deleteById(messageId);
+
+        // Prépare un message de suppression pour le WebSocket
+        ChatMessage deleteNotification = new ChatMessage();
+        deleteNotification.setId(messageId); // L'ID du message supprimé
+        deleteNotification.setType(MessageType.DELETE);
+
+        // Notifie l'expéditeur et le destinataire que le message a été supprimé
+        messagingTemplate.convertAndSendToUser(requestingUser.getLogin(), "/queue/private", deleteNotification);
+        if (receiverUser != null) {
+            messagingTemplate.convertAndSendToUser(receiverUser.getLogin(), "/queue/private", deleteNotification);
+        }
+    }
+
     /**
-     * Sauvegarde un message contenant un fichier et notifie les participants via WebSocket.
-     * @param file Le fichier uploadé.
-     * @param senderId L'ID de l'expéditeur.
+     * Sauvegarde un message contenant un fichier et notifie les participants via
+     * WebSocket.
+     * 
+     * @param file       Le fichier uploadé.
+     * @param senderId   L'ID de l'expéditeur.
      * @param receiverId L'ID du destinataire.
      */
     public void saveAndSendFileMessage(MultipartFile file, Integer senderId, Integer receiverId) throws IOException {
@@ -88,8 +130,9 @@ public class ChatMessageService {
         Utilisateur receiverUser = utilisateurRepository.findById(receiverId)
                 .orElseThrow(() -> new IllegalArgumentException("Destinataire non trouvé avec l'ID: " + receiverId));
 
-        String messageTypeName = file.getContentType() != null && file.getContentType().startsWith("image/") ? "IMAGE" : "FILE";
-        
+        String messageTypeName = file.getContentType() != null && file.getContentType().startsWith("image/") ? "IMAGE"
+                : "FILE";
+
         ChatMessage chatMessage = ChatMessage.builder()
                 .sender(senderId)
                 .receiver(receiverId)
@@ -99,22 +142,24 @@ public class ChatMessageService {
                 .fileType(file.getContentType())
                 .fileContent(file.getBytes()) // Stocke le contenu binaire du fichier
                 .build();
-        
+
         ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
-        
+
         // Enrichir pour la notification WebSocket (sans le contenu binaire lourd)
         savedMessage.setSenderDetails(UtilisateurFactory.toDTOLight(senderUser));
         savedMessage.setReceiverDetails(UtilisateurFactory.toDTOLight(receiverUser));
-        
+
         // Notifier l'expéditeur et le destinataire
         messagingTemplate.convertAndSendToUser(senderUser.getLogin(), "/queue/private", savedMessage);
         messagingTemplate.convertAndSendToUser(receiverUser.getLogin(), "/queue/private", savedMessage);
-        
-        log.info("Message fichier #{} de {} à {} a été sauvegardé et notifié.", savedMessage.getId(), senderUser.getLogin(), receiverUser.getLogin());
+
+        log.info("Message fichier #{} de {} à {} a été sauvegardé et notifié.", savedMessage.getId(),
+                senderUser.getLogin(), receiverUser.getLogin());
     }
 
     /**
      * Récupère le contenu binaire d'un message spécifique.
+     * 
      * @param messageId L'ID du message contenant le fichier.
      * @return L'entité ChatMessage complète, incluant le `fileContent`.
      */
@@ -127,39 +172,46 @@ public class ChatMessageService {
 
     /**
      * Récupère l'historique de chat entre deux utilisateurs.
+     * 
      * @param user1 L'ID du premier utilisateur.
      * @param user2 L'ID du second utilisateur.
-     * @return Une liste de messages enrichis avec les détails de l'expéditeur/destinataire.
+     * @return Une liste de messages enrichis avec les détails de
+     *         l'expéditeur/destinataire.
      */
     @Transactional(readOnly = true)
     public List<ChatMessage> findByParticipants(Integer user1, Integer user2) {
-        List<ChatMessage> messages = chatMessageRepository.findBySenderAndReceiverOrReceiverAndSenderOrderByTimestampAsc(user1, user2, user1, user2);
-        
+        List<ChatMessage> messages = chatMessageRepository
+                .findBySenderAndReceiverOrReceiverAndSenderOrderByTimestampAsc(user1, user2, user1, user2);
+
         // Enrichissement des messages
         messages.forEach(msg -> {
-             utilisateurRepository.findById(msg.getSender()).ifPresent(user -> msg.setSenderDetails(UtilisateurFactory.toDTOLight(user)));
-             utilisateurRepository.findById(msg.getReceiver()).ifPresent(user -> msg.setReceiverDetails(UtilisateurFactory.toDTOLight(user)));
+            utilisateurRepository.findById(msg.getSender())
+                    .ifPresent(user -> msg.setSenderDetails(UtilisateurFactory.toDTOLight(user)));
+            utilisateurRepository.findById(msg.getReceiver())
+                    .ifPresent(user -> msg.setReceiverDetails(UtilisateurFactory.toDTOLight(user)));
         });
         return messages;
     }
 
     /**
      * Récupère les dernières conversations pour un utilisateur donné.
+     * 
      * @param userId L'ID de l'utilisateur.
-     * @return Une liste de DTOs représentant chaque contact et le dernier message échangé.
+     * @return Une liste de DTOs représentant chaque contact et le dernier message
+     *         échangé.
      */
     @Transactional(readOnly = true)
     public List<ChatContactDTO> findMyChatMessages(Integer userId) {
         List<ChatMessage> latestMessages = chatMessageRepository.findLatestMessageFromEachConversation(userId);
-        
+
         return latestMessages.stream()
-            .map(msg -> {
-                Integer partnerId = msg.getSender().equals(userId) ? msg.getReceiver() : msg.getSender();
-                return utilisateurRepository.findById(partnerId)
-                        .map(partnerUser -> new ChatContactDTO(UtilisateurFactory.toDTOLight(partnerUser), msg))
-                        .orElse(null);
-            })
-            .filter(contact -> contact != null)
-            .collect(Collectors.toList());
+                .map(msg -> {
+                    Integer partnerId = msg.getSender().equals(userId) ? msg.getReceiver() : msg.getSender();
+                    return utilisateurRepository.findById(partnerId)
+                            .map(partnerUser -> new ChatContactDTO(UtilisateurFactory.toDTOLight(partnerUser), msg))
+                            .orElse(null);
+                })
+                .filter(contact -> contact != null)
+                .collect(Collectors.toList());
     }
 }
