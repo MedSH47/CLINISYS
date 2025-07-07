@@ -71,18 +71,44 @@ public class TicketService {
         log.debug("Request to update Ticket: {}", ticketId);
         Ticket existingTicket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
-        // La logique métier de notification, etc. est préservée
-        if (ticketRequestDTO.getIdUtilisateur()!=null && ticketRequestDTO.getIdUtilisateur() != 0) {
-            String message = "Le ticket #" + ticketId + " a été assigné à " + ticketRequestDTO.getIdUtilisateur();
-            String link = "/tickets/" + ticketId; // Un lien direct vers le ticket
-            Utilisateur user = utilisateurRepository.findById(ticketRequestDTO.getIdUtilisateur()).orElse(null);
-            notificationService.createAndSendNotification(user, message, link);
-        }
-        TicketFactory.updateFromDTO(existingTicket, ticketRequestDTO);
-        ticketRepository.save(existingTicket);
-        sendTargetedNotification(existingTicket, "TICKET_UPDATED", "Le ticket #" + ticketId + " a été mis à jour.");
 
-        return TicketFactory.toResponseDTO(existingTicket);
+        // Keep track of the old assigned user and status
+        Integer oldUserId = existingTicket.getIdUtilisateur() != null ? existingTicket.getIdUtilisateur().getId() : null;
+        Status oldStatus = existingTicket.getStatue();
+
+        // Update the ticket entity
+        TicketFactory.updateFromDTO(existingTicket, ticketRequestDTO);
+        Ticket updatedTicket = ticketRepository.save(existingTicket);
+
+        // 1. Notification for ticket assignment
+        if (ticketRequestDTO.getIdUtilisateur() != null && !ticketRequestDTO.getIdUtilisateur().equals(oldUserId)) {
+            Utilisateur assignedUser = utilisateurRepository.findById(ticketRequestDTO.getIdUtilisateur()).orElse(null);
+            if (assignedUser != null) {
+                String message = "Le ticket #" + ticketId + " vous a été assigné.";
+                String link = "/tickets/" + ticketId;
+                notificationService.createAndSendNotification(assignedUser, message, link);
+            }
+        }
+
+        // 2. Notification for admins on status change
+        Status newStatus = updatedTicket.getStatue();
+        if (newStatus != oldStatus) {
+            if (newStatus == Status.Termine) {
+                List<Utilisateur> admins = utilisateurRepository.findByRole(Role.A);
+                String message = "Le ticket #" + ticketId + " a été terminé.";
+                String link = "/tickets/" + ticketId;
+                notificationService.createAndSendNotificationToUsers(admins, message, link);
+            } else if (newStatus == Status.Refuse) {
+                List<Utilisateur> admins = utilisateurRepository.findByRole(Role.A);
+                String message = "Le ticket #" + ticketId + " a été refusé.";
+                String link = "/tickets/" + ticketId;
+                notificationService.createAndSendNotificationToUsers(admins, message, link);
+            }
+        }
+        
+        sendTargetedNotification(updatedTicket, "TICKET_UPDATED", "Le ticket #" + ticketId + " a été mis à jour.");
+
+        return TicketFactory.toResponseDTO(updatedTicket);
     }
 
     public ResponseEntity<?> delete(Integer id) {
