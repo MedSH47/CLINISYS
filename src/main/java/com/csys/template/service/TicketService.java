@@ -40,18 +40,22 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final JPAQueryFactory queryFactory; // Injection de JPAQueryFactory
     private final SimpMessagingTemplate messagingTemplate; // <-- **2. DÉCLARATION DU CHAMP**
+    private final NotificationService notificationService;
+    
 
     // Le reste des dépendances pour les opérations d'écriture
     private final ModuleRepository moduleRepository;
     private final UtilisateurRepository utilisateurRepository;
 
     public TicketService(TicketRepository ticketRepository, JPAQueryFactory queryFactory,
-            ModuleRepository moduleRepository, UtilisateurRepository utilisateurRepository, SimpMessagingTemplate messagingTemplate) {
+            ModuleRepository moduleRepository, UtilisateurRepository utilisateurRepository,
+             SimpMessagingTemplate messagingTemplate,NotificationService notificationService) {
         this.ticketRepository = ticketRepository;
         this.queryFactory = queryFactory;
         this.moduleRepository = moduleRepository;
         this.utilisateurRepository = utilisateurRepository;
         this.messagingTemplate = messagingTemplate;
+        this.notificationService = notificationService;
     }
 
     public TicketResponseDTO save(TicketRequestDTO ticketRequestDTO) {
@@ -68,6 +72,12 @@ public class TicketService {
         Ticket existingTicket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
         // La logique métier de notification, etc. est préservée
+        if (ticketRequestDTO.getIdUtilisateur()!=null) {
+            String message = "Le ticket #" + ticketId + " a été assigné à " + ticketRequestDTO.getIdUtilisateur();
+            String link = "/tickets/" + ticketId; // Un lien direct vers le ticket
+            Utilisateur user = utilisateurRepository.findById(ticketRequestDTO.getIdUtilisateur()).orElse(null);
+            notificationService.createAndSendNotification(user, message, link);
+        }
         TicketFactory.updateFromDTO(existingTicket, ticketRequestDTO);
         ticketRepository.save(existingTicket);
         sendTargetedNotification(existingTicket, "TICKET_UPDATED", "Le ticket #" + ticketId + " a été mis à jour.");

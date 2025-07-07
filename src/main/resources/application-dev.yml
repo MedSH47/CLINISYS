@@ -92,6 +92,7 @@ spring:
     show-sql: true # redondant avec logging.level mais ne nuit pas
     hibernate:
       # IMPORTANT : 'update' va créer ou mettre à jour les tables d'audit automatiquement
+      ddl-auto: update
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

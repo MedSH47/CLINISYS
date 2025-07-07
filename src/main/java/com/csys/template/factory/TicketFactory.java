@@ -13,9 +13,18 @@ import com.csys.template.domain.Utilisateur;
 import com.csys.template.domain.enum_identifier.Status;
 import com.csys.template.dtoRequest.TicketRequestDTO;
 import com.csys.template.dtoResponse.TicketResponseDTO;
+import com.csys.template.service.NotificationService;
 import com.csys.template.util.Helper;
 
+import liquibase.pro.packaged.au;
+
 public class TicketFactory {
+    private final NotificationService notificationService;
+
+    public TicketFactory(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
+
 
     public static List<TicketResponseDTO> toResponseDTOsParents(Collection<Ticket> tickets) {
         if (tickets == null) {
@@ -41,6 +50,7 @@ public class TicketFactory {
         dto.setUserCreation(ticket.getUserCreation());
         dto.setActif(ticket.getActif());
         dto.setPriorite(ticket.getPriorite());
+        dto.setParentTicket(ticket.getParentTicket() != null ? TicketFactory.toDTOLight(ticket.getParentTicket()) : null);
         dto.setStatue(ticket.getStatue());
         dto.setDate_echeance(ticket.getDate_echeance());
         dto.setDateCloture(ticket.getDateCloture());
@@ -62,7 +72,9 @@ public class TicketFactory {
             return null;
         TicketResponseDTO dto = new TicketResponseDTO();
         dto.setActif(ticket.getActif());
+        dto.setParentTicket(TicketFactory.toDTOLight( ticket.getParentTicket()));
         dto.setId(ticket.getId());
+        dto.setIdClient(ClientFactory.toDTOLight(ticket.getIdClient()));
         dto.setTitre(ticket.getTitre());
         dto.setDebutTraitement(ticket.getDebutTraitement());
         dto.setStatue(ticket.getStatue());
