@@ -11,6 +11,7 @@ import org.hibernate.envers.Audited;
 
 import com.csys.template.domain.enum_identifier.Role;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.*;
@@ -78,7 +79,6 @@ public class Utilisateur implements Serializable {
 
     @Column(name = "activite")
     private Boolean actif;
-
     @OneToMany(mappedBy = "utilisateur", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EquipePosteutilisateur> equipePosteutilisateurList;
 

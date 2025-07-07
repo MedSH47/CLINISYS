@@ -72,7 +72,7 @@ public class TicketService {
         Ticket existingTicket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
         // La logique métier de notification, etc. est préservée
-        if (ticketRequestDTO.getIdUtilisateur()!=null) {
+        if (ticketRequestDTO.getIdUtilisateur()!=null && ticketRequestDTO.getIdUtilisateur() != 0) {
             String message = "Le ticket #" + ticketId + " a été assigné à " + ticketRequestDTO.getIdUtilisateur();
             String link = "/tickets/" + ticketId; // Un lien direct vers le ticket
             Utilisateur user = utilisateurRepository.findById(ticketRequestDTO.getIdUtilisateur()).orElse(null);
@@ -99,20 +99,46 @@ public class TicketService {
         return ResponseEntity.ok().build();
     }
 
-    private void sendTargetedNotification(Ticket ticket, String type, String message) {
-        NotificationDTO notification = new NotificationDTO(message, type);
-        Set<Utilisateur> recipients = new HashSet<>();
-        if (ticket.getIdUtilisateur() != null) {
-            recipients.add(ticket.getIdUtilisateur());
-        }
-        if (ticket.getModule() != null && ticket.getModule().getEquipe() != null && ticket.getModule().getEquipe().getChefEquipe() != null) {
-            recipients.add(ticket.getModule().getEquipe().getChefEquipe());
-        }
-        List<Utilisateur> admins = utilisateurRepository.findByRole(Role.A);
-        recipients.addAll(admins);
-        log.info("Sending targeted notifications to {} recipients for ticket #{}", recipients.size(), ticket.getId());
-        recipients.forEach(user -> messagingTemplate.convertAndSendToUser(user.getLogin(), "/queue/notifications", notification));
+   private void sendTargetedNotification(Ticket ticket, String type, String message) {
+    if (ticket == null) {
+        log.warn("Ticket null reçu pour notification ciblée.");
+        return;
     }
+
+    NotificationDTO notification = new NotificationDTO(ticket, message, type);
+    Set<String> sentToUsers = new HashSet<>(); // pour éviter les doublons de login
+    Set<Utilisateur> recipients = new HashSet<>();
+
+    if (ticket.getIdUtilisateur() != null) {
+        recipients.add(ticket.getIdUtilisateur());
+    }
+
+    if (ticket.getModule() != null && ticket.getModule().getEquipe() != null
+            && ticket.getModule().getEquipe().getChefEquipe() != null) {
+        recipients.add(ticket.getModule().getEquipe().getChefEquipe());
+    }
+
+    List<Utilisateur> admins = utilisateurRepository.findByRole(Role.A);
+    recipients.addAll(admins);
+
+    log.info("Sending targeted notifications to {} recipients for ticket #{}", recipients.size(), ticket.getId());
+
+    for (Utilisateur user : recipients) {
+        if (user != null && user.getLogin() != null && !user.getLogin().isBlank()) {
+            if (sentToUsers.add(user.getLogin())) {
+                try {
+                    messagingTemplate.convertAndSendToUser(user.getLogin(), "/queue/notifications", notification);
+                    log.debug("Notification envoyée à {}", user.getLogin());
+                } catch (Exception e) {
+                    log.error("Erreur d'envoi de notification à {} : {}", user.getLogin(), e.getMessage(), e);
+                }
+            }
+        } else {
+            log.warn("Utilisateur null ou login absent : notification ignorée.");
+        }
+    }
+}
+
 
     // --- Méthodes de lecture refactorisées ---
     @Transactional(readOnly = true)

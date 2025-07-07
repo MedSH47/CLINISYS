@@ -2,6 +2,7 @@ package com.csys.template.service;
 
 import com.csys.template.domain.Notification;
 import com.csys.template.domain.Utilisateur;
+import com.csys.template.dtoProjection.NotificationDTO;
 import com.csys.template.repository.NotificationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -35,27 +37,39 @@ public class NotificationService {
      * @param link    Un lien optionnel (ex: /tickets/123).
      */
     public void createAndSendNotification(Utilisateur user, String message, String link) {
-        if (user == null) {
-            log.error("Tentative de création d'une notification pour un utilisateur null.");
-            return;
-        }
-
-        // 1. Créer et sauvegarder l'entité notification
-        Notification notification = new Notification();
-        notification.setUtilisateur(user);
-        notification.setMessage(message);
-        notification.setLink(link);
-        notification.setRead(false);
-        Notification savedNotification = notificationRepository.save(notification);
-        log.info("Notification sauvegardée avec l'ID {}", savedNotification.getId());
-
-        // 2. Pousser la notification en temps réel via WebSocket
-        // La destination est privée à l'utilisateur, basée sur son login.
-        String destination = "/user/" + user.getLogin() + "/queue/notifications";
-        
-        log.info("Envoi de la notification en temps réel à la destination : {}", destination);
-        messagingTemplate.convertAndSend(destination, savedNotification);
+    if (user == null || user.getLogin() == null || user.getLogin().isBlank()) {
+        log.error("Tentative de création d'une notification pour un utilisateur avec login null ou vide.");
+        return;
     }
+
+    // 1. Créer et sauvegarder l'entité Notification
+    Notification notification = new Notification();
+    notification.setUtilisateur(user);
+    notification.setMessage(message);
+    notification.setLink(link);
+    notification.setCreatedAt(LocalDateTime.now()); // si tu as ce champ
+    notification.setRead(false);
+
+    Notification savedNotification = notificationRepository.save(notification);
+    log.info("Notification sauvegardée avec l'ID {}", savedNotification.getId());
+
+    // 2. Préparer la destination WebSocket sécurisée
+    String destination = "/user/" + user.getLogin() + "/queue/notifications";
+    log.info("Envoi de la notification en temps réel à la destination : {}", destination);
+
+    // 3. Utiliser un DTO pour éviter les erreurs de sérialisation
+    NotificationDTO dto = new NotificationDTO();
+    dto.setMessage(notification.getMessage());
+    dto.setLink(notification.getLink());
+    dto.setTimestamp(notification.getCreatedAt());
+
+    try {
+        messagingTemplate.convertAndSendToUser(user.getLogin(), "/queue/notifications", dto);
+    } catch (Exception e) {
+        log.error("Erreur lors de l'envoi de la notification WebSocket : ", e);
+    }
+}
+
 
     /**
      * Récupère toutes les notifications d'un utilisateur.
