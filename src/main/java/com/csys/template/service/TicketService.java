@@ -22,6 +22,7 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -38,12 +39,9 @@ public class TicketService {
 
     private final Logger log = LoggerFactory.getLogger(TicketService.class);
     private final TicketRepository ticketRepository;
-    private final JPAQueryFactory queryFactory; // Injection de JPAQueryFactory
-    private final SimpMessagingTemplate messagingTemplate; // <-- **2. DÉCLARATION DU CHAMP**
+    private final JPAQueryFactory queryFactory;
+    private final SimpMessagingTemplate messagingTemplate;
     private final NotificationService notificationService;
-    
-
-    // Le reste des dépendances pour les opérations d'écriture
     private final ModuleRepository moduleRepository;
     private final UtilisateurRepository utilisateurRepository;
 
@@ -62,6 +60,9 @@ public class TicketService {
         log.debug("Request to save Ticket: {}", ticketRequestDTO);
         Ticket ticket = TicketFactory.toEntity(ticketRequestDTO);
         ticket = ticketRepository.save(ticket);
+        
+        notifyTeamLeadOnModuleAssignment(ticket);
+
         sendTargetedNotification(ticket, "TICKET_CREATED", "Nouveau ticket créé : #" + ticket.getId());
 
         return TicketFactory.toResponseDTO(ticket);
@@ -72,49 +73,56 @@ public class TicketService {
         Ticket existingTicket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
 
-        // Keep track of the old assigned user and status
         Integer oldUserId = existingTicket.getIdUtilisateur() != null ? existingTicket.getIdUtilisateur().getId() : null;
+        Integer oldModuleId = existingTicket.getModule() != null ? existingTicket.getModule().getId() : null;
         Status oldStatus = existingTicket.getStatue();
 
-        // Update the ticket entity
         TicketFactory.updateFromDTO(existingTicket, ticketRequestDTO);
         Ticket updatedTicket = ticketRepository.save(existingTicket);
 
-        // 1. Notification for ticket assignment
         if (ticketRequestDTO.getIdUtilisateur() != null && !ticketRequestDTO.getIdUtilisateur().equals(oldUserId)) {
             Utilisateur assignedUser = utilisateurRepository.findById(ticketRequestDTO.getIdUtilisateur()).orElse(null);
             if (assignedUser != null) {
-                String message = "Le ticket #" + ticketId + " vous a été assigné.";
-                String link = "/tickets/" + ticketId;
-                notificationService.createAndSendNotification(assignedUser, message, link);
+                notificationService.createAndSendNotification(assignedUser, "Le ticket #" + ticketId + " vous a été assigné.", "/tickets/" + ticketId);
             }
         }
+        
+        Integer newModuleId = updatedTicket.getModule() != null ? updatedTicket.getModule().getId() : null;
+        if (!Objects.equals(oldModuleId, newModuleId)) {
+            notifyTeamLeadOnModuleAssignment(updatedTicket);
+        }
 
-        // 2. Notification for admins on status change
         Status newStatus = updatedTicket.getStatue();
         if (newStatus != oldStatus) {
             if (newStatus == Status.Termine) {
-                List<Utilisateur> admins = utilisateurRepository.findByRole(Role.A);
-                String message = "Le ticket #" + ticketId + " a été terminé.";
-                String link = "/tickets/" + ticketId;
-                notificationService.createAndSendNotificationToUsers(admins, message, link);
+                notificationService.createAndSendNotificationToUsers(utilisateurRepository.findByRole(Role.A), "Le ticket #" + ticketId + " a été terminé.", "/tickets/" + ticketId);
             } else if (newStatus == Status.Refuse) {
-                List<Utilisateur> admins = utilisateurRepository.findByRole(Role.A);
-                String message = "Le ticket #" + ticketId + " a été refusé.";
-                String link = "/tickets/" + ticketId;
-                notificationService.createAndSendNotificationToUsers(admins, message, link);
+                notificationService.createAndSendNotificationToUsers(utilisateurRepository.findByRole(Role.A), "Le ticket #" + ticketId + " a été refusé.", "/tickets/" + ticketId);
             }
         }
         
         sendTargetedNotification(updatedTicket, "TICKET_UPDATED", "Le ticket #" + ticketId + " a été mis à jour.");
-
         return TicketFactory.toResponseDTO(updatedTicket);
+    }
+
+    private void notifyTeamLeadOnModuleAssignment(Ticket ticket) {
+        if (ticket.getModule() != null && ticket.getModule().getId() != null) {
+            // ✅ CORRECTION APPLIQUÉE ICI
+            com.csys.template.domain.Module module = moduleRepository.findById(ticket.getModule().getId()).orElse(null);
+            
+            if (module != null && module.getEquipe() != null && module.getEquipe().getChefEquipe() != null) {
+                Utilisateur teamLead = module.getEquipe().getChefEquipe();
+                String message = String.format("Nouveau ticket #%d assigné au module '%s'.", ticket.getId(), module.getDesignation());
+                String link = "/tickets/" + ticket.getId();
+                notificationService.createAndSendNotification(teamLead, message, link);
+                log.info("Notification envoyée au chef d'équipe {} pour l'assignation du ticket #{} au module {}", teamLead.getLogin(), ticket.getId(), module.getDesignation());
+            }
+        }
     }
 
     public ResponseEntity<?> delete(Integer id) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
-        // La logique métier de vérification est préservée
         if (ticket.getModule() != null || ticket.getIdUtilisateur() != null || !ticket.getChildTickets().isEmpty()) {
             return ResponseEntity.status(HttpStatus.LOCKED)
                     .body("Le ticket ne peut être supprimé car il a des dépendances.");
@@ -126,58 +134,51 @@ public class TicketService {
     }
 
    private void sendTargetedNotification(Ticket ticket, String type, String message) {
-    if (ticket == null) {
-        log.warn("Ticket null reçu pour notification ciblée.");
-        return;
-    }
+        if (ticket == null) {
+            log.warn("Ticket null reçu pour notification ciblée.");
+            return;
+        }
 
-    NotificationDTO notification = new NotificationDTO(ticket, message, type);
-    Set<String> sentToUsers = new HashSet<>(); // pour éviter les doublons de login
-    Set<Utilisateur> recipients = new HashSet<>();
+        NotificationDTO notification = new NotificationDTO(ticket, message, type);
+        Set<String> sentToUsers = new HashSet<>(); 
+        Set<Utilisateur> recipients = new HashSet<>();
 
-    if (ticket.getIdUtilisateur() != null) {
-        recipients.add(ticket.getIdUtilisateur());
-    }
+        if (ticket.getIdUtilisateur() != null) {
+            recipients.add(ticket.getIdUtilisateur());
+        }
 
-    if (ticket.getModule() != null && ticket.getModule().getEquipe() != null
-            && ticket.getModule().getEquipe().getChefEquipe() != null) {
-        recipients.add(ticket.getModule().getEquipe().getChefEquipe());
-    }
+        if (ticket.getModule() != null && ticket.getModule().getEquipe() != null
+                && ticket.getModule().getEquipe().getChefEquipe() != null) {
+            recipients.add(ticket.getModule().getEquipe().getChefEquipe());
+        }
 
-    List<Utilisateur> admins = utilisateurRepository.findByRole(Role.A);
-    recipients.addAll(admins);
+        List<Utilisateur> admins = utilisateurRepository.findByRole(Role.A);
+        recipients.addAll(admins);
 
-    log.info("Sending targeted notifications to {} recipients for ticket #{}", recipients.size(), ticket.getId());
+        log.info("Sending targeted notifications to {} recipients for ticket #{}", recipients.size(), ticket.getId());
 
-    for (Utilisateur user : recipients) {
-        if (user != null && user.getLogin() != null && !user.getLogin().isBlank()) {
-            if (sentToUsers.add(user.getLogin())) {
-                try {
-                    messagingTemplate.convertAndSendToUser(user.getLogin(), "/queue/notifications", notification);
-                    log.debug("Notification envoyée à {}", user.getLogin());
-                } catch (Exception e) {
-                    log.error("Erreur d'envoi de notification à {} : {}", user.getLogin(), e.getMessage(), e);
+        for (Utilisateur user : recipients) {
+            if (user != null && user.getLogin() != null && !user.getLogin().isBlank()) {
+                if (sentToUsers.add(user.getLogin())) {
+                    try {
+                        messagingTemplate.convertAndSendToUser(user.getLogin(), "/queue/notifications", notification);
+                        log.debug("Notification envoyée à {}", user.getLogin());
+                    } catch (Exception e) {
+                        log.error("Erreur d'envoi de notification à {} : {}", user.getLogin(), e.getMessage(), e);
+                    }
                 }
+            } else {
+                log.warn("Utilisateur null ou login absent : notification ignorée.");
             }
-        } else {
-            log.warn("Utilisateur null ou login absent : notification ignorée.");
         }
     }
-}
 
-
-    // --- Méthodes de lecture refactorisées ---
     @Transactional(readOnly = true)
     public TicketResponseDTO findOne(Integer id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         return TicketFactory.toResponseDTO(ticket);
     }
 
-    /**
-     * REFACTORISÉ : Utilise QueryDSL (BooleanBuilder) pour un filtrage
-     * dynamique et propre. AVANT : Utilisait un WhereClauseBuilder
-     * personnalisé.
-     */
     @Transactional(readOnly = true)
     public List<TicketResponseDTO> findAll(Status statue, Integer idModule, Priorite priorite, Boolean[] actifs) {
         log.debug("Request to get All Tickets with filters");
@@ -201,10 +202,6 @@ public class TicketService {
         return TicketFactory.toResponseDTOs(result);
     }
 
-    /**
-     * REFACTORISÉ : Le filtre se fait maintenant dans la base de données. AVANT
-     * : Récupérait TOUS les tickets puis filtrait en mémoire. Très inefficace.
-     */
     @Transactional(readOnly = true)
     public List<TicketResponseDTO> findAllParents() {
         QTicket ticket = QTicket.ticket;
@@ -212,11 +209,6 @@ public class TicketService {
         return TicketFactory.toResponseDTOsParents(tickets);
     }
 
-    /**
-     * REFACTORISÉ : Utilise une requête d'agrégation SQL (via QueryDSL) et une
-     * projection DTO. AVANT : Récupérait TOUS les tickets, puis utilisait un
-     * stream pour grouper en mémoire.
-     */
     @Transactional(readOnly = true)
     public List<StatusCountDTO> getCountsByStatus() {
         log.debug("Request to get ticket counts by status");
@@ -230,11 +222,6 @@ public class TicketService {
                 .fetch();
     }
 
-    /**
-     * REFACTORISÉ : Utilise une projection DTO pour ne sélectionner que les
-     * champs nécessaires. AVANT : Récupérait les entités Ticket complètes, puis
-     * mappait manuellement vers une Map.
-     */
     @Transactional(readOnly = true)
     public List<TicketCalendarEventDTO> getCalendarEvents() {
         log.debug("Request to get calendar events from tickets");
@@ -252,11 +239,6 @@ public class TicketService {
                 .fetch();
     }
 
-    /**
-     * REFACTORISÉ : Utilise des requêtes de comptage ciblées, beaucoup plus
-     * rapides. AVANT : Récupérait TOUS les tickets puis les parcourait
-     * plusieurs fois en mémoire.
-     */
     @Transactional(readOnly = true)
     public GlobalTicketCountDTO getGlobalTicketCounts() {
         log.debug("Request to get global ticket counts");
@@ -281,10 +263,6 @@ public class TicketService {
                 terminesThisWeek);
     }
 
-    /**
-     * REFACTORISÉ : Le groupement est fait par la base de données. AVANT :
-     * Récupérait tous les tickets actifs puis groupait en mémoire.
-     */
     @Transactional(readOnly = true)
     public List<ActiveTicketCountDTO> getActiveTicketsByAssigneeOrModule(String groupBy) {
         log.debug("Request to get active tickets grouped by: {}", groupBy);
@@ -317,47 +295,6 @@ public class TicketService {
         }
     }
 
-    /**
-     * REFACTORISÉ : Filtrage par date et groupement faits par la BDD. AVANT :
-     * Filtrait et groupait tout en mémoire.
-     */
-    // @Transactional(readOnly = true)
-    // public List<PerformanceStatDTO> getPerformanceStats(String groupBy, String period) {
-    //     log.debug("Request to get performance stats by {} for period: {}", groupBy, period);
-    //     QTicket ticket = QTicket.ticket;
-    //     LocalDateTime startDate = "last_7_days".equalsIgnoreCase(period)
-    //             ? LocalDateTime.now().minusDays(7).with(LocalTime.MIN)
-    //             : LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN);
-    //     BooleanBuilder predicate = new BooleanBuilder(ticket.statue.eq(Status.Termine)
-    //             .and(ticket.dateCloture.isNotNull())
-    //             .and(ticket.dateCloture.goe(startDate)));
-    //     if ("employee".equalsIgnoreCase(groupBy)) {
-    //         return queryFactory
-    //                 .select(Projections.constructor(PerformanceStatDTO.class,
-    //                         ticket.idUtilisateur.nom.concat(" ").concat(ticket.idUtilisateur.prenom),
-    //                         ticket.id.count()))
-    //                 .from(ticket)
-    //                 .where(predicate.and(ticket.idUtilisateur.isNotNull()))
-    //                 .groupBy(ticket.idUtilisateur.nom, ticket.idUtilisateur.prenom)
-    //                 .orderBy(ticket.id.count().desc())
-    //                 .fetch();
-    //     } else if ("team".equalsIgnoreCase(groupBy)) {
-    //         return queryFactory
-    //                 .select(Projections.constructor(PerformanceStatDTO.class,
-    //                         ticket.module.equipe.designation,
-    //                         ticket.id.count()))
-    //                 .from(ticket)
-    //                 .where(predicate.and(ticket.module.isNotNull()).and(ticket.module.equipe.isNotNull()))
-    //                 .groupBy(ticket.module.equipe.designation)
-    //                 .orderBy(ticket.id.count().desc())
-    //                 .fetch();
-    //     } else {
-    //         throw new IllegalArgumentException("Invalid groupBy parameter. Must be 'employee' or 'team'.");
-    //     }
-    // }
-    /**
-     * REFACTORISÉ : Filtrage en BDD. AVANT : Filtrait en mémoire.
-     */
     @Transactional(readOnly = true)
     public List<TicketResponseDTO> getOverdueTickets() {
         log.debug("Request to get overdue tickets");
@@ -374,13 +311,7 @@ public class TicketService {
     public List<TicketResponseDTO> findByUtilisateurId(Integer userId) {
         log.debug("Request to get all Tickets for user ID: {}", userId);
         QTicket ticket = QTicket.ticket;
-        // Utilise QueryDSL pour trouver tous les tickets où l'ID de l'utilisateur
-        // correspond.
         List<Ticket> tickets = (List<Ticket>) ticketRepository.findAll(ticket.idUtilisateur.id.eq(userId));
-
-        // Utilise la factory "complète" car le point d'entrée est le ticket, pas
-        // l'utilisateur.
-        // Il n'y a donc aucun risque de boucle de récursion.
         return TicketFactory.toResponseDTOs(tickets);
     }
 }
