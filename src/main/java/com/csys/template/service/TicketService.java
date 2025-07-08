@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class TicketService {
 
     public TicketService(TicketRepository ticketRepository, JPAQueryFactory queryFactory,
             ModuleRepository moduleRepository, UtilisateurRepository utilisateurRepository,
-             SimpMessagingTemplate messagingTemplate,NotificationService notificationService) {
+            SimpMessagingTemplate messagingTemplate, NotificationService notificationService) {
         this.ticketRepository = ticketRepository;
         this.queryFactory = queryFactory;
         this.moduleRepository = moduleRepository;
@@ -60,7 +61,7 @@ public class TicketService {
         log.debug("Request to save Ticket: {}", ticketRequestDTO);
         Ticket ticket = TicketFactory.toEntity(ticketRequestDTO);
         ticket = ticketRepository.save(ticket);
-        
+
         notifyTeamLeadOnModuleAssignment(ticket);
 
         sendTargetedNotification(ticket, "TICKET_CREATED", "Nouveau ticket créé : #" + ticket.getId());
@@ -73,7 +74,8 @@ public class TicketService {
         Ticket existingTicket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("ticket.NotFound"));
 
-        Integer oldUserId = existingTicket.getIdUtilisateur() != null ? existingTicket.getIdUtilisateur().getId() : null;
+        Integer oldUserId = existingTicket.getIdUtilisateur() != null ? existingTicket.getIdUtilisateur().getId()
+                : null;
         Integer oldModuleId = existingTicket.getModule() != null ? existingTicket.getModule().getId() : null;
         Status oldStatus = existingTicket.getStatue();
 
@@ -83,10 +85,11 @@ public class TicketService {
         if (ticketRequestDTO.getIdUtilisateur() != null && !ticketRequestDTO.getIdUtilisateur().equals(oldUserId)) {
             Utilisateur assignedUser = utilisateurRepository.findById(ticketRequestDTO.getIdUtilisateur()).orElse(null);
             if (assignedUser != null) {
-                notificationService.createAndSendNotification(assignedUser, "Le ticket #" + ticketId + " vous a été assigné.", "/tickets/" + ticketId);
+                notificationService.createAndSendNotification(assignedUser,
+                        "Le ticket #" + ticketId + " vous a été assigné.", "/tickets/" + ticketId);
             }
         }
-        
+
         Integer newModuleId = updatedTicket.getModule() != null ? updatedTicket.getModule().getId() : null;
         if (!Objects.equals(oldModuleId, newModuleId)) {
             notifyTeamLeadOnModuleAssignment(updatedTicket);
@@ -95,12 +98,14 @@ public class TicketService {
         Status newStatus = updatedTicket.getStatue();
         if (newStatus != oldStatus) {
             if (newStatus == Status.Termine) {
-                notificationService.createAndSendNotificationToUsers(utilisateurRepository.findByRole(Role.A), "Le ticket #" + ticketId + " a été terminé.", "/tickets/" + ticketId);
+                notificationService.createAndSendNotificationToUsers(utilisateurRepository.findByRole(Role.A),
+                        "Le ticket #" + ticketId + " a été terminé.", "/tickets/" + ticketId);
             } else if (newStatus == Status.Refuse) {
-                notificationService.createAndSendNotificationToUsers(utilisateurRepository.findByRole(Role.A), "Le ticket #" + ticketId + " a été refusé.", "/tickets/" + ticketId);
+                notificationService.createAndSendNotificationToUsers(utilisateurRepository.findByRole(Role.A),
+                        "Le ticket #" + ticketId + " a été refusé.", "/tickets/" + ticketId);
             }
         }
-        
+
         sendTargetedNotification(updatedTicket, "TICKET_UPDATED", "Le ticket #" + ticketId + " a été mis à jour.");
         return TicketFactory.toResponseDTO(updatedTicket);
     }
@@ -109,13 +114,15 @@ public class TicketService {
         if (ticket.getModule() != null && ticket.getModule().getId() != null) {
             // ✅ CORRECTION APPLIQUÉE ICI
             com.csys.template.domain.Module module = moduleRepository.findById(ticket.getModule().getId()).orElse(null);
-            
+
             if (module != null && module.getEquipe() != null && module.getEquipe().getChefEquipe() != null) {
                 Utilisateur teamLead = module.getEquipe().getChefEquipe();
-                String message = String.format("Nouveau ticket #%d assigné au module '%s'.", ticket.getId(), module.getDesignation());
+                String message = String.format("Nouveau ticket #%d assigné au module '%s'.", ticket.getId(),
+                        module.getDesignation());
                 String link = "/tickets/" + ticket.getId();
                 notificationService.createAndSendNotification(teamLead, message, link);
-                log.info("Notification envoyée au chef d'équipe {} pour l'assignation du ticket #{} au module {}", teamLead.getLogin(), ticket.getId(), module.getDesignation());
+                log.info("Notification envoyée au chef d'équipe {} pour l'assignation du ticket #{} au module {}",
+                        teamLead.getLogin(), ticket.getId(), module.getDesignation());
             }
         }
     }
@@ -133,14 +140,14 @@ public class TicketService {
         return ResponseEntity.ok().build();
     }
 
-   private void sendTargetedNotification(Ticket ticket, String type, String message) {
+    private void sendTargetedNotification(Ticket ticket, String type, String message) {
         if (ticket == null) {
             log.warn("Ticket null reçu pour notification ciblée.");
             return;
         }
 
         NotificationDTO notification = new NotificationDTO(ticket, message, type);
-        Set<String> sentToUsers = new HashSet<>(); 
+        Set<String> sentToUsers = new HashSet<>();
         Set<Utilisateur> recipients = new HashSet<>();
 
         if (ticket.getIdUtilisateur() != null) {
@@ -313,5 +320,14 @@ public class TicketService {
         QTicket ticket = QTicket.ticket;
         List<Ticket> tickets = (List<Ticket>) ticketRepository.findAll(ticket.idUtilisateur.id.eq(userId));
         return TicketFactory.toResponseDTOs(tickets);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TicketResponseDTO> searchByTerm(String term) {
+        if (term == null || term.isBlank() || term.length() < 2) {
+            return Collections.emptyList();
+        }
+        List<Ticket> results = ticketRepository.searchByTerm(term);
+        return TicketFactory.toResponseDTOs(results);
     }
 }

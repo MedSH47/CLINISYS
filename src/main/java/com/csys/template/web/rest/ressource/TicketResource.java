@@ -159,4 +159,10 @@ public class TicketResource {
 
         return notifications;
     }
+
+    @GetMapping("/tickets/search")
+    public ResponseEntity<List<TicketResponseDTO>> searchTickets(@RequestParam("term") String term) {
+        List<TicketResponseDTO> results = ticketService.searchByTerm(term);
+        return ResponseEntity.ok(results);
+    }
 }

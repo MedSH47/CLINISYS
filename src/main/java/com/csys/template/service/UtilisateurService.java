@@ -1,6 +1,7 @@
 package com.csys.template.service;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -186,4 +187,13 @@ public class UtilisateurService {
     Utilisateur utilisateur = utilisateurRepository.findByLogin(username);
     return utilisateur != null ? utilisateur.getId() : null;
   }
+
+  @Transactional(readOnly = true)
+    public List<UtilisateurResponseDTO> searchByTerm(String term) {
+        if (term == null || term.isBlank() || term.length() < 2) {
+            return Collections.emptyList();
+        }
+        List<Utilisateur> results = utilisateurRepository.searchByTerm(term);
+        return UtilisateurFactory.toResponseDTOs(results);
+    }
 }

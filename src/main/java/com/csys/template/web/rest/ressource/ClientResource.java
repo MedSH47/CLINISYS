@@ -91,4 +91,10 @@ public class ClientResource {
         List<?> locations = clientService.findAllClientLocations();
         return ResponseEntity.ok(locations);
     }
+
+     @GetMapping("/clients/search")
+    public ResponseEntity<List<ClientResponseDTO>> searchClients(@RequestParam("term") String term) {
+        List<ClientResponseDTO> results = clientService.searchByTerm(term);
+        return ResponseEntity.ok(results);
+    }
 }

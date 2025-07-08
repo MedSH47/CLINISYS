@@ -7,6 +7,7 @@ import com.csys.template.factory.ClientFactory;
 import com.csys.template.repository.ClientRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +37,8 @@ public class ClientService {
         if (client.getCountryCode() != null && client.getRegionName() != null) {
             try {
                 Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
-                    client.getCountryCode(),
-                    client.getRegionName()
-                );
+                        client.getCountryCode(),
+                        client.getRegionName());
                 if (coords != null) {
                     client.setLatitude(coords.get("latitude"));
                     client.setLongitude(coords.get("longitude"));
@@ -47,7 +47,7 @@ public class ClientService {
                 log.error("Geocoding failed for new client {}: {}", client.getNomComplet(), e.getMessage());
             }
         }
-        
+
         client = clientRepository.save(client);
         return ClientFactory.toResponseDTO(client);
     }
@@ -68,14 +68,13 @@ public class ClientService {
         existingClient.setActif(clientRequestDTO.getActif());
 
         boolean addressChanged = !Objects.equals(clientRequestDTO.getRegionName(), oldRegion) ||
-                                 !Objects.equals(clientRequestDTO.getCountryCode(), oldCountry);
+                !Objects.equals(clientRequestDTO.getCountryCode(), oldCountry);
 
         if (addressChanged) {
             try {
                 Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
-                    existingClient.getCountryCode(),
-                    existingClient.getRegionName()
-                );
+                        existingClient.getCountryCode(),
+                        existingClient.getRegionName());
                 if (coords != null) {
                     existingClient.setLatitude(coords.get("latitude"));
                     existingClient.setLongitude(coords.get("longitude"));
@@ -84,7 +83,7 @@ public class ClientService {
                 log.error("Geocoding failed for updated client {}: {}", existingClient.getId(), e.getMessage());
             }
         }
-        
+
         Client saved = clientRepository.save(existingClient);
         return ClientFactory.toResponseDTO(saved);
     }
@@ -104,8 +103,8 @@ public class ClientService {
         log.debug("Request to delete Client: {}", id);
         clientRepository.deleteById(id);
     }
-    
-    public List<String> getAllNames(){
+
+    public List<String> getAllNames() {
         return clientRepository.findAll().stream()
                 .map(Client::getNomComplet)
                 .collect(Collectors.toList());
@@ -113,19 +112,20 @@ public class ClientService {
 
     /**
      * NOUVELLE MÉTHODE : Calcule le nombre de nouveaux clients créés par heure.
-     * @return Une liste de maps, chaque map représentant une heure avec les statistiques associées.
+     * 
+     * @return Une liste de maps, chaque map représentant une heure avec les
+     *         statistiques associées.
      */
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getHourlyNewClientStats() {
         log.debug("Request to get hourly new client statistics");
-        
+
         // Regroupe les clients par leur heure de création
         Map<Integer, Long> newClientsByHour = clientRepository.findAll().stream()
-            .filter(c -> c.getDateCreation() != null)
-            .collect(Collectors.groupingBy(
-                c -> c.getDateCreation().getHour(),
-                Collectors.counting()
-            ));
+                .filter(c -> c.getDateCreation() != null)
+                .collect(Collectors.groupingBy(
+                        c -> c.getDateCreation().getHour(),
+                        Collectors.counting()));
 
         List<Map<String, Object>> hourlyData = new ArrayList<>();
         long totalClients = clientRepository.count();
@@ -138,7 +138,7 @@ public class ClientService {
             hourStats.put("totalClients", totalClients); // Le total est le même pour chaque heure
             hourlyData.add(hourStats);
         }
-        
+
         return hourlyData;
     }
 
@@ -168,5 +168,14 @@ public class ClientService {
                     return locationData;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ClientResponseDTO> searchByTerm(String term) {
+        if (term == null || term.isBlank() || term.length() < 2) {
+            return Collections.emptyList();
+        }
+        List<Client> results = clientRepository.searchByTerm(term);
+        return ClientFactory.toResponseDTOs(results);
     }
 }

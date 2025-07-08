@@ -130,4 +130,10 @@ public CompletableFuture<ResponseEntity<UtilisateurResponseDTO>> createUtilisate
     public List<String> getAllNames() {
         return utilisateurService.getAllNames();
     }
+
+    @GetMapping("/utilisateurs/search")
+    public ResponseEntity<List<UtilisateurResponseDTO>> searchUtilisateurs(@RequestParam("term") String term) {
+        List<UtilisateurResponseDTO> results = utilisateurService.searchByTerm(term);
+        return ResponseEntity.ok(results);
+    }
 }
