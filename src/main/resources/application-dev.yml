@@ -123,7 +123,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: harrabimohamedsaleh71@gmail.com # Remplacez par votre e-mail
-    password: vyqe cewo rdbe hqfv # Remplacez par votre mot de passe d'application Gmail
+    password: jfua fogk ibck nkkj # Remplacez par votre mot de passe d'application Gmail
     properties:
       mail:
         smtp:
