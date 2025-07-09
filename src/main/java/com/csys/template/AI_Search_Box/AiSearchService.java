@@ -47,6 +47,9 @@ public class AiSearchService {
         if (aiResponse.getDoumean() != null && !aiResponse.getDoumean().isEmpty()) {
             return new AiSearchResponseDTO(aiResponse.getDoumean());
         }
+        if (aiResponse.getEntities().isEmpty()) {
+            return new AiSearchResponseDTO(aiResponse.getEntityType(), Collections.emptyList());
+        }
 
         if (aiResponse.getEntityType() != null && !"unknown".equals(aiResponse.getEntityType())) {
              String entityType = aiResponse.getEntityType();

@@ -17,6 +17,8 @@ import com.csys.template.service.NotificationService;
 import com.csys.template.util.Helper;
 
 import liquibase.pro.packaged.au;
+import org.hibernate.LazyInitializationException;
+
 
 public class TicketFactory {
     private final NotificationService notificationService;
@@ -72,7 +74,6 @@ public class TicketFactory {
             return null;
         TicketResponseDTO dto = new TicketResponseDTO();
         dto.setActif(ticket.getActif());
-        dto.setParentTicket(TicketFactory.toDTOLight( ticket.getParentTicket()));
         dto.setId(ticket.getId());
         dto.setIdClient(ClientFactory.toDTOLight(ticket.getIdClient()));
         dto.setTitre(ticket.getTitre());
@@ -84,7 +85,21 @@ public class TicketFactory {
         dto.setPriorite(ticket.getPriorite());
         dto.setDateCreation(ticket.getDateCreation());
         dto.setDate_echeance(ticket.getDate_echeance());
-        dto.setCommentaireList(CommentaireFactory.toResponseDTOs(ticket.getCommentaireList()));
+
+        // FIX: Handle potential lazy-loading issues for audited entities
+        try {
+            if (ticket.getParentTicket() != null) {
+               dto.setParentTicket(TicketFactory.toDTOLight(ticket.getParentTicket()));
+            }
+        } catch (LazyInitializationException e) {
+            dto.setParentTicket(null); // Set to null if lazy loading fails
+        }
+       
+        try {
+            dto.setCommentaireList(CommentaireFactory.toResponseDTOs(ticket.getCommentaireList()));
+        } catch (LazyInitializationException e) {
+            dto.setCommentaireList(Collections.emptyList()); // Return empty list on failure
+        }
         return dto;
     }
 

@@ -1,4 +1,3 @@
-// Créez le fichier : src/main/java/com/csys/template/service/AuditService.java
 package com.csys.template.service;
 
 import com.csys.template.config.jpa.audit.Revision;
@@ -43,6 +42,7 @@ public class AuditService {
     private <T> List<AuditLogDTO> getHistoryForEntity(Class<T> entityClass, Object entityId, Function<T, Object> toDto) {
         AuditReader auditReader = AuditReaderFactory.get(entityManager);
 
+        // This query correctly fetches all revisions, including deletions, because the third parameter is 'true'.
         List<Object[]> results = auditReader.createQuery()
                 .forRevisionsOfEntity(entityClass, false, true)
                 .add(AuditEntity.id().eq(entityId))
@@ -51,16 +51,21 @@ public class AuditService {
 
         return results.stream()
                 .map(result -> {
-                    // result[0] est l'entité à un certain état (ex: un Ticket)
+                    // result[0] is the entity state at a specific revision.
+                    // For a DEL revision, this holds the state of the entity just BEFORE it was deleted.
                     T entityState = (T) result[0];
-                    // result[1] est l'objet Revision contenant qui/quand
+                    
+                    // result[1] is our custom Revision entity containing user and timestamp.
                     Revision revision = (Revision) result[1];
-                    // result[2] est le type de révision (ADD, MOD, DEL)
+                    
+                    // result[2] is the revision type (ADD, MOD, DEL).
                     org.hibernate.envers.RevisionType revisionType = (org.hibernate.envers.RevisionType) result[2];
 
                     RevisionInfoDTO revisionInfoDTO = new RevisionInfoDTO(revision.getId(), revision.getTimestamp(), revision.getUserCreate());
                     
-                    // On utilise la fonction de conversion passée en paramètre
+                    // We apply the conversion function to get the DTO.
+                    // For DEL revisions, the 'entityState' is valid and contains the pre-deletion data.
+                    // The factory must be robust enough to handle detached audited entities, especially lazy collections.
                     Object dto = toDto.apply(entityState);
 
                     return new AuditLogDTO(revisionInfoDTO, revisionType, dto);

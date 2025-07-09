@@ -87,6 +87,8 @@ public class SecurityConfiguration {
                         .antMatchers("/api/forgot-password").permitAll()
                         .antMatchers("/api/verify-code").permitAll()
                         .antMatchers(HttpMethod.PUT, "**").permitAll()
+                                                .antMatchers(HttpMethod.POST, "**").permitAll()
+
                         .antMatchers(HttpMethod.GET, "**").permitAll()
                         .antMatchers("/api/geo/**").permitAll() // Pour les requêtes de géocodage
                         .antMatchers("/api/reset-password-jwt").permitAll()
