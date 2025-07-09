@@ -67,10 +67,9 @@ public class ClientService {
         existingClient.setCountryCode(clientRequestDTO.getCountryCode());
         existingClient.setActif(clientRequestDTO.getActif());
 
-        boolean addressChanged = !Objects.equals(clientRequestDTO.getRegionName(), oldRegion) ||
-                !Objects.equals(clientRequestDTO.getCountryCode(), oldCountry);
+      
 
-        if (addressChanged) {
+        if (clientRequestDTO.getRegionName()!=null && clientRequestDTO.getCountryCode()!=null) {
             try {
                 Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
                         existingClient.getCountryCode(),

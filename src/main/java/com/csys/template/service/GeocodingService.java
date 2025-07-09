@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import com.csys.template.dtoProjection.GeocodingResponseDTO;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,18 +29,25 @@ public class GeocodingService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, String> body = new HashMap<>();
-        body.put("location", country + "," + region);
+        body.put("location", region + ", " + country);
 
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+        
+        // --- CHANGE IS HERE ---
+        // Tell RestTemplate to map the response directly to our DTO
+        ResponseEntity<GeocodingResponseDTO> response = restTemplate.postForEntity(url, request, GeocodingResponseDTO.class);
 
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            Map<String, Object> responseBody = response.getBody();
-            Map<String, Double> coords = new HashMap<>();
-            coords.put("latitude", Double.parseDouble(responseBody.get("latitude").toString()));
-            coords.put("longitude", Double.parseDouble(responseBody.get("longitude").toString()));
-            return coords;
+            GeocodingResponseDTO responseBody = response.getBody();
+            
+            // --- NEW, SAFER LOGIC ---
+            if (responseBody.getCoordinates() != null) {
+                Map<String, Double> coords = new HashMap<>();
+                coords.put("latitude", responseBody.getCoordinates().getLatitude());
+                coords.put("longitude", responseBody.getCoordinates().getLongitude());
+                return coords;
+            }
         }
-        return null;
+        return null; // Or throw a custom exception
     }
 }
