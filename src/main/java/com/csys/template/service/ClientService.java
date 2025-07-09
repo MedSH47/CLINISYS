@@ -38,7 +38,9 @@ public class ClientService {
             try {
                 Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
                         client.getCountryCode(),
-                        client.getRegionName());
+                        client.getRegionName(),
+                        client.getAdress()
+                        );
                 if (coords != null) {
                     client.setLatitude(coords.get("latitude"));
                     client.setLongitude(coords.get("longitude"));
@@ -73,7 +75,8 @@ public class ClientService {
             try {
                 Map<String, Double> coords = geocodingService.geocodeRegionAndCountry(
                         existingClient.getCountryCode(),
-                        existingClient.getRegionName());
+                        existingClient.getRegionName(),
+                        existingClient.getAdress());
                 if (coords != null) {
                     existingClient.setLatitude(coords.get("latitude"));
                     existingClient.setLongitude(coords.get("longitude"));

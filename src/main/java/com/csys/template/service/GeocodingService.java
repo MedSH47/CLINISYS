@@ -22,14 +22,14 @@ public class GeocodingService {
         this.restTemplate = new RestTemplate();
     }
 
-    public Map<String, Double> geocodeRegionAndCountry(String country, String region) {
+    public Map<String, Double> geocodeRegionAndCountry(String country, String region,String speceficadress) {
         String url = "http://localhost:5001/geo";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, String> body = new HashMap<>();
-        body.put("location", region + ", " + country);
+        body.put("location", region + ", " + country+"specefic adress:"+speceficadress);
 
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
         
