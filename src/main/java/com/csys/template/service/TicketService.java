@@ -18,7 +18,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Collections;
 import java.util.HashSet;
@@ -86,7 +85,7 @@ public class TicketService {
             Utilisateur assignedUser = utilisateurRepository.findById(ticketRequestDTO.getIdUtilisateur()).orElse(null);
             if (assignedUser != null) {
                 notificationService.createAndSendNotification(assignedUser,
-                        "Le ticket #" + ticketId + " vous a été assigné.", "/tickets/" + ticketId);
+                        "Le ticket #" + ticketId + " vous a été assigné."+"\n verifier votre tickets", "/tickets/" + ticketId);
             }
         }
 
@@ -98,15 +97,20 @@ public class TicketService {
         Status newStatus = updatedTicket.getStatue();
         if (newStatus != oldStatus) {
             if (newStatus == Status.Termine) {
-                notificationService.createAndSendNotificationToUsers(utilisateurRepository.findByRole(Role.A),
-                        "Le ticket #" + ticketId + " a été terminé.", "/tickets/" + ticketId);
+                notificationService.createAndSendNotificationToUsers(
+                        utilisateurRepository.findByRole(Role.A),
+                        "Le ticket #" + ticketId + " a été terminé.",
+                        "/tickets/" + ticketId);
             } else if (newStatus == Status.Refuse) {
                 notificationService.createAndSendNotificationToUsers(utilisateurRepository.findByRole(Role.A),
                         "Le ticket #" + ticketId + " a été refusé.", "/tickets/" + ticketId);
             }
         }
 
-        sendTargetedNotification(updatedTicket, "TICKET_UPDATED", "Le ticket #" + ticketId + " a été mis à jour.");
+        sendTargetedNotification(
+                updatedTicket,
+                "TICKET_UPDATED",
+                "Le ticket #" + ticketId +"sous le titre"+ updatedTicket.getTitre() + " a été mis à jour");
         return TicketFactory.toResponseDTO(updatedTicket);
     }
 

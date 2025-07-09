@@ -1,8 +1,14 @@
 package com.csys.template.web.rest.ressource;
 
 import com.csys.template.config.MailSender;
+import com.csys.template.dtoResponse.ClientResponseDTO;
+import com.csys.template.dtoResponse.ModuleResponseDTO;
+import com.csys.template.dtoResponse.TicketResponseDTO;
 import com.csys.template.dtoResponse.UtilisateurResponseDTO;
+import com.csys.template.service.TicketService;
 import com.csys.template.service.UtilisateurService;
+import com.csys.template.service.ClientService; // Import du service Client
+import com.csys.template.service.ModuleService; // Import du service Module
 import com.csys.template.util.Helper;
 import com.csys.template.util.FormulairesHtml;
 import com.csys.template.util.JwtUtil;
@@ -15,6 +21,7 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.slf4j.Logger;
@@ -31,14 +38,20 @@ public class MailingServiceRessource {
 
     private final MailSender mailSender;
     private final UtilisateurService utilisateurService;
+    private final TicketService ticketService;
+    private final ClientService clientService; // Service Client injecté
+    private final ModuleService moduleService; // Service Module injecté
     private final JwtUtil jwtUtil;
 
     private static final long CODE_EXPIRE_AFTER_MINUTES = 5;
     private final Map<String, ResetCode> resetCodes = new ConcurrentHashMap<>();
     
-    public MailingServiceRessource(MailSender mailSender, UtilisateurService utilisateurService, JwtUtil jwtUtil) {
+    public MailingServiceRessource(MailSender mailSender, UtilisateurService utilisateurService, TicketService ticketService, ClientService clientService, ModuleService moduleService, JwtUtil jwtUtil) {
         this.mailSender = mailSender;
         this.utilisateurService = utilisateurService;
+        this.ticketService = ticketService;
+        this.clientService = clientService;
+        this.moduleService = moduleService;
         this.jwtUtil = jwtUtil;
     }
 
@@ -75,34 +88,77 @@ public class MailingServiceRessource {
         }
     }
 
-    /**
-     * ENDPOINT FINAL ET SÉCURISÉ : Réinitialise le mot de passe en utilisant le JWT.
-     */
     @PostMapping("/reset-password-jwt")
     public ResponseEntity<?> resetPasswordWithJwt(@Valid @RequestBody PasswordResetRequest request) {
         try {
-            // Étape 1 : Valider la signature et l'expiration du jeton.
             if (!jwtUtil.validateToken(request.getResetToken())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Jeton de réinitialisation invalide ou expiré.");
             }
-
-            // Étape 2 : Extraire l'e-mail du jeton (source de confiance).
             String emailFromToken = jwtUtil.extractUsername(request.getResetToken());
-
-            // Étape 3 : VÉRIFICATION DE SÉCURITÉ CRUCIALE.
-            // S'assurer que le jeton est utilisé pour le bon utilisateur.
             if (!emailFromToken.equalsIgnoreCase(request.getEmail().trim())) {
                 log.warn("Tentative de réinitialisation de mot de passe frauduleuse ! L'e-mail du jeton ({}) ne correspond pas à l'e-mail de la requête ({}).", emailFromToken, request.getEmail());
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Le jeton ne correspond pas à l'utilisateur spécifié.");
             }
-
-            // Étape 4 : Le jeton est valide et correspond à l'utilisateur. Procéder à la mise à jour.
             utilisateurService.updatePassword(emailFromToken, request.getNewPassword());
-            
             return ResponseEntity.ok("Votre mot de passe a été mis à jour avec succès.");
         } catch (Exception e) {
             log.error("Erreur lors de la réinitialisation du mot de passe avec JWT : {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Jeton invalide ou une erreur interne est survenue.");
+        }
+    }
+
+    @PostMapping("/notify-late-ticket/{ticketId}")
+    public ResponseEntity<?> sendLateTicketNotification(@PathVariable @NotNull Integer ticketId) {
+        TicketResponseDTO ticket = ticketService.findOne(ticketId);
+        if (ticket == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket non trouvé pour l'ID : " + ticketId);
+        }
+
+        if (ticket.getIdUtilisateur() == null) {
+            log.warn("Tentative de notification pour le ticket en retard #{} sans utilisateur assigné.", ticketId);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Le ticket n'a pas d'utilisateur assigné.");
+        }
+        
+        UtilisateurResponseDTO utilisateur = utilisateurService.findOne(ticket.getIdUtilisateur().getId());
+        if (utilisateur == null || utilisateur.getEmail() == null || utilisateur.getEmail().isEmpty()) {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur assigné non trouvé ou sans e-mail.");
+        }
+
+        // CORRECTION : Récupérer les noms du client et du module via leurs services
+        String nomClient = "N/A";
+        if (ticket.getIdClient() != null) {
+            ClientResponseDTO client = clientService.findOne(ticket.getIdClient().getId());
+            if (client != null) {
+                nomClient = client.getNomComplet();
+            }
+        }
+
+        String nomModule = "N/A";
+        if (ticket.getIdModule() != null) {
+            ModuleResponseDTO module = moduleService.findOne(ticket.getIdModule().getId());
+            if (module != null) {
+                nomModule = module.getDesignation();
+            }
+        }
+
+        FormulairesHtml.TicketInfo ticketInfo = new FormulairesHtml.TicketInfo();
+        ticketInfo.setTitre(ticket.getTitre());
+        ticketInfo.setDescription(ticket.getDescription());
+        ticketInfo.setPriorite(ticket.getPriorite() != null ? ticket.getPriorite().name() : "N/A");
+        ticketInfo.setStatut(ticket.getStatue() != null ? ticket.getStatue().name() : "N/A");
+        ticketInfo.setDateEcheance(ticket.getDate_echeance());
+        ticketInfo.setNomClient(nomClient);
+        ticketInfo.setNomModule(nomModule);
+        ticketInfo.setNomUtilisateur(utilisateur.getNom());
+
+        try {
+            String emailBody = FormulairesHtml.genererHtmlTicketEnRetard(utilisateur.getNom(), ticketInfo);
+            String subject = "Alerte : Ticket en Retard - " + ticket.getTitre();
+            mailSender.sendHtmlMail(utilisateur.getEmail(), subject, emailBody);
+            return ResponseEntity.ok("Notification de ticket en retard envoyée avec succès à " + utilisateur.getEmail());
+        } catch (MessagingException e) {
+            log.error("Échec de l'envoi de l'e-mail de notification de retard pour '{}'.", utilisateur.getEmail(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Échec de l'envoi de l'e-mail.");
         }
     }
     
@@ -131,7 +187,6 @@ public class MailingServiceRessource {
         public LocalDateTime getTimestamp() { return timestamp; }
     }
 
-    // DTO pour la requête de réinitialisation, maintenant avec des validations.
     public static class PasswordResetRequest {
         @NotEmpty(message = "L'e-mail ne peut pas être vide.")
         @Email(message = "Le format de l'e-mail est invalide.")
