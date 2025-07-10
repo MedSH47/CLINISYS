@@ -1,19 +1,24 @@
 package com.csys.template.AI_Search_Box;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AiQueryResponse {
     private String entityType;
     private Map<String, String> entities;
     private String doumean;
+    private String  error;
 
-    // Getters and Setters
-    public String getEntityType() { return entityType; }
-    public void setEntityType(String entityType) { this.entityType = entityType; }
-    public Map<String, String> getEntities() { return entities; }
-    public void setEntities(Map<String, String> entities) { this.entities = entities; }
-    public String getDoumean() { return doumean; }
-    public void setDoumean(String doumean) { this.doumean = doumean; }
+   
 }

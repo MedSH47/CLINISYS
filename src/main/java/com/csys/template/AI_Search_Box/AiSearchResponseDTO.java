@@ -1,13 +1,28 @@
 package com.csys.template.AI_Search_Box;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import lombok.AllArgsConstructor;
+
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@AllArgsConstructor
 public class AiSearchResponseDTO {
     private String entityType;
     private List<?> data;
     private String doumean;
+    private String error;
+
+
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
 
     public AiSearchResponseDTO(String entityType, List<?> data) {
         this.entityType = entityType;
@@ -19,6 +34,7 @@ public class AiSearchResponseDTO {
     }
 
     // Getters and Setters
+
     public String getEntityType() { return entityType; }
     public void setEntityType(String entityType) { this.entityType = entityType; }
     public List<?> getData() { return data; }

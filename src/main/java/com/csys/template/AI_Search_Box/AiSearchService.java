@@ -4,6 +4,9 @@ import com.csys.template.domain.*;
 import com.csys.template.domain.Module;
 import com.csys.template.factory.*;
 import com.csys.template.repository.*;
+
+import lombok.extern.java.Log;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Log
 public class AiSearchService {
 
     private final RestTemplate restTemplate;
@@ -39,7 +43,12 @@ public class AiSearchService {
         String aiServiceUrl = "http://localhost:5001/llm-parse";
         Map<String, String> requestBody = Collections.singletonMap("query", query);
         AiQueryResponse aiResponse = restTemplate.postForObject(aiServiceUrl, requestBody, AiQueryResponse.class);
-
+        
+        if (aiResponse.getError() != null ) {
+            log.info("erreur info"+aiResponse.getError());
+            return new AiSearchResponseDTO(null,null,null,aiResponse.getError());
+        }
+        
         if (aiResponse == null) {
             return new AiSearchResponseDTO("unknown", Collections.emptyList());
         }
