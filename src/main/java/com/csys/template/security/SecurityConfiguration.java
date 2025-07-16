@@ -85,17 +85,15 @@ public class SecurityConfiguration {
                         // 1. Endpoints publics qui ne nécessitent AUCUNE authentification
                         .antMatchers("/api/authenticate").permitAll()
                         .antMatchers("/api/forgot-password").permitAll()
+                        .antMatchers(HttpMethod.GET ,"**").permitAll()
                         .antMatchers("/api/verify-code").permitAll()
-                        .antMatchers(HttpMethod.PUT, "**").permitAll()
-                                                .antMatchers(HttpMethod.POST, "**").permitAll()
-
-                        .antMatchers(HttpMethod.GET, "**").permitAll()
                         .antMatchers("/api/geo/**").permitAll() // Pour les requêtes de géocodage
                         .antMatchers("/api/reset-password-jwt").permitAll()
+                        .antMatchers("/ws/**").permitAll()
                         .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Pour la documentation Swagger
-                        .antMatchers("/ws/**").permitAll() // Pour les WebSockets
+                        //.antMatchers("/ws/**").permitAll() // <-- THIS LINE WAS REMOVED. This is the fix.
 
-                        // 2. Toutes les autres requêtes (/api/**) doivent être authentifiées
+                        // 2. Toutes les autres requêtes (/api/**, /ws/**, etc.) doivent être authentifiées
                         .anyRequest().authenticated())
 
                 // Ajoute notre filtre personnalisé de validation JWT avant le filtre standard

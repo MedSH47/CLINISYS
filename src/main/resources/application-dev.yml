@@ -122,8 +122,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: harrabimohamedsaleh71@gmail.com # Remplacez par votre e-mail
-    password: jfua fogk ibck nkkj # Remplacez par votre mot de passe d'application Gmail
+    username: clinisyserp.sfax@gmail.com # Remplacez par votre e-mail
+    password: agpp vwcj hyjx yhel # Remplacez par votre mot de passe d'application Gmail
     properties:
       mail:
         smtp:
@@ -148,5 +148,5 @@ server:
 
 # Configuration des e-mails par défaut de l'application
 email:
-  from: harrabimohamedsaleh71@gmail.com # E-mail d'envoi
+  from: clinisyserp.sfax@gmail.com # E-mail d'envoi
   to: harrabimohamedsaleh71@gmail.com   # E-mail de destination par défaut (pour tests)

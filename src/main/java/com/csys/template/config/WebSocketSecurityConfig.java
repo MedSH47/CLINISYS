@@ -1,3 +1,5 @@
+// in src/main/java/com/csys/template/config/WebSocketSecurityConfig.java
+
 package com.csys.template.config;
 
 import com.csys.template.util.JwtUtil; // Import de VOTRE classe

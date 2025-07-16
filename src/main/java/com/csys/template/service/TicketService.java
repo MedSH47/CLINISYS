@@ -63,7 +63,7 @@ public class TicketService {
 
         notifyTeamLeadOnModuleAssignment(ticket);
 
-        sendTargetedNotification(ticket, "TICKET_CREATED", "Nouveau ticket créé : #" + ticket.getId());
+        sendTargetedNotification(ticket, "TICKET_CREATED", "Nouveau ticket créé : "+ticket.getTitre() );
 
         return TicketFactory.toResponseDTO(ticket);
     }
@@ -85,7 +85,7 @@ public class TicketService {
             Utilisateur assignedUser = utilisateurRepository.findById(ticketRequestDTO.getIdUtilisateur()).orElse(null);
             if (assignedUser != null) {
                 notificationService.createAndSendNotification(assignedUser,
-                        "Le ticket #" + ticketId + " vous a été assigné."+"\n verifier votre tickets", "/tickets/" + ticketId);
+                        "Le ticket  " + updatedTicket.getTitre() + " vous a été assigné."+"\n verifier votre tickets", "/tickets/" + ticketId);
             }
         }
 
@@ -99,18 +99,18 @@ public class TicketService {
             if (newStatus == Status.Termine) {
                 notificationService.createAndSendNotificationToUsers(
                         utilisateurRepository.findByRole(Role.A),
-                        "Le ticket #" + ticketId + " a été terminé.",
+                        "Le ticket " + updatedTicket.getTitre() + " a été terminé.",
                         "/tickets/" + ticketId);
             } else if (newStatus == Status.Refuse) {
                 notificationService.createAndSendNotificationToUsers(utilisateurRepository.findByRole(Role.A),
-                        "Le ticket #" + ticketId + " a été refusé.", "/tickets/" + ticketId);
+                        "Le ticket  " + updatedTicket.getTitre() + " a été refusé.", "/tickets/" + ticketId);
             }
         }
 
         sendTargetedNotification(
                 updatedTicket,
                 "TICKET_UPDATED",
-                "Le ticket #" + ticketId +"sous le titre"+ updatedTicket.getTitre() + " a été mis à jour");
+                "Le ticket " + updatedTicket.getTitre() + " a été mis à jour");
         return TicketFactory.toResponseDTO(updatedTicket);
     }
 
@@ -121,7 +121,7 @@ public class TicketService {
 
             if (module != null && module.getEquipe() != null && module.getEquipe().getChefEquipe() != null) {
                 Utilisateur teamLead = module.getEquipe().getChefEquipe();
-                String message = String.format("Nouveau ticket #%d assigné au module '%s'.", ticket.getId(),
+                String message = String.format("Nouveau ticket '%s' assigné au module '%s'. ", ticket.getTitre(),
                         module.getDesignation());
                 String link = "/tickets/" + ticket.getId();
                 notificationService.createAndSendNotification(teamLead, message, link);

@@ -47,4 +47,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // Without this line, `convertAndSendToUser` will NOT work.
         config.setUserDestinationPrefix("/user");
     }
+    
 }

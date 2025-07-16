@@ -15,7 +15,7 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         // Use allowedOriginPatterns for more flexibility
-                        .allowedOriginPatterns("http://localhost:5173") 
+                        .allowedOriginPatterns("http://localhost:5173","http://localhost:8081") 
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
